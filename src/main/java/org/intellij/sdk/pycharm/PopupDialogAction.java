@@ -7,10 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -35,32 +32,36 @@ public class PopupDialogAction extends AnAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     Project project = event.getProject();
-    assert project != null;  // plugin only enabled when there is a project; see update method below
-    Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
+    String message;
+    if (project == null) message = "no open project";
+    else {
+      Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
 
-    StringBuilder stringBuilder = new StringBuilder();
+      StringBuilder stringBuilder = new StringBuilder();
 
-    for (VirtualFile f : files) {
-      //stringBuilder.append('"').append(f.getName()).append("\": ");
+      for (VirtualFile f : files) {
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
+        if (psiFile == null) continue;
 
-      PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
-      assert psiFile != null;
-      //stringBuilder.append(psiFile.getFileType().toString()).append('\n');
+        psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
+          @Override
+          public void visitElement(@NotNull PsiElement element) {
+            if (element instanceof PsiWhiteSpace)
 
-      psiFile.accept(new PsiElementVisitor() {
-        @Override
-        public void visitElement(@NotNull PsiElement element) {
-          stringBuilder.append('[').append(element.getClass().toString()).append(']');
-          @NotNull PsiElement[] children = element.getChildren();
-          for (PsiElement child : children) {
-            this.visitElement(child);
+              stringBuilder.append('[').append(element.getClass().toString()).append(']');
+            @NotNull PsiElement[] children = element.getChildren();
+            for (PsiElement child : children) {
+              this.visitElement(child);
+            }
           }
-        }
-      });
+        });
+      }
+
+      message = stringBuilder.toString();
     }
 
     Messages.showMessageDialog(project,
-            stringBuilder.toString(), // "Popup dialog action"
+            message,
             "Greetings from PyCharm Basics Plugin",
             Messages.getInformationIcon());
   }
