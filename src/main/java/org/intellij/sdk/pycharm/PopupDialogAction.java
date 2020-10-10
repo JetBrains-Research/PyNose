@@ -10,7 +10,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
+import pytestsmelldetector.UnknownTestSmellDetector;
+import pytestsmelldetector.Util;
 
 import java.util.Collection;
 
@@ -41,20 +44,14 @@ public class PopupDialogAction extends AnAction {
 
       for (VirtualFile f : files) {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
+
         if (psiFile == null) continue;
 
-        psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
-          @Override
-          public void visitElement(@NotNull PsiElement element) {
-            if (element instanceof PsiWhiteSpace)
-
-              stringBuilder.append('[').append(element.getClass().toString()).append(']');
-            @NotNull PsiElement[] children = element.getChildren();
-            for (PsiElement child : children) {
-              this.visitElement(child);
-            }
-          }
-        });
+        for (PyClass testCase : Util.gatherTestCases(psiFile)) {
+          UnknownTestSmellDetector detector = new UnknownTestSmellDetector(testCase);
+          detector.analyze();
+          stringBuilder.append('[').append(detector.getAssertCounts().toString()).append(']');
+        }
       }
 
       message = stringBuilder.toString();

@@ -19,6 +19,7 @@ intellij {
   version = '2020.2'
   type = 'PY'
   downloadSources = false
+  plugins 'Pythonid'
 }
 
 buildSearchableOptions {
