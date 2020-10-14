@@ -12,6 +12,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
+import pytestsmelldetector.EmptyTestSmellDetector;
 import pytestsmelldetector.UnknownTestSmellDetector;
 import pytestsmelldetector.Util;
 
@@ -50,7 +51,11 @@ public class PopupDialogAction extends AnAction {
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
           UnknownTestSmellDetector detector = new UnknownTestSmellDetector(testCase);
           detector.analyze();
-          stringBuilder.append('[').append(detector.getAssertCounts().toString()).append(']');
+          stringBuilder.append('[').append(detector.getAssertCounts().toString()).append(';');
+
+          EmptyTestSmellDetector detector1 = new EmptyTestSmellDetector(testCase);
+          detector1.analyze();
+          stringBuilder.append(']').append(detector1.getTestMethodEmptiness()).append(']');
         }
       }
 

@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.*;
@@ -10,6 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
+    private static final Logger LOG = Logger.getInstance(Util.class);
+
     public static boolean isValidUnittestCase(PyClass pyClass) {
         Optional<PsiElement> superClassList = Arrays.stream(pyClass.getChildren())
                 .filter(PyArgumentList.class::isInstance)
@@ -45,7 +48,7 @@ public class Util {
         return Arrays.stream(testCase.getStatementList().getStatements())
                 .filter(PyFunction.class::isInstance)
                 .map(PyFunction.class::cast)
-                //.filter(Util::isValidUnittestMethod)
+                .filter(Util::isValidUnittestMethod)
                 .collect(Collectors.toList());
     }
 
@@ -53,7 +56,7 @@ public class Util {
         return Arrays.stream(file.getChildren())
                 .filter(PyClass.class::isInstance)
                 .map(PyClass.class::cast)
-                //.filter(Util::isValidUnittestCase)
+                .filter(Util::isValidUnittestCase)
                 .collect(Collectors.toList());
     }
 
