@@ -1,35 +1,33 @@
 package pytestsmelldetector;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.pyi.PyiFile;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Util {
     private static final Logger LOG = Logger.getInstance(Util.class);
 
     public static boolean isValidUnittestCase(PyClass pyClass) {
-        Optional<PsiElement> superClassList = Arrays.stream(pyClass.getChildren())
-                .filter(PyArgumentList.class::isInstance)
-                .findFirst();
-
-        Collection<PyExpression> superClasses;
-        if (!superClassList.isPresent() || (superClasses = ((PyArgumentList) superClassList.get()).getArgumentExpressions()).isEmpty())
-            return false;
-
-        for (PyExpression superClass : superClasses) {
-            if (!(superClass instanceof PyReferenceExpression))
-                continue;
-            PyReferenceExpression superClassRef = (PyReferenceExpression) superClass;
-
-            // TODO: do some real stuff instead of just checking variable name
-            if (superClassRef.getText().equals("unittest.TestCase"))
-                return true;
+        PyClass[] superClasses = pyClass.getSuperClasses(null);
+        for (PyClass c : superClasses) {
+            PsiElement casePyFile = c.getParent();
+            if (casePyFile instanceof PyiFile && ((PyiFile) casePyFile).getName().equals("case.pyi")) {  // TODO: still hardcoding?
+                PsiElement unittestModule = casePyFile.getParent();
+                if (unittestModule instanceof PsiDirectory && ((PsiDirectory) unittestModule).getName().equals("unittest")) {
+                    return true;
+                }
+            }
         }
 
         return false;
