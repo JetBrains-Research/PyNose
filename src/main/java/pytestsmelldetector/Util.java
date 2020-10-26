@@ -6,7 +6,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.pyi.PyiFile;
 
 import java.io.PrintWriter;
@@ -21,12 +23,8 @@ public class Util {
     public static boolean isValidUnittestCase(PyClass pyClass) {
         PyClass[] superClasses = pyClass.getSuperClasses(null);
         for (PyClass c : superClasses) {
-            PsiElement casePyFile = c.getParent();
-            if (casePyFile instanceof PyiFile && ((PyiFile) casePyFile).getName().equals("case.pyi")) {  // TODO: still hardcoding?
-                PsiElement unittestModule = casePyFile.getParent();
-                if (unittestModule instanceof PsiDirectory && ((PsiDirectory) unittestModule).getName().equals("unittest")) {
-                    return true;
-                }
+            if (isTestCaseClass(c)) {
+                return true;
             }
         }
 
@@ -63,5 +61,27 @@ public class Util {
         PrintWriter printWriter = new PrintWriter(stringWriter);
         e.printStackTrace(printWriter);
         return stringWriter.toString();
+    }
+
+    public static boolean isTestCaseClass(PyClass pyClass) {
+        PsiElement casePyFile = pyClass.getParent();
+        if (casePyFile instanceof PyiFile && ((PyiFile) casePyFile).getName().equals("case.pyi")) {
+            PsiElement unittestModule = casePyFile.getParent();
+            return unittestModule instanceof PsiDirectory && ((PsiDirectory) unittestModule).getName().equals("unittest");
+        }
+        return false;
+    }
+
+    public static boolean isCallAssertMethod(PyReferenceExpression calledMethodRef) {
+        if (!calledMethodRef.getText().startsWith("self.assert") && !calledMethodRef.getText().startsWith("self.fail"))
+            return false;
+
+        PsiElement e = calledMethodRef.followAssignmentsChain(PyResolveContext.defaultContext()).getElement();
+        if (e == null)
+            return false;
+
+        return e.getParent() != null &&
+                e.getParent().getParent() instanceof PyClass &&
+                isTestCaseClass((PyClass) e.getParent().getParent());
     }
 }

@@ -4,6 +4,7 @@ package pytestsmelldetector;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +23,7 @@ public class UnknownTestSmellDetector extends AbstractSmellDetector {
                 return;
             }
 
-            PyReferenceExpression calledMethodRef = (PyReferenceExpression) child;
-
-            // TODO: do some real analysis instead of just based on name
-            if (calledMethodRef.getText().startsWith("self.assert") || calledMethodRef.getText().startsWith("self.fail")) {
+            if (Util.isCallAssertMethod((PyReferenceExpression) child)) {
                 assertCounts.put(currentMethod, assertCounts.get(currentMethod) + 1);
             }
         }
