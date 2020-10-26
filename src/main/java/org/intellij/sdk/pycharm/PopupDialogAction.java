@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.python.psi.PyClass;
 import org.jetbrains.annotations.NotNull;
 import pytestsmelldetector.EmptyTestSmellDetector;
+import pytestsmelldetector.RedundantPrintTestSmellDetector;
 import pytestsmelldetector.UnknownTestSmellDetector;
 import pytestsmelldetector.Util;
 
@@ -55,7 +56,11 @@ public class PopupDialogAction extends AnAction {
 
           EmptyTestSmellDetector detector1 = new EmptyTestSmellDetector(testCase);
           detector1.analyze();
-          stringBuilder.append(']').append(detector1.getTestMethodEmptiness()).append(']');
+          stringBuilder.append(detector1.getTestMethodEmptiness()).append(';');
+
+          RedundantPrintTestSmellDetector detector2 = new RedundantPrintTestSmellDetector(testCase);
+          detector2.analyze();
+          stringBuilder.append(detector2.getTestMethodHavePrint()).append(']');
         }
       }
 
