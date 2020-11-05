@@ -11,7 +11,7 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 import java.util.HashMap;
 import java.util.List;
 
-public class UnknownTestTestSmellDetector extends AbstractSmellDetector {
+public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
     private PyClass testCase;
     private final HashMap<PyFunction, Integer> assertCounts;
     private PyFunction currentMethod;

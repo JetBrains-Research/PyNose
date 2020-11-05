@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractSmellDetector {
+public abstract class AbstractTestSmellDetector {
     public abstract void analyze();
     public abstract void reset();
     public abstract void reset(PyClass testCase);
 
-    private static final Logger LOG = Logger.getInstance(AbstractSmellDetector.class);
+    private static final Logger LOG = Logger.getInstance(AbstractTestSmellDetector.class);
 
     abstract static class MyPsiElementVisitor extends PsiElementVisitor {
         public void visitElement(@NotNull PsiElement element) {
@@ -52,7 +52,6 @@ public abstract class AbstractSmellDetector {
                         LOG.warn(Util.exceptionToString(e));
                     }
                 } catch (NoSuchMethodException ignored) {
-
                 }
             }
 

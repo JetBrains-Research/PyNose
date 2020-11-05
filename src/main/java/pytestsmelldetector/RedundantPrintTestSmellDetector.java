@@ -13,7 +13,7 @@ import com.jetbrains.python.pyi.PyiFile;
 import java.util.HashMap;
 import java.util.List;
 
-public class RedundantPrintTestSmellDetector extends AbstractSmellDetector {
+public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(RedundantPrintTestSmellDetector.class);
 
     private PyClass testCase;

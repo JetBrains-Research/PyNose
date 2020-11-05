@@ -47,21 +47,13 @@ public class PopupDialogAction extends AnAction {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          UnknownTestTestSmellDetector detector = new UnknownTestTestSmellDetector(testCase);
+          ConditionalTestLogicTestSmellDetector detector = new ConditionalTestLogicTestSmellDetector(testCase);
           detector.analyze();
-          stringBuilder.append('[').append(detector.getAssertCounts().toString()).append(';');
+          stringBuilder.append("ConditionalTestLogic:\"").append(detector.getTestHasConditionalTestLogic()).append("\"\n");
 
-          EmptyTestTestSmellDetector detector1 = new EmptyTestTestSmellDetector(testCase);
+          ConstructorInitializationTestSmellDetector detector1 = new ConstructorInitializationTestSmellDetector(testCase);
           detector1.analyze();
-          stringBuilder.append(detector1.getTestMethodEmptiness()).append(';');
-
-          RedundantPrintTestSmellDetector detector2 = new RedundantPrintTestSmellDetector(testCase);
-          detector2.analyze();
-          stringBuilder.append(detector2.getTestMethodHavePrint()).append(';');
-
-          RedundantAssertionTestSmellDetector detector3 = new RedundantAssertionTestSmellDetector(testCase);
-          detector3.analyze();
-          stringBuilder.append(detector3.getTestMethodHaveRedundantAssertion()).append(']');
+          stringBuilder.append("ConstructorInitializationTestSmellDetector:\"").append(detector1.hasInit()).append("\"\n");
         }
       }
 

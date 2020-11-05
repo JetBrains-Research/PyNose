@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RedundantAssertionTestSmellDetector extends AbstractSmellDetector {
+public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private PyClass testCase;
     private final HashMap<PyFunction, Integer> testMethodHaveRedundantAssertion;
     private PyFunction currentMethod;

@@ -9,7 +9,7 @@ import com.jetbrains.python.psi.PyStatement;
 import java.util.HashMap;
 import java.util.List;
 
-public class EmptyTestTestSmellDetector extends AbstractSmellDetector {
+public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(EmptyTestTestSmellDetector.class);
 
     class EmptyTestVisitor extends MyPsiElementVisitor {
