@@ -11,12 +11,12 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 import java.util.HashMap;
 import java.util.List;
 
-public class UnknownTestSmellDetector extends AbstractSmellDetector {
+public class UnknownTestTestSmellDetector extends AbstractSmellDetector {
     private PyClass testCase;
     private final HashMap<PyFunction, Integer> assertCounts;
     private PyFunction currentMethod;
 
-    private static final Logger LOG = Logger.getInstance(UnknownTestSmellDetector.class);
+    private static final Logger LOG = Logger.getInstance(UnknownTestTestSmellDetector.class);
 
     class UnknownTestVisitor extends MyPsiElementVisitor {
         public void visitPyCallExpression(PyCallExpression callExpression) {
@@ -33,7 +33,7 @@ public class UnknownTestSmellDetector extends AbstractSmellDetector {
 
     private final UnknownTestVisitor visitor;
 
-    public UnknownTestSmellDetector(PyClass aTestCase) {
+    public UnknownTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         assertCounts = new HashMap<>();
         visitor = new UnknownTestVisitor();

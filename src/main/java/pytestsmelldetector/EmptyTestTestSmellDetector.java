@@ -9,8 +9,8 @@ import com.jetbrains.python.psi.PyStatement;
 import java.util.HashMap;
 import java.util.List;
 
-public class EmptyTestSmellDetector extends AbstractSmellDetector {
-    private static final Logger LOG = Logger.getInstance(EmptyTestSmellDetector.class);
+public class EmptyTestTestSmellDetector extends AbstractSmellDetector {
+    private static final Logger LOG = Logger.getInstance(EmptyTestTestSmellDetector.class);
 
     class EmptyTestVisitor extends MyPsiElementVisitor {
         public void visitPyFunction(PyFunction testMethod) {
@@ -27,7 +27,7 @@ public class EmptyTestSmellDetector extends AbstractSmellDetector {
     private PyFunction currentMethod;
     private final EmptyTestVisitor visitor;
 
-    public EmptyTestSmellDetector(PyClass aTestCase) {
+    public EmptyTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         testMethodEmptiness = new HashMap<>();
         visitor = new EmptyTestVisitor();

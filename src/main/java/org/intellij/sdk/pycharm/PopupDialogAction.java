@@ -47,11 +47,11 @@ public class PopupDialogAction extends AnAction {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          UnknownTestSmellDetector detector = new UnknownTestSmellDetector(testCase);
+          UnknownTestTestSmellDetector detector = new UnknownTestTestSmellDetector(testCase);
           detector.analyze();
           stringBuilder.append('[').append(detector.getAssertCounts().toString()).append(';');
 
-          EmptyTestSmellDetector detector1 = new EmptyTestSmellDetector(testCase);
+          EmptyTestTestSmellDetector detector1 = new EmptyTestTestSmellDetector(testCase);
           detector1.analyze();
           stringBuilder.append(detector1.getTestMethodEmptiness()).append(';');
 
