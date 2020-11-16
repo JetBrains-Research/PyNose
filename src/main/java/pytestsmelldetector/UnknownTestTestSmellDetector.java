@@ -9,7 +9,7 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.List; 
 
 public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
     private final HashMap<PyFunction, Integer> assertCounts;

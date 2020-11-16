@@ -3,7 +3,6 @@ package pytestsmelldetector;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyStatement;
 
 import java.util.Arrays;
 import java.util.Objects;
