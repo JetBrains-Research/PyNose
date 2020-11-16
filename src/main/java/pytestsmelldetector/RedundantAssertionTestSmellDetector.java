@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetector {
-    private PyClass testCase;
     private final HashMap<PyFunction, Integer> testMethodHaveRedundantAssertion;
-    private PyFunction currentMethod;
 
     private static final Logger LOG = Logger.getInstance(RedundantAssertionTestSmellDetector.class);
 

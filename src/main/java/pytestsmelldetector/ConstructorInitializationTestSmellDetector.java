@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ConstructorInitializationTestSmellDetector extends AbstractTestSmellDetector {
-    private PyClass testCase;
     private boolean init;
 
     private static final Logger LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector.class);
@@ -21,19 +20,6 @@ public class ConstructorInitializationTestSmellDetector extends AbstractTestSmel
 
     @Override
     public void analyze() {
-//        for (PyStatement statement : testCase.getStatementList().getStatements()) {
-//            PyFunction pyFunction;
-//            if (!(statement instanceof PyFunction))
-//                continue;
-//            pyFunction = (PyFunction) statement;
-//
-//            LOG.warn(pyFunction.getName());
-//
-//            if (Objects.equals(pyFunction.getName(), "__init__")) {
-//                init = true;
-//                break;
-//            }
-//        }
         init = Arrays.stream(testCase.getStatementList().getStatements())
                 .filter(PyFunction.class::isInstance)
                 .map(PyFunction.class::cast).anyMatch(pyFunction -> Objects.equals(pyFunction.getName(), "__init__"));

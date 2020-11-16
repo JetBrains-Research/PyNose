@@ -22,9 +22,7 @@ public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
         }
     }
 
-    private PyClass testCase;
     private final HashMap<PyFunction, Boolean> testMethodEmptiness;
-    private PyFunction currentMethod;
     private final EmptyTestVisitor visitor;
 
     public EmptyTestTestSmellDetector(PyClass aTestCase) {

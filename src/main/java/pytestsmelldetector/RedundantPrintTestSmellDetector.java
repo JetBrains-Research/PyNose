@@ -16,9 +16,7 @@ import java.util.List;
 public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(RedundantPrintTestSmellDetector.class);
 
-    private PyClass testCase;
     private final HashMap<PyFunction, Boolean> testMethodHavePrint;
-    private PyFunction currentMethod;
 
     class RedundantPrintTestVisitor extends MyPsiElementVisitor {
         public void visitPyCallExpression(PyCallExpression callExpression) {

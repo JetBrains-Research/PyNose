@@ -4,18 +4,24 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTestSmellDetector {
     public abstract void analyze();
     public abstract void reset();
     public abstract void reset(PyClass testCase);
+
+    protected PyClass testCase;
+    protected PyFunction currentMethod;
 
     private static final Logger LOG = Logger.getInstance(AbstractTestSmellDetector.class);
 

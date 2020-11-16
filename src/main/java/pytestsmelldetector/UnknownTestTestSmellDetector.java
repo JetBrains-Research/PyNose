@@ -12,9 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
-    private PyClass testCase;
     private final HashMap<PyFunction, Integer> assertCounts;
-    private PyFunction currentMethod;
 
     private static final Logger LOG = Logger.getInstance(UnknownTestTestSmellDetector.class);
 

@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDetector {
-    private PyClass testCase;
     private final Map<PyFunction, Boolean> testHasConditionalTestLogic = new HashMap<>();
-    private PyFunction currentMethod;
 
     private static final Logger LOG = Logger.getInstance(ConditionalTestLogicTestSmellDetector.class);
 
