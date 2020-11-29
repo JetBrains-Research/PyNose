@@ -14,7 +14,9 @@ import com.jetbrains.python.pyi.PyiFile;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -83,5 +85,33 @@ public class Util {
         return e.getParent() != null &&
                 e.getParent().getParent() instanceof PyClass &&
                 isTestCaseClass((PyClass) e.getParent().getParent());
+    }
+
+    public final static List<String> ASSERT_METHOD_TWO_PARAMS = Arrays.asList(
+            "assertEqual",
+            "assertNotEqual",
+            "assertIs",
+            "assertIsNot",
+            "assertAlmostEqual",
+            "assertNotAlmostEqual",
+            "assertGreater",
+            "assertGreaterEqual",
+            "assertLess",
+            "assertLessEqual",
+            "assertCountEqual",
+            "assertMultiLineEqual",
+            "assertSequenceEqual",
+            "assertListEqual",
+            "assertTupleEqual",
+            "assertSetEqual",
+            "assertDictEqual"
+    );
+
+    public final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>();
+    static {
+        ASSERT_METHOD_ONE_PARAM.put("assertTrue", "True");
+        ASSERT_METHOD_ONE_PARAM.put("assertFalse", "False");
+        ASSERT_METHOD_ONE_PARAM.put("assertIsNone", "None");
+        ASSERT_METHOD_ONE_PARAM.put("assertIsNotNone", "None");
     }
 }

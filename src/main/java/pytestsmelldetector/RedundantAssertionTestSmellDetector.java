@@ -22,14 +22,14 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
             }
 
             List<PyExpression> argList = callExpression.getArguments(null);
-            if (ASSERT_METHOD_ONE_PARAM.containsKey(((PyReferenceExpression) child).getName())) {
-                if (argList.get(0).getText().equals(ASSERT_METHOD_ONE_PARAM.get(((PyReferenceExpression) child).getName()))) {
+            if (Util.ASSERT_METHOD_ONE_PARAM.containsKey(((PyReferenceExpression) child).getName())) {
+                if (argList.get(0).getText().equals(Util.ASSERT_METHOD_ONE_PARAM.get(((PyReferenceExpression) child).getName()))) {
                     testMethodHaveRedundantAssertion.replace(
                             currentMethod,
                             testMethodHaveRedundantAssertion.get(currentMethod) + 1
                     );
                 }
-            } else if (ASSERT_METHOD_TWO_PARAMS.contains(((PyReferenceExpression) child).getName())) {
+            } else if (Util.ASSERT_METHOD_TWO_PARAMS.contains(((PyReferenceExpression) child).getName())) {
                 if (argList.get(0).getText().equals(argList.get(1).getText())) {
                     testMethodHaveRedundantAssertion.replace(
                             currentMethod,
@@ -73,33 +73,5 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
 
     public HashMap<PyFunction, Integer> getTestMethodHaveRedundantAssertion() {
         return testMethodHaveRedundantAssertion;
-    }
-
-    private final static List<String> ASSERT_METHOD_TWO_PARAMS = Arrays.asList(
-            "assertEqual",
-            "assertNotEqual",
-            "assertIs",
-            "assertIsNot",
-            "assertAlmostEqual",
-            "assertNotAlmostEqual",
-            "assertGreater",
-            "assertGreaterEqual",
-            "assertLess",
-            "assertLessEqual",
-            "assertCountEqual",
-            "assertMultiLineEqual",
-            "assertSequenceEqual",
-            "assertListEqual",
-            "assertTupleEqual",
-            "assertSetEqual",
-            "assertDictEqual"
-    );
-
-    private final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>();
-    static {
-        ASSERT_METHOD_ONE_PARAM.put("assertTrue", "True");
-        ASSERT_METHOD_ONE_PARAM.put("assertFalse", "False");
-        ASSERT_METHOD_ONE_PARAM.put("assertIsNone", "None");
-        ASSERT_METHOD_ONE_PARAM.put("assertIsNotNone", "None");
     }
 }
