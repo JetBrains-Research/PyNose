@@ -47,11 +47,11 @@ public class PopupDialogAction extends AnAction {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          AssertionRouletteTestSmellDetector detector = new AssertionRouletteTestSmellDetector(testCase);
+          DuplicateAssertionTestSmellDetector detector = new DuplicateAssertionTestSmellDetector(testCase);
           detector.analyze();
           stringBuilder.append(testCase.getName())
-                  .append("[ConditionalTestLogic:\"")
-                  .append(detector.getTestHasAssertionRoulette())
+                  .append("[DuplicateAssertionTestSmellDetector:\"")
+                  .append(detector.getTestHasDuplicateAssert())
                   .append("\"]\n");
         }
       }
