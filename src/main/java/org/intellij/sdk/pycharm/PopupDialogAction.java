@@ -47,11 +47,11 @@ public class PopupDialogAction extends AnAction {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          MagicNumberTestTestSmellDetector detector = new MagicNumberTestTestSmellDetector(testCase);
+          EagerTestTestSmellDetector detector = new EagerTestTestSmellDetector(testCase);
           detector.analyze();
           stringBuilder.append(testCase.getName())
-                  .append("[DuplicateAssertionTestSmellDetector:\"")
-                  .append(detector.getTestMethodHasMagicNumber())
+                  .append("[EagerTestTestSmellDetector:\"")
+                  .append(detector.getTestHasEagerTestTestSmell())
                   .append("\"]\n");
         }
       }
