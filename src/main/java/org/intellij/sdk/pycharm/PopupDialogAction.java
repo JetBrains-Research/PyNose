@@ -35,7 +35,7 @@ public class PopupDialogAction extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent event) {
     Project project = event.getProject();
     String message;
-    if (project == null) message = "no open project";
+    if (project == null) message = "No open project";
     else {
       Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
 
@@ -47,11 +47,11 @@ public class PopupDialogAction extends AnAction {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          DuplicateAssertionTestSmellDetector detector = new DuplicateAssertionTestSmellDetector(testCase);
+          MagicNumberTestTestSmellDetector detector = new MagicNumberTestTestSmellDetector(testCase);
           detector.analyze();
           stringBuilder.append(testCase.getName())
                   .append("[DuplicateAssertionTestSmellDetector:\"")
-                  .append(detector.getTestHasDuplicateAssert())
+                  .append(detector.getTestMethodHasMagicNumber())
                   .append("\"]\n");
         }
       }
