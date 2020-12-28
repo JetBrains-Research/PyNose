@@ -7,7 +7,6 @@ import com.jetbrains.python.psi.PyRaiseStatement;
 import com.jetbrains.python.psi.PyTryExceptStatement;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetector {
