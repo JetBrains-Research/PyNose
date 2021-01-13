@@ -38,6 +38,16 @@ public class DefaultTestTestSmellDetector extends AbstractTestSmellDetector {
         testCase = aTestCase;
     }
 
+    @Override
+    public String getSmellName() {
+        return "Default Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return Boolean.toString(isDefaultTest);
+    }
+
     public boolean isDefaultTest() {
         return isDefaultTest;
     }

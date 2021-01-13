@@ -92,4 +92,14 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
     public Map<PyFunction, Boolean> getTestHasAssertionRoulette() {
         return testHasAssertionRoulette;
     }
+
+    @Override
+    public String getSmellName() {
+        return "Assertion Roulette";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasAssertionRoulette.toString();
+    }
 }

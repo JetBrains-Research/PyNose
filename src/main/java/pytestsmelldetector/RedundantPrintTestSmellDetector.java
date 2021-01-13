@@ -78,6 +78,16 @@ public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
         currentMethod = null;
     }
 
+    @Override
+    public String getSmellName() {
+        return "Redundant Print";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testMethodHavePrint.toString();
+    }
+
     public HashMap<PyFunction, Boolean> getTestMethodHavePrint() {
         return testMethodHavePrint;
     }

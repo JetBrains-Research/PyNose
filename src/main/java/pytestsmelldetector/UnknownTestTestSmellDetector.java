@@ -59,6 +59,16 @@ public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
         assertCounts.clear();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Unknown Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return assertCounts.toString();
+    }
+
     public HashMap<PyFunction, Integer> getAssertCounts() {
         return assertCounts;
     }

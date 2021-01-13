@@ -60,6 +60,16 @@ public class IgnoredTestTestSmellDetector extends AbstractTestSmellDetector {
         reset();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Ignored Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasSkipDecorator.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestHasSkipDecorator() {
         return testHasSkipDecorator;
     }

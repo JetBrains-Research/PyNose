@@ -87,6 +87,16 @@ public class SleepyTestTestSmellDetector extends AbstractTestSmellDetector {
         reset();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Sleepy Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasSleepWithoutComment.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestHasSleepWithoutComment() {
         return testHasSleepWithoutComment;
     }

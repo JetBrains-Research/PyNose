@@ -60,6 +60,16 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
         testHasDuplicateAssert.clear();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Duplicate Assertion";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasDuplicateAssert.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestHasDuplicateAssert() {
         return testHasDuplicateAssert;
     }

@@ -71,6 +71,16 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
         testMethodHaveRedundantAssertion.clear();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Redundant Assertion";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testMethodHaveRedundantAssertion.toString();
+    }
+
     public HashMap<PyFunction, Integer> getTestMethodHaveRedundantAssertion() {
         return testMethodHaveRedundantAssertion;
     }

@@ -17,6 +17,8 @@ public abstract class AbstractTestSmellDetector {
     public abstract void analyze();
     public abstract void reset();
     public abstract void reset(PyClass testCase);
+    public abstract String getSmellName();
+    public abstract String getSmellDetail();
 
     protected PyClass testCase;
     protected PyFunction currentMethod;

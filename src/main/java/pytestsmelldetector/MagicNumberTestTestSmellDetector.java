@@ -57,6 +57,16 @@ public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector 
         testMethodHasMagicNumber.clear();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Magic Number Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testMethodHasMagicNumber.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestMethodHasMagicNumber() {
         return testMethodHasMagicNumber;
     }

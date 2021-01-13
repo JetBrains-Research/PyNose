@@ -33,6 +33,16 @@ public class ConstructorInitializationTestSmellDetector extends AbstractTestSmel
         testCase = aTestCase;
     }
 
+    @Override
+    public String getSmellName() {
+        return "Constructor Initialization";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return Boolean.toString(init);
+    }
+
     public boolean hasInit() {
         return init;
     }

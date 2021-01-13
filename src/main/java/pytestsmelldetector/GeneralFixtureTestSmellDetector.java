@@ -100,6 +100,16 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
         reset();
     }
 
+    @Override
+    public String getSmellName() {
+        return "General Fixture";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testCaseFieldsUsage.toString();
+    }
+
     public Map<PyFunction, Set<String>> getTestCaseFieldsUsage() {
         return testCaseFieldsUsage;
     }

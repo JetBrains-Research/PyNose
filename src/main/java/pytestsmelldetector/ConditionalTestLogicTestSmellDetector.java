@@ -57,4 +57,14 @@ public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDete
     public Map<PyFunction, Boolean> getTestHasConditionalTestLogic() {
         return testHasConditionalTestLogic;
     }
+
+    @Override
+    public String getSmellName() {
+        return "Conditional Test Logic";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasConditionalTestLogic.toString();
+    }
 }

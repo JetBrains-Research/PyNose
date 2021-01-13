@@ -84,6 +84,16 @@ public class EagerTestTestSmellDetector extends AbstractTestSmellDetector {
         testHasEagerTestTestSmell.clear();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Eager Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasEagerTestTestSmell.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestHasEagerTestTestSmell() {
         return testHasEagerTestTestSmell;
     }

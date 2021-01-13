@@ -53,6 +53,16 @@ public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetecto
         reset();
     }
 
+    @Override
+    public String getSmellName() {
+        return "Exception Handling";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testHasExceptionHandlingLogic.toString();
+    }
+
     public Map<PyFunction, Boolean> getTestHasExceptionHandlingLogic() {
         return testHasExceptionHandlingLogic;
     }

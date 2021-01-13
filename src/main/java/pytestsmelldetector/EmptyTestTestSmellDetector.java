@@ -55,6 +55,16 @@ public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
         currentMethod = null;
     }
 
+    @Override
+    public String getSmellName() {
+        return "Empty Test";
+    }
+
+    @Override
+    public String getSmellDetail() {
+        return testMethodEmptiness.toString();
+    }
+
     public HashMap<PyFunction, Boolean> getTestMethodEmptiness() {
         return testMethodEmptiness;
     }
