@@ -13,10 +13,7 @@ import com.jetbrains.python.pyi.PyiFile;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -107,11 +104,31 @@ public class Util {
             "assertDictEqual"
     );
 
-    public final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>();
+    public final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>(4);
     static {
         ASSERT_METHOD_ONE_PARAM.put("assertTrue", "True");
         ASSERT_METHOD_ONE_PARAM.put("assertFalse", "False");
         ASSERT_METHOD_ONE_PARAM.put("assertIsNone", "None");
         ASSERT_METHOD_ONE_PARAM.put("assertIsNotNone", "None");
+    }
+
+    public static List<AbstractTestSmellDetector> newAllDetectors(PyClass testCase) {
+        return Arrays.asList(
+                new AssertionRouletteTestSmellDetector(testCase),
+                new ConditionalTestLogicTestSmellDetector(testCase),
+                new ConstructorInitializationTestSmellDetector(testCase),
+                new DefaultTestTestSmellDetector(testCase),
+                new DuplicateAssertionTestSmellDetector(testCase),
+                new EagerTestTestSmellDetector(testCase),
+                new EmptyTestTestSmellDetector(testCase),
+                new ExceptionHandlingTestSmellDetector(testCase),
+                new GeneralFixtureTestSmellDetector(testCase),
+                new IgnoredTestTestSmellDetector(testCase),
+                new MagicNumberTestTestSmellDetector(testCase),
+                new RedundantAssertionTestSmellDetector(testCase),
+                new RedundantPrintTestSmellDetector(testCase),
+                new SleepyTestTestSmellDetector(testCase),
+                new UnknownTestTestSmellDetector(testCase)
+        );
     }
 }

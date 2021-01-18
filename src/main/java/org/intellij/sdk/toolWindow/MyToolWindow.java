@@ -10,11 +10,12 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.python.psi.PyClass;
-import pytestsmelldetector.SleepyTestTestSmellDetector;
+import pytestsmelldetector.AbstractTestSmellDetector;
 import pytestsmelldetector.Util;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 
 public class MyToolWindow {
 
@@ -43,13 +44,12 @@ public class MyToolWindow {
         if (psiFile == null) continue;
 
         for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          SleepyTestTestSmellDetector detector = new SleepyTestTestSmellDetector(testCase);
-          detector.analyze();
-          stringBuilder.append(testCase.getName())
-                  .append('[').append(SleepyTestTestSmellDetector.class.toString())
-                  .append(":\"")
-                  .append(detector.getTestHasSleepWithoutComment())
-                  .append("\"]\n");
+          List<AbstractTestSmellDetector> allDetectors = Util.newAllDetectors(testCase);
+          for (AbstractTestSmellDetector detector : allDetectors) {
+            detector.analyze();
+            stringBuilder.append(detector.getSmellName()).append('\n');
+            stringBuilder.append(detector.getSmellDetail()).append("\n\n");
+          }
         }
       }
 
