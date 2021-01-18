@@ -2,46 +2,61 @@
 
 package org.intellij.sdk.toolWindow;
 
-import com.intellij.openapi.wm.ToolWindow;
+
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.jetbrains.python.psi.PyClass;
+import pytestsmelldetector.SleepyTestTestSmellDetector;
+import pytestsmelldetector.Util;
 
 import javax.swing.*;
-import java.util.Calendar;
+import java.util.Collection;
 
 public class MyToolWindow {
 
   private JButton refreshToolWindowButton;
-  private JButton hideToolWindowButton;
-  private JLabel currentDate;
-  private JLabel currentTime;
-  private JLabel timeZone;
+  private JLabel resultLabel;
   private JPanel myToolWindowContent;
+  private final Project project;
 
-  public MyToolWindow(ToolWindow toolWindow) {
-    hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
-    refreshToolWindowButton.addActionListener(e -> currentDateTime());
-
-    this.currentDateTime();
+  public MyToolWindow(Project theProject) {
+    project = theProject;
+    refreshToolWindowButton.addActionListener(e -> updateResultLabel());
+    updateResultLabel();
   }
 
-  public void currentDateTime() {
-    // Get current date and time
-    Calendar instance = Calendar.getInstance();
-    currentDate.setText(
-            instance.get(Calendar.DAY_OF_MONTH) + "/"
-                    + (instance.get(Calendar.MONTH) + 1) + "/"
-                    + instance.get(Calendar.YEAR)
-    );
-    currentDate.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Calendar-icon.png")));
-    int min = instance.get(Calendar.MINUTE);
-    String strMin = min < 10 ? "0" + min : String.valueOf(min);
-    currentTime.setText(instance.get(Calendar.HOUR_OF_DAY) + ":" + strMin);
-    currentTime.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Time-icon.png")));
-    // Get time zone
-    long gmt_Offset = instance.get(Calendar.ZONE_OFFSET); // offset from GMT in milliseconds
-    String str_gmt_Offset = String.valueOf(gmt_Offset / 3600000);
-    str_gmt_Offset = (gmt_Offset > 0) ? "GMT + " + str_gmt_Offset : "GMT - " + str_gmt_Offset;
-    timeZone.setText(str_gmt_Offset);
-    timeZone.setIcon(new ImageIcon(getClass().getResource("/toolWindow/Time-zone-icon.png")));
+  public void updateResultLabel() {
+    String message;
+    if (project == null) message = "No open project";
+    else {
+      Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
+
+      StringBuilder stringBuilder = new StringBuilder();
+
+      for (VirtualFile f : files) {
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
+
+        if (psiFile == null) continue;
+
+        for (PyClass testCase : Util.gatherTestCases(psiFile)) {
+          SleepyTestTestSmellDetector detector = new SleepyTestTestSmellDetector(testCase);
+          detector.analyze();
+          stringBuilder.append(testCase.getName())
+                  .append('[').append(SleepyTestTestSmellDetector.class.toString())
+                  .append(":\"")
+                  .append(detector.getTestHasSleepWithoutComment())
+                  .append("\"]\n");
+        }
+      }
+
+      message = stringBuilder.toString();
+    }
+
+    resultLabel.setText(message);
   }
 
   public JPanel getContent() {

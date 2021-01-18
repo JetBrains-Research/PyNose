@@ -33,35 +33,8 @@ public class PopupDialogAction extends AnAction {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    Project project = event.getProject();
-    String message;
-    if (project == null) message = "No open project";
-    else {
-      Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
-
-      StringBuilder stringBuilder = new StringBuilder();
-
-      for (VirtualFile f : files) {
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
-
-        if (psiFile == null) continue;
-
-        for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-          SleepyTestTestSmellDetector detector = new SleepyTestTestSmellDetector(testCase);
-          detector.analyze();
-          stringBuilder.append(testCase.getName())
-                  .append('[').append(SleepyTestTestSmellDetector.class.toString())
-                  .append(":\"")
-                  .append(detector.getTestHasSleepWithoutComment())
-                  .append("\"]\n");
-        }
-      }
-
-      message = stringBuilder.toString();
-    }
-
-    Messages.showMessageDialog(project,
-            message,
+    Messages.showMessageDialog(event.getProject(),
+            "Hello, world",
             "Greetings from PyCharm Basics Plugin",
             Messages.getInformationIcon());
   }
