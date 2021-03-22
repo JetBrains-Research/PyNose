@@ -8,6 +8,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import pytestsmelldetector.Util;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
@@ -20,7 +23,8 @@ public class PluginRunner implements ApplicationStarter {
 
     @Override
     public void main(@NotNull List<String> args) {
-        Project p = ProjectUtil.openOrImport("C:\\Users\\tjwan\\PycharmProjects\\SamplePythonProject - Copy", null, true);
+        String pathString = "C:\\Users\\tjwan\\PycharmProjects\\PythonTestSmellTestProject";
+        Project p = ProjectUtil.openOrImport(pathString, null, true);
 
         if (p == null) {
             System.exit(1);
@@ -30,19 +34,31 @@ public class PluginRunner implements ApplicationStarter {
 
             StringBuilder stringBuilder = new StringBuilder();
             List<PsiFile> projectPsiFiles = Util.extractPsiFromProject(p);
-            LOG.warn(projectPsiFiles.toString());
-            projectPsiFiles.forEach(psiFile ->
-                    Util.gatherTestCases(psiFile).forEach(testCase ->
-                            Util.newAllDetectors(testCase).forEach(detector -> {
-                                detector.analyze();
-                                stringBuilder.append(detector.getSmellName()).append('\n');
-                                stringBuilder.append(detector.getSmellDetail()).append("\n\n");
-                            })));
+            projectPsiFiles.forEach(psiFile -> {
+                stringBuilder.append(psiFile.toString()).append('\n');
+                Util.gatherTestCases(psiFile).forEach(testCase -> {
+                    stringBuilder.append(testCase.toString()).append('\n');
+                    Util.newAllDetectors(testCase).forEach(detector -> {
+                        detector.analyze();
+                        stringBuilder.append(detector.getSmellName()).append('\n');
+                        stringBuilder.append(detector.getSmellDetail()).append("\n\n");
+                    });
+                });
+                stringBuilder.append("\n\n");
+            });
 
             LOG.warn(stringBuilder.toString());
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathString + ".txt"));
+                bufferedWriter.write(stringBuilder.toString());
+                bufferedWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             LOG.warn("done");
         }
         ProjectManager.getInstance().addProjectManagerListener(p, new MyProjectManagerListener());
+        System.exit(0);
     }
 }
 
