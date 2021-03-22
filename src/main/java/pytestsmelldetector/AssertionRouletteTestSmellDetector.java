@@ -48,8 +48,6 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
                     continue;
                 }
 
-                LOG.warn(((PyReferenceExpression) call.getFirstChild()).getName());
-
                 if (Util.ASSERT_METHOD_TWO_PARAMS.contains(((PyReferenceExpression) call.getFirstChild()).getName()) &&
                         argumentList.getArguments().length < 3) {
                     testHasAssertionRoulette.replace(testMethod, true);
