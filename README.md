@@ -1,23 +1,11 @@
-# PyCharm Sample [![JetBrains IntelliJ Platform SDK Docs](https://jb.gg/badges/docs.svg)][docs]
-*Reference: [PyCharm Plugin Development in IntelliJ SDK Docs][docs:pycharm]*
+# PyCharm Test Smell Plugin
 
-## Quickstart
+# Usage
 
-PyCharm Sample is a plugin that depends on the PyCharm IDE having the proper dependencies specified in the Gradle configuration file.
-The implementation utilizes a simple action added to the *MainMenu* group displaying a message dialog after invoking.
+Open this project in IntelliJ IDEA, and change the `pathString` in the `PluginRunner`'s `main` method to the path of the
+project. Then run the task `runIde`. It should print the result and save the result to a text file right next to the 
+project directory.
 
-### Actions
-
-| ID                                           | Implementation                              | Extension Point Class    |
-| -------------------------------------------- | ------------------------------------------- | ------------------------ |
-| `org.intellij.sdk.pycharm.PopupDialogAction` | [PopupDialogAction][file:PopupDialogAction] | [AnAction][sdk:AnAction] |
-
-*Reference: [Action System in IntelliJ SDK Docs][docs:actions]*
-
-[docs]: https://www.jetbrains.org/intellij/sdk/docs
-[docs:actions]: https://www.jetbrains.org/intellij/sdk/docs/basics/action_system.html
-[docs:pycharm]: https://jetbrains.org/intellij/sdk/docs/products/pycharm.html
-
-[file:PopupDialogAction]: ./src/main/java/org/intellij/sdk/pycharm/PopupDialogAction.java
-
-[sdk:AnAction]: upsource:///platform/editor-ui-api/src/com/intellij/openapi/actionSystem/AnAction.java
+For example, if the project is named `PythonTestSmellTestProject` whose path is `/path/to/PythonTestSmellTestProject`, 
+then the `pathString` in `PluginRunner` should be `/path/to/PythonTestSmellTestProject` and the text file output is 
+`/path/to/PythonTestSmellTestProject.txt`.
