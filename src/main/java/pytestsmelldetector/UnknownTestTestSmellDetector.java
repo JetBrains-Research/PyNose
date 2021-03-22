@@ -9,26 +9,11 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.util.HashMap;
-import java.util.List; 
+import java.util.List;
 
 public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
-    private final HashMap<PyFunction, Integer> assertCounts;
-
     private static final Logger LOG = Logger.getInstance(UnknownTestTestSmellDetector.class);
-
-    class UnknownTestVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-            PsiElement child = callExpression.getFirstChild();
-            if (!(child instanceof PyReferenceExpression)) {
-                return;
-            }
-
-            if (Util.isCallAssertMethod((PyReferenceExpression) child)) {
-                assertCounts.put(currentMethod, assertCounts.get(currentMethod) + 1);
-            }
-        }
-    }
-
+    private final HashMap<PyFunction, Integer> assertCounts;
     private final UnknownTestVisitor visitor;
 
     public UnknownTestTestSmellDetector(PyClass aTestCase) {
@@ -71,5 +56,18 @@ public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
 
     public HashMap<PyFunction, Integer> getAssertCounts() {
         return assertCounts;
+    }
+
+    class UnknownTestVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+            PsiElement child = callExpression.getFirstChild();
+            if (!(child instanceof PyReferenceExpression)) {
+                return;
+            }
+
+            if (Util.isCallAssertMethod((PyReferenceExpression) child)) {
+                assertCounts.put(currentMethod, assertCounts.get(currentMethod) + 1);
+            }
+        }
     }
 }

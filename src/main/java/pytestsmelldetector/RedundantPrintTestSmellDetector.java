@@ -17,35 +17,6 @@ public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(RedundantPrintTestSmellDetector.class);
 
     private final HashMap<PyFunction, Boolean> testMethodHavePrint;
-
-    class RedundantPrintTestVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-            PsiElement child = callExpression.getFirstChild();
-            if (!(child instanceof PyReferenceExpression)) {
-                return;
-            }
-
-            PyReferenceExpression callMethodRef = (PyReferenceExpression) child;
-
-            if (!callMethodRef.getText().equals("print"))
-                return;
-
-            PsiElement e = callMethodRef.followAssignmentsChain(PyResolveContext.defaultContext()).getElement();
-            if (e == null)
-                return;
-
-            if (e.getParent() instanceof PyiFile &&
-                    ((PyiFile) e.getParent()).getName().equals("builtins.pyi") &&
-                    e.getParent().getParent() instanceof PsiDirectory &&
-                    ((PsiDirectory) e.getParent().getParent()).getName().equals("3") &&
-                    e.getParent().getParent().getParent() instanceof PsiDirectory &&
-                    ((PsiDirectory) e.getParent().getParent().getParent()).getName().equals("stdlib")
-            ) {
-                testMethodHavePrint.replace(currentMethod, true);
-            }
-        }
-    }
-
     private final RedundantPrintTestVisitor visitor;
 
     public RedundantPrintTestSmellDetector(PyClass aTestCase) {
@@ -90,5 +61,33 @@ public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
 
     public HashMap<PyFunction, Boolean> getTestMethodHavePrint() {
         return testMethodHavePrint;
+    }
+
+    class RedundantPrintTestVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+            PsiElement child = callExpression.getFirstChild();
+            if (!(child instanceof PyReferenceExpression)) {
+                return;
+            }
+
+            PyReferenceExpression callMethodRef = (PyReferenceExpression) child;
+
+            if (!callMethodRef.getText().equals("print"))
+                return;
+
+            PsiElement e = callMethodRef.followAssignmentsChain(PyResolveContext.defaultContext()).getElement();
+            if (e == null)
+                return;
+
+            if (e.getParent() instanceof PyiFile &&
+                    ((PyiFile) e.getParent()).getName().equals("builtins.pyi") &&
+                    e.getParent().getParent() instanceof PsiDirectory &&
+                    ((PsiDirectory) e.getParent().getParent()).getName().equals("3") &&
+                    e.getParent().getParent().getParent() instanceof PsiDirectory &&
+                    ((PsiDirectory) e.getParent().getParent().getParent()).getName().equals("stdlib")
+            ) {
+                testMethodHavePrint.replace(currentMethod, true);
+            }
+        }
     }
 }

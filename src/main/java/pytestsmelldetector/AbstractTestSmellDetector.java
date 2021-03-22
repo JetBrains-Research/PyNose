@@ -14,16 +14,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTestSmellDetector {
-    public abstract void analyze();
-    public abstract void reset();
-    public abstract void reset(PyClass testCase);
-    public abstract String getSmellName();
-    public abstract String getSmellDetail();
-
+    private static final Logger LOG = Logger.getInstance(AbstractTestSmellDetector.class);
     protected PyClass testCase;
     protected PyFunction currentMethod;
 
-    private static final Logger LOG = Logger.getInstance(AbstractTestSmellDetector.class);
+    public abstract void analyze();
+
+    public abstract void reset();
+
+    public abstract void reset(PyClass testCase);
+
+    public abstract String getSmellName();
+
+    public abstract String getSmellDetail();
 
     abstract static class MyPsiElementVisitor extends PsiElementVisitor {
         public void visitElement(@NotNull PsiElement element) {

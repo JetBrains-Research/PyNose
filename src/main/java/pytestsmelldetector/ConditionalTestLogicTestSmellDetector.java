@@ -8,24 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDetector {
-    private final Map<PyFunction, Boolean> testHasConditionalTestLogic = new HashMap<>();
-
     private static final Logger LOG = Logger.getInstance(ConditionalTestLogicTestSmellDetector.class);
-
-    class ConditionalTestLogicVisitor extends MyPsiElementVisitor {
-        public void visitPyIfStatement(PyIfStatement ifStatement) {
-            testHasConditionalTestLogic.put(currentMethod, true);
-        }
-
-        public void visitPyForStatement(PyForStatement forStatement) {
-            testHasConditionalTestLogic.put(currentMethod, true);
-        }
-
-        public void visitPyWhileStatement(PyWhileStatement whileStatement) {
-            testHasConditionalTestLogic.put(currentMethod, true);
-        }
-    }
-
+    private final Map<PyFunction, Boolean> testHasConditionalTestLogic = new HashMap<>();
     private final ConditionalTestLogicVisitor visitor = new ConditionalTestLogicVisitor();
 
     public ConditionalTestLogicTestSmellDetector(PyClass aTestCase) {
@@ -66,5 +50,19 @@ public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDete
     @Override
     public String getSmellDetail() {
         return testHasConditionalTestLogic.toString();
+    }
+
+    class ConditionalTestLogicVisitor extends MyPsiElementVisitor {
+        public void visitPyIfStatement(PyIfStatement ifStatement) {
+            testHasConditionalTestLogic.put(currentMethod, true);
+        }
+
+        public void visitPyForStatement(PyForStatement forStatement) {
+            testHasConditionalTestLogic.put(currentMethod, true);
+        }
+
+        public void visitPyWhileStatement(PyWhileStatement whileStatement) {
+            testHasConditionalTestLogic.put(currentMethod, true);
+        }
     }
 }

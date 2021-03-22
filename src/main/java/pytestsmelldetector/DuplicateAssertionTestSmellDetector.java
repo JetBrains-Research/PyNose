@@ -2,35 +2,18 @@ package pytestsmelldetector;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetector{
+public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(DuplicateAssertionTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasDuplicateAssert = new HashMap<>();
     private final Set<Set<String>> asserts = new HashSet<>();
-
-    class DuplicateAssertionVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-            PsiElement child = callExpression.getFirstChild();
-            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
-                return;
-            }
-
-            final Set<String> args = Arrays.stream(callExpression.getArguments())
-                    .map(PsiElement::getText)
-                    .collect(Collectors.toSet());
-
-            if (asserts.contains(args)) {
-                testHasDuplicateAssert.replace(currentMethod, true);
-            } else {
-                asserts.add(args);
-            }
-        }
-    }
-
     private final DuplicateAssertionVisitor visitor = new DuplicateAssertionVisitor();
 
     public DuplicateAssertionTestSmellDetector(PyClass aTestCase) {
@@ -72,5 +55,24 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
 
     public Map<PyFunction, Boolean> getTestHasDuplicateAssert() {
         return testHasDuplicateAssert;
+    }
+
+    class DuplicateAssertionVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+            PsiElement child = callExpression.getFirstChild();
+            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
+                return;
+            }
+
+            final Set<String> args = Arrays.stream(callExpression.getArguments())
+                    .map(PsiElement::getText)
+                    .collect(Collectors.toSet());
+
+            if (asserts.contains(args)) {
+                testHasDuplicateAssert.replace(currentMethod, true);
+            } else {
+                asserts.add(args);
+            }
+        }
     }
 }

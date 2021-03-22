@@ -7,47 +7,9 @@ import com.jetbrains.python.psi.*;
 import java.util.*;
 
 public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
+    private static final Logger LOG = Logger.getInstance(GeneralFixtureTestSmellDetector.class);
     private final Set<String> assignmentStatementTexts;
     private final Map<PyFunction, Set<String>> testCaseFieldsUsage;
-
-    private static final Logger LOG = Logger.getInstance(GeneralFixtureTestSmellDetector.class);
-
-    class GeneralFixtureVisitor extends MyPsiElementVisitor {
-        Class<? extends PyElement> elementToCheck;
-
-        public void visitPyAssignmentStatement(PyAssignmentStatement assignmentStatement) {
-            if (!elementToCheck.equals(PyAssignmentStatement.class)) {
-                for (PsiElement psiElement : assignmentStatement.getChildren()) {
-                    visitElement(psiElement);
-                }
-                return;
-            }
-
-            for (PyExpression expression : assignmentStatement.getTargets()) {
-                if (!(expression instanceof PyTargetExpression)) {
-                    continue;
-                }
-
-                PyTargetExpression target = (PyTargetExpression) expression;
-                if (target.getText().startsWith("self.")) {
-                    assignmentStatementTexts.add(target.getText());
-                }
-            }
-        }
-
-        public void visitPyReferenceExpression(PyReferenceExpression referenceExpression) {
-            if (!elementToCheck.equals(PyReferenceExpression.class) ||
-                    !assignmentStatementTexts.contains(referenceExpression.getText())) {
-                for (PsiElement psiElement : referenceExpression.getChildren()) {
-                    visitElement(psiElement);
-                }
-                return;
-            }
-
-            testCaseFieldsUsage.get(currentMethod).remove(referenceExpression.getText());
-        }
-    }
-
     private final GeneralFixtureVisitor visitor;
 
     public GeneralFixtureTestSmellDetector(PyClass aTestCase) {
@@ -67,9 +29,9 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
                 .map(PyFunction.class::cast)
                 .filter(f ->
                         Objects.equals(f.getName(), "setUp") &&
-                        f.getParent() instanceof PyStatementList &&
-                        f.getParent().getParent() instanceof PyClass &&
-                        Util.isValidUnittestCase((PyClass) f.getParent().getParent())
+                                f.getParent() instanceof PyStatementList &&
+                                f.getParent().getParent() instanceof PyClass &&
+                                Util.isValidUnittestCase((PyClass) f.getParent().getParent())
                 )
                 .findFirst();
 
@@ -112,5 +74,41 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
 
     public Map<PyFunction, Set<String>> getTestCaseFieldsUsage() {
         return testCaseFieldsUsage;
+    }
+
+    class GeneralFixtureVisitor extends MyPsiElementVisitor {
+        Class<? extends PyElement> elementToCheck;
+
+        public void visitPyAssignmentStatement(PyAssignmentStatement assignmentStatement) {
+            if (!elementToCheck.equals(PyAssignmentStatement.class)) {
+                for (PsiElement psiElement : assignmentStatement.getChildren()) {
+                    visitElement(psiElement);
+                }
+                return;
+            }
+
+            for (PyExpression expression : assignmentStatement.getTargets()) {
+                if (!(expression instanceof PyTargetExpression)) {
+                    continue;
+                }
+
+                PyTargetExpression target = (PyTargetExpression) expression;
+                if (target.getText().startsWith("self.")) {
+                    assignmentStatementTexts.add(target.getText());
+                }
+            }
+        }
+
+        public void visitPyReferenceExpression(PyReferenceExpression referenceExpression) {
+            if (!elementToCheck.equals(PyReferenceExpression.class) ||
+                    !assignmentStatementTexts.contains(referenceExpression.getText())) {
+                for (PsiElement psiElement : referenceExpression.getChildren()) {
+                    visitElement(psiElement);
+                }
+                return;
+            }
+
+            testCaseFieldsUsage.get(currentMethod).remove(referenceExpression.getText());
+        }
     }
 }

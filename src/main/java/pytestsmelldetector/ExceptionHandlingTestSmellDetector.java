@@ -12,17 +12,6 @@ import java.util.Map;
 public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(ExceptionHandlingTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasExceptionHandlingLogic = new HashMap<>();
-
-    class ExceptionHandlingVisitor extends MyPsiElementVisitor {
-        public void visitPyTryExceptStatement(PyTryExceptStatement tryExceptStatement) {
-            testHasExceptionHandlingLogic.put(currentMethod, true);
-        }
-
-        public void visitPyRaiseStatement(PyRaiseStatement raiseStatement) {
-            testHasExceptionHandlingLogic.put(currentMethod, true);
-        }
-    }
-
     private final ExceptionHandlingVisitor visitor;
 
     public ExceptionHandlingTestSmellDetector(PyClass aTestCase) {
@@ -65,5 +54,15 @@ public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetecto
 
     public Map<PyFunction, Boolean> getTestHasExceptionHandlingLogic() {
         return testHasExceptionHandlingLogic;
+    }
+
+    class ExceptionHandlingVisitor extends MyPsiElementVisitor {
+        public void visitPyTryExceptStatement(PyTryExceptStatement tryExceptStatement) {
+            testHasExceptionHandlingLogic.put(currentMethod, true);
+        }
+
+        public void visitPyRaiseStatement(PyRaiseStatement raiseStatement) {
+            testHasExceptionHandlingLogic.put(currentMethod, true);
+        }
     }
 }

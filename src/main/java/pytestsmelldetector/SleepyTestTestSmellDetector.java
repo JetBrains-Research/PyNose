@@ -15,47 +15,6 @@ import java.util.Objects;
 public class SleepyTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(SleepyTestTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasSleepWithoutComment;
-
-    class SleepTestVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-            if (!(callExpression.getFirstChild() instanceof PyReferenceExpression)) {
-                for (PsiElement child : callExpression.getChildren()) {
-                    visitElement(child);
-                }
-                return;
-            }
-
-            PyReferenceExpression callExprRef = (PyReferenceExpression) callExpression.getFirstChild();
-            PsiElement element = callExprRef.followAssignmentsChain(PyResolveContext.defaultContext()).getElement();
-
-            if (!(element instanceof PyFunction) || !Objects.equals(((PyFunction) element).getName(), "sleep")) {
-                for (PsiElement child : callExpression.getChildren()) {
-                    visitElement(child);
-                }
-                return;
-            }
-
-            PyFunction sleep = (PyFunction) element;
-
-            if (!(sleep.getParent() instanceof PyiFile) || !((PyiFile) sleep.getParent()).getName().equals("time.pyi")) {
-                for (PsiElement child : callExpression.getChildren()) {
-                    visitElement(child);
-                }
-                return;
-            }
-
-            // call is time.sleep
-            PsiElement parent = callExpression.getParent();
-            while (!(parent instanceof PyExpressionStatement)) {
-                parent = parent.getParent();
-            }
-
-            if (!(parent.getLastChild() instanceof PsiComment)) {
-                testHasSleepWithoutComment.replace(currentMethod, true);
-            }
-        }
-    }
-
     private final SleepTestVisitor visitor;
 
     public SleepyTestTestSmellDetector(PyClass aTestCase) {
@@ -99,5 +58,45 @@ public class SleepyTestTestSmellDetector extends AbstractTestSmellDetector {
 
     public Map<PyFunction, Boolean> getTestHasSleepWithoutComment() {
         return testHasSleepWithoutComment;
+    }
+
+    class SleepTestVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+            if (!(callExpression.getFirstChild() instanceof PyReferenceExpression)) {
+                for (PsiElement child : callExpression.getChildren()) {
+                    visitElement(child);
+                }
+                return;
+            }
+
+            PyReferenceExpression callExprRef = (PyReferenceExpression) callExpression.getFirstChild();
+            PsiElement element = callExprRef.followAssignmentsChain(PyResolveContext.defaultContext()).getElement();
+
+            if (!(element instanceof PyFunction) || !Objects.equals(((PyFunction) element).getName(), "sleep")) {
+                for (PsiElement child : callExpression.getChildren()) {
+                    visitElement(child);
+                }
+                return;
+            }
+
+            PyFunction sleep = (PyFunction) element;
+
+            if (!(sleep.getParent() instanceof PyiFile) || !((PyiFile) sleep.getParent()).getName().equals("time.pyi")) {
+                for (PsiElement child : callExpression.getChildren()) {
+                    visitElement(child);
+                }
+                return;
+            }
+
+            // call is time.sleep
+            PsiElement parent = callExpression.getParent();
+            while (!(parent instanceof PyExpressionStatement)) {
+                parent = parent.getParent();
+            }
+
+            if (!(parent.getLastChild() instanceof PsiComment)) {
+                testHasSleepWithoutComment.replace(currentMethod, true);
+            }
+        }
     }
 }

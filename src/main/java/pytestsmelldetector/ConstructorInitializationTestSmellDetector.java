@@ -8,9 +8,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ConstructorInitializationTestSmellDetector extends AbstractTestSmellDetector {
-    private boolean init;
-
     private static final Logger LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector.class);
+    private boolean init;
 
     public ConstructorInitializationTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;

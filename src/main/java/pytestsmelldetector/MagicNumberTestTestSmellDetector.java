@@ -12,20 +12,6 @@ import java.util.Map;
 public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(MagicNumberTestTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testMethodHasMagicNumber;
-
-    class MagicNumberTestVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-            PsiElement child = callExpression.getFirstChild();
-            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
-                return;
-            }
-
-            if (Arrays.stream(callExpression.getArguments()).anyMatch(PyNumericLiteralExpression.class::isInstance)) {
-                testMethodHasMagicNumber.put(currentMethod, true);
-            }
-        }
-    }
-
     private final MagicNumberTestVisitor visitor;
 
     public MagicNumberTestTestSmellDetector(PyClass aTestCase) {
@@ -69,5 +55,18 @@ public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector 
 
     public Map<PyFunction, Boolean> getTestMethodHasMagicNumber() {
         return testMethodHasMagicNumber;
+    }
+
+    class MagicNumberTestVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+            PsiElement child = callExpression.getFirstChild();
+            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
+                return;
+            }
+
+            if (Arrays.stream(callExpression.getArguments()).anyMatch(PyNumericLiteralExpression.class::isInstance)) {
+                testMethodHasMagicNumber.put(currentMethod, true);
+            }
+        }
     }
 }

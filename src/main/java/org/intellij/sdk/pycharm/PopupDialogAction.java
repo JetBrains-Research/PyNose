@@ -16,31 +16,31 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PopupDialogAction extends AnAction {
 
-  /**
-   * Gives the user feedback when the dynamic action menu is chosen.
-   * Pops a simple message dialog. See the psi_demo plugin for an
-   * example of how to use AnActionEvent to access data.
-   *
-   * @param event Event received when the associated menu item is chosen.
-   */
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent event) {
-    Messages.showMessageDialog(event.getProject(),
-            "Hello, world",
-            "Greetings from PyCharm Basics Plugin",
-            Messages.getInformationIcon());
-  }
+    /**
+     * Gives the user feedback when the dynamic action menu is chosen.
+     * Pops a simple message dialog. See the psi_demo plugin for an
+     * example of how to use AnActionEvent to access data.
+     *
+     * @param event Event received when the associated menu item is chosen.
+     */
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        Messages.showMessageDialog(event.getProject(),
+                "Hello, world",
+                "Greetings from PyCharm Basics Plugin",
+                Messages.getInformationIcon());
+    }
 
-  /**
-   * Determines whether this menu item is available for the current context.
-   * Requires a project to be open.
-   *
-   * @param e Event received when the associated group-id menu is chosen.
-   */
-  @Override
-  public void update(AnActionEvent e) {
-    // Set the availability based on whether a project is open
-    Project project = e.getProject();
-    e.getPresentation().setEnabledAndVisible(project != null);
-  }
+    /**
+     * Determines whether this menu item is available for the current context.
+     * Requires a project to be open.
+     *
+     * @param e Event received when the associated group-id menu is chosen.
+     */
+    @Override
+    public void update(AnActionEvent e) {
+        // Set the availability based on whether a project is open
+        Project project = e.getProject();
+        e.getPresentation().setEnabledAndVisible(project != null);
+    }
 }

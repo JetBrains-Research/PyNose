@@ -13,19 +13,6 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
     private static final Logger LOG = Logger.getInstance(AssertionRouletteTestSmellDetector.class);
     private final Map<PyFunction, List<PyCallExpression>> assertionsInTests = new HashMap<>();
     private final Map<PyFunction, Boolean> testHasAssertionRoulette = new HashMap<>();
-
-    class AssertionRouletteVisitor extends MyPsiElementVisitor {
-        public void visitPyCallExpression(PyCallExpression callExpression) {
-
-            PsiElement child = callExpression.getFirstChild();
-            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
-                return;
-            }
-
-            assertionsInTests.get(currentMethod).add(callExpression);
-        }
-    }
-
     private final AssertionRouletteVisitor visitor = new AssertionRouletteVisitor();
 
     public AssertionRouletteTestSmellDetector(PyClass aTestCase) {
@@ -101,5 +88,17 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
     @Override
     public String getSmellDetail() {
         return testHasAssertionRoulette.toString();
+    }
+
+    class AssertionRouletteVisitor extends MyPsiElementVisitor {
+        public void visitPyCallExpression(PyCallExpression callExpression) {
+
+            PsiElement child = callExpression.getFirstChild();
+            if (!(child instanceof PyReferenceExpression) || !Util.isCallAssertMethod((PyReferenceExpression) child)) {
+                return;
+            }
+
+            assertionsInTests.get(currentMethod).add(callExpression);
+        }
     }
 }

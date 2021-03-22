@@ -1,28 +1,18 @@
 package pytestsmelldetector;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
 
 import java.util.*;
 
 public class ObscureInLineSetupTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOGGER = Logger.getInstance(ObscureInLineSetupTestSmellDetector.class);
-
-    class ObscureInLineSetupVisitor extends MyPsiElementVisitor {
-        public void visitPyAssignmentStatement(PyAssignmentStatement assignmentStatement) {
-            Set<String> localVars = testMethodLocalVarCount.get(currentMethod);
-            for (PyExpression target : assignmentStatement.getTargets()) {
-                if (target.getChildren().length == 0) {
-                    localVars.add(target.getName());
-                }
-            }
-        }
-    }
-
-    private PyClass testCase;
     private final Map<PyFunction, Set<String>> testMethodLocalVarCount = new HashMap<>();
     private final ObscureInLineSetupVisitor visitor = new ObscureInLineSetupVisitor();
-
+    private PyClass testCase;
     public ObscureInLineSetupTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
     }
@@ -57,5 +47,16 @@ public class ObscureInLineSetupTestSmellDetector extends AbstractTestSmellDetect
     @Override
     public String getSmellDetail() {
         return testMethodLocalVarCount.toString();
+    }
+
+    class ObscureInLineSetupVisitor extends MyPsiElementVisitor {
+        public void visitPyAssignmentStatement(PyAssignmentStatement assignmentStatement) {
+            Set<String> localVars = testMethodLocalVarCount.get(currentMethod);
+            for (PyExpression target : assignmentStatement.getTargets()) {
+                if (target.getChildren().length == 0) {
+                    localVars.add(target.getName());
+                }
+            }
+        }
     }
 }

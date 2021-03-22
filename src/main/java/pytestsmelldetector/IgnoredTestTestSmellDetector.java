@@ -13,22 +13,6 @@ import java.util.Map;
 public class IgnoredTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(IgnoredTestTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasSkipDecorator;
-
-    class IgnoredTestVisitor extends MyPsiElementVisitor {
-        public void visitPyDecorator(PyDecorator decorator) {
-            if (!decorator.getText().startsWith("@unittest.skip")) {
-                for (PsiElement element : decorator.getChildren()) {
-                    visitElement(element);
-                }
-                return;
-            }
-
-            if (currentMethod.equals(decorator.getTarget())) {
-                testHasSkipDecorator.replace(currentMethod, true);
-            }
-        }
-    }
-
     private final IgnoredTestVisitor visitor;
 
     public IgnoredTestTestSmellDetector(PyClass aTestCase) {
@@ -72,5 +56,20 @@ public class IgnoredTestTestSmellDetector extends AbstractTestSmellDetector {
 
     public Map<PyFunction, Boolean> getTestHasSkipDecorator() {
         return testHasSkipDecorator;
+    }
+
+    class IgnoredTestVisitor extends MyPsiElementVisitor {
+        public void visitPyDecorator(PyDecorator decorator) {
+            if (!decorator.getText().startsWith("@unittest.skip")) {
+                for (PsiElement element : decorator.getChildren()) {
+                    visitElement(element);
+                }
+                return;
+            }
+
+            if (currentMethod.equals(decorator.getTarget())) {
+                testHasSkipDecorator.replace(currentMethod, true);
+            }
+        }
     }
 }

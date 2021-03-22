@@ -13,14 +13,13 @@ import java.util.Objects;
  * Time: 9:13 PM
  */
 public class DefaultTestTestSmellDetector extends AbstractTestSmellDetector {
+    private static final Logger LOG = Logger.getInstance(DefaultTestTestSmellDetector.class);
     private boolean isDefaultTest;
 
     public DefaultTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         isDefaultTest = false;
     }
-
-    private static final Logger LOG = Logger.getInstance(DefaultTestTestSmellDetector.class);
 
     @Override
     public void analyze() {

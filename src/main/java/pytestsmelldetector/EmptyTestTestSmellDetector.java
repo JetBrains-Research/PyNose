@@ -11,20 +11,8 @@ import java.util.List;
 
 public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(EmptyTestTestSmellDetector.class);
-
-    class EmptyTestVisitor extends MyPsiElementVisitor {
-        public void visitPyFunction(PyFunction testMethod) {
-            PyStatement[] statements = testMethod.getStatementList().getStatements();
-            testMethodEmptiness.replace(
-                    currentMethod,
-                    statements.length == 1 && (statements[0] instanceof PyPassStatement)
-            );
-        }
-    }
-
     private final HashMap<PyFunction, Boolean> testMethodEmptiness;
     private final EmptyTestVisitor visitor;
-
     public EmptyTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         testMethodEmptiness = new HashMap<>();
@@ -67,5 +55,15 @@ public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
 
     public HashMap<PyFunction, Boolean> getTestMethodEmptiness() {
         return testMethodEmptiness;
+    }
+
+    class EmptyTestVisitor extends MyPsiElementVisitor {
+        public void visitPyFunction(PyFunction testMethod) {
+            PyStatement[] statements = testMethod.getStatementList().getStatements();
+            testMethodEmptiness.replace(
+                    currentMethod,
+                    statements.length == 1 && (statements[0] instanceof PyPassStatement)
+            );
+        }
     }
 }

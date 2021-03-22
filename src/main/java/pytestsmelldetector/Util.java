@@ -1,12 +1,9 @@
 package pytestsmelldetector;
 
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -17,7 +14,6 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.pyi.PyiFile;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,7 +21,34 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
+    public final static List<String> ASSERT_METHOD_TWO_PARAMS = Arrays.asList(
+            "assertEqual",
+            "assertNotEqual",
+            "assertIs",
+            "assertIsNot",
+            "assertAlmostEqual",
+            "assertNotAlmostEqual",
+            "assertGreater",
+            "assertGreaterEqual",
+            "assertLess",
+            "assertLessEqual",
+            "assertCountEqual",
+            "assertMultiLineEqual",
+            "assertSequenceEqual",
+            "assertListEqual",
+            "assertTupleEqual",
+            "assertSetEqual",
+            "assertDictEqual"
+    );
+    public final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>(4);
     private static final Logger LOG = Logger.getInstance(Util.class);
+
+    static {
+        ASSERT_METHOD_ONE_PARAM.put("assertTrue", "True");
+        ASSERT_METHOD_ONE_PARAM.put("assertFalse", "False");
+        ASSERT_METHOD_ONE_PARAM.put("assertIsNone", "None");
+        ASSERT_METHOD_ONE_PARAM.put("assertIsNotNone", "None");
+    }
 
     public static List<PsiFile> extractPsiFromProject(Project project) {
         List<PsiFile> projectPsiFiles = new ArrayList<>();
@@ -107,34 +130,6 @@ public class Util {
         return e.getParent() != null &&
                 e.getParent().getParent() instanceof PyClass &&
                 isTestCaseClass((PyClass) e.getParent().getParent());
-    }
-
-    public final static List<String> ASSERT_METHOD_TWO_PARAMS = Arrays.asList(
-            "assertEqual",
-            "assertNotEqual",
-            "assertIs",
-            "assertIsNot",
-            "assertAlmostEqual",
-            "assertNotAlmostEqual",
-            "assertGreater",
-            "assertGreaterEqual",
-            "assertLess",
-            "assertLessEqual",
-            "assertCountEqual",
-            "assertMultiLineEqual",
-            "assertSequenceEqual",
-            "assertListEqual",
-            "assertTupleEqual",
-            "assertSetEqual",
-            "assertDictEqual"
-    );
-
-    public final static Map<String, String> ASSERT_METHOD_ONE_PARAM = new HashMap<>(4);
-    static {
-        ASSERT_METHOD_ONE_PARAM.put("assertTrue", "True");
-        ASSERT_METHOD_ONE_PARAM.put("assertFalse", "False");
-        ASSERT_METHOD_ONE_PARAM.put("assertIsNone", "None");
-        ASSERT_METHOD_ONE_PARAM.put("assertIsNotNone", "None");
     }
 
     public static List<AbstractTestSmellDetector> newAllDetectors(PyClass testCase) {
