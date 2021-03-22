@@ -1,15 +1,23 @@
 package pytestsmelldetector;
 
+import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.pyi.PyiFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,6 +26,23 @@ import java.util.stream.Collectors;
 
 public class Util {
     private static final Logger LOG = Logger.getInstance(Util.class);
+
+    public static List<PsiFile> extractPsiFromProject(Project project) {
+        List<PsiFile> projectPsiFiles = new ArrayList<>();
+        Arrays.stream(ProjectRootManager.getInstance(project).getContentRoots())
+                .filter(Objects::nonNull)
+                .forEach(root -> VfsUtilCore.iterateChildrenRecursively(root, null, virtualFile -> {
+                    if (Objects.equals(virtualFile.getExtension(), "py") && virtualFile.getCanonicalPath() != null) {
+                        PsiFile psi = PsiManager.getInstance(project).findFile(virtualFile);
+                        if (psi != null) {
+                            projectPsiFiles.add(psi);
+                        }
+                    }
+                    return true;
+                }));
+
+        return projectPsiFiles;
+    }
 
     public static boolean isValidUnittestCase(PyClass pyClass) {
         PyClass[] superClasses = pyClass.getSuperClasses(null);
@@ -128,7 +153,8 @@ public class Util {
                 new RedundantAssertionTestSmellDetector(testCase),
                 new RedundantPrintTestSmellDetector(testCase),
                 new SleepyTestTestSmellDetector(testCase),
-                new UnknownTestTestSmellDetector(testCase)
+                new UnknownTestTestSmellDetector(testCase),
+                new ObscureInLineSetupTestSmellDetector(testCase)
         );
     }
 }
