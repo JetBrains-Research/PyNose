@@ -40,6 +40,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                 factoryClass="org.intellij.sdk.toolWindow.MyToolWindowFactory"/>
+    <appStarter implementation="PluginRunner"/>
   </extensions>
 
 </idea-plugin>

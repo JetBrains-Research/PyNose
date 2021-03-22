@@ -20,6 +20,12 @@ intellij {
   type = 'PY'
   downloadSources = false
   plugins 'Pythonid'
+  tasks {
+    runIde {
+      args('test_smell')
+      jvmArgs('-Djava.awt.headless=true')
+    }
+  }
 }
 
 buildSearchableOptions {
