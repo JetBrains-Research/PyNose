@@ -67,15 +67,29 @@ public class Util {
         return projectPsiFiles;
     }
 
-    public static boolean isValidUnittestCase(PyClass pyClass) {
+    private static boolean isValidUnittestCaseRecursively(PyClass pyClass, int maxRecursionDepth, int currentRecursionDepth) {
+        if (currentRecursionDepth > maxRecursionDepth) {
+            return false;
+        }
+
         PyClass[] superClasses = pyClass.getSuperClasses(null);
         for (PyClass c : superClasses) {
             if (isTestCaseClass(c)) {
                 return true;
             }
+
+            for (PyClass cSuper : c.getSuperClasses(null)) {
+                if (isValidUnittestCaseRecursively(cSuper, maxRecursionDepth, currentRecursionDepth + 1)) {
+                    return true;
+                }
+            }
         }
 
         return false;
+    }
+
+    public static boolean isValidUnittestCase(PyClass pyClass) {
+        return isValidUnittestCaseRecursively(pyClass, Integer.MAX_VALUE, 0);
     }
 
     public static boolean isValidUnittestMethod(PyFunction pyFunction) {
@@ -149,7 +163,8 @@ public class Util {
                 new RedundantPrintTestSmellDetector(testCase),
                 new SleepyTestTestSmellDetector(testCase),
                 new UnknownTestTestSmellDetector(testCase),
-                new ObscureInLineSetupTestSmellDetector(testCase)
+                new ObscureInLineSetupTestSmellDetector(testCase),
+                new TestMaverickTestSmellDetector(testCase)
         );
     }
 }
