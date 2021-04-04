@@ -1,9 +1,14 @@
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationStarter;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import pytestsmelldetector.Util;
@@ -28,6 +33,11 @@ public class PluginRunner implements ApplicationStarter {
 
         if (p == null) {
             System.exit(1);
+        }
+        ProjectRootManager projectRootManager = ProjectRootManager.getInstance(p);
+        if (projectRootManager.getProjectSdk() == null) {
+            Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk("Python 3.8 (py38)");
+            WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
         }
         if (p.isInitialized()) {
             LOG.warn("Project \"" + p.getName() + "\" is initialized");
