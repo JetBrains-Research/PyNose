@@ -3,12 +3,10 @@ import com.intellij.openapi.application.ApplicationStarter;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import pytestsmelldetector.Util;
@@ -36,7 +34,8 @@ public class PluginRunner implements ApplicationStarter {
         }
         ProjectRootManager projectRootManager = ProjectRootManager.getInstance(p);
         if (projectRootManager.getProjectSdk() == null) {
-            Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk("Python 3.8 (py38)");
+            // the value depends on what Python interpreter you have on your computer
+            Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk("Python 3.9");
             WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
         }
         if (p.isInitialized()) {
@@ -67,22 +66,6 @@ public class PluginRunner implements ApplicationStarter {
             }
             LOG.warn("done");
         }
-        ProjectManager.getInstance().addProjectManagerListener(p, new MyProjectManagerListener());
-        System.exit(0);
-    }
-}
-
-class MyProjectManagerListener implements ProjectManagerListener {
-    private static final Logger LOG = Logger.getInstance(MyProjectManagerListener.class);
-
-    @Override
-    public void projectOpened(@NotNull Project project) {
-        LOG.warn("Project \"" + project.getName() + "\" is opened");
-        ProjectManager.getInstance().closeAndDispose(project);
-    }
-
-    @Override
-    public void projectClosed(@NotNull Project project) {
         System.exit(0);
     }
 }
