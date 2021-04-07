@@ -17,6 +17,9 @@ repositories {
 dependencies {
   // https://mvnrepository.com/artifact/org.apache.opennlp/opennlp-tools
   implementation group: 'org.apache.opennlp', name: 'opennlp-tools', version: '1.9.3'
+
+  // https://github.com/google/gson
+  implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/

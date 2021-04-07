@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -26,7 +27,20 @@ public abstract class AbstractTestSmellDetector {
 
     public abstract String getSmellName();
 
-    public abstract String getSmellDetail();
+    public abstract boolean hasSmell();
+
+    public String getSmellDetail() {
+        return getSmellDetailJSON().toString();
+    }
+
+    public abstract JsonObject getSmellDetailJSON();
+
+    protected JsonObject templateSmellDetailJSON() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("name", this.getSmellName());
+        jsonObject.addProperty("hasSmell", this.hasSmell());
+        return jsonObject;
+    }
 
     abstract static class MyPsiElementVisitor extends PsiElementVisitor {
         public void visitElement(@NotNull PsiElement element) {

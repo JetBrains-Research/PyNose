@@ -1,5 +1,7 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.jetbrains.python.psi.PyClass;
@@ -10,12 +12,31 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
+    private static final PorterStemmer STEMMER = new PorterStemmer();
+    private static final Logger LOGGER = Logger.getInstance(LackCohesionTestSmellDetector.class);
+    private static final Set<String> STOP_WORDS = new HashSet<>(
+            Arrays.asList(
+                    "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
+                    "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
+                    "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that",
+                    "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
+                    "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as",
+                    "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through",
+                    "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off",
+                    "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how",
+                    "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
+                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
+                    "now", "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
+                    "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if",
+                    "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while",
+                    "with", "yield")
+    );
+    private final Map<Pair<PyFunction, PyFunction>, Double> cosineSimilarityScores;
     public boolean splitIdentifier = false;
     public boolean removeStopWords = false;
     public double threshold = 0.6;  // from the paper
-    private final Map<Pair<PyFunction, PyFunction>, Double> cosineSimilarityScores;
-    private static final PorterStemmer STEMMER = new PorterStemmer();
-    private static final Logger LOGGER = Logger.getInstance(LackCohesionTestSmellDetector.class);
+
+    private double testClassCohesionScore;
 
     public LackCohesionTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
@@ -31,6 +52,11 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
                 cosineSimilarityScores.put(new Pair<>(methodList.get(i), methodList.get(j)), score);
             }
         }
+
+        testClassCohesionScore = cosineSimilarityScores.values().stream()
+                .mapToDouble(d -> d)
+                .average()
+                .orElse(0.0);
     }
 
     @Override
@@ -46,20 +72,31 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
 
     @Override
     public String getSmellName() {
-        return "LackCohesionTestSmell";
+        return "Lack Cohesion";
     }
 
     @Override
-    public String getSmellDetail() {
-        double testClassCohesionScore = cosineSimilarityScores.values().stream()
-                .mapToDouble(d -> d)
-                .average()
-                .orElse(0.0);
-        boolean hasLackCohesionTestSmell = (1 - testClassCohesionScore) >= threshold;
+    public boolean hasSmell() {
+        return (1 - testClassCohesionScore) >= threshold;
+    }
 
-        return cosineSimilarityScores.toString() + '\n' +
-                "testClassCohesionScore=" + testClassCohesionScore + '\n' +
-                "hasLackCohesionTestSmell=" + hasLackCohesionTestSmell + "\n\n";
+    @Override
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        JsonObject detailObject = new JsonObject();
+        detailObject.addProperty("testClassCohesionScore", testClassCohesionScore);
+        detailObject.addProperty("threshold", threshold);
+        JsonArray cosineSimilarityArray = new JsonArray();
+        cosineSimilarityScores.forEach((ffPair, score) -> {
+            JsonArray cosineSimilarityEntry = new JsonArray();
+            cosineSimilarityEntry.add(ffPair.first.getName());
+            cosineSimilarityEntry.add(ffPair.second.getName());
+            cosineSimilarityEntry.add(score);
+            cosineSimilarityArray.add(cosineSimilarityEntry);
+        });
+        detailObject.add("cosineSimilarityScores", cosineSimilarityArray);
+        jsonObject.add("detail", detailObject);
+        return jsonObject;
     }
 
     private List<String> extractMethodBody(PyFunction method) {
@@ -97,28 +134,18 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
 
         return numerator / denominator;
     }
-
-    private static final Set<String> STOP_WORDS = new HashSet<>(
-            Arrays.asList(
-                    "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
-                    "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
-                    "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that",
-                    "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
-                    "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as",
-                    "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through",
-                    "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off",
-                    "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how",
-                    "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
-                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
-                    "now", "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
-                    "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if",
-                    "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while",
-                    "with", "yield")
-    );
 }
 
 class Counter<T> {
     final Map<T, Integer> counts = new HashMap<>();
+
+    public static <T> Counter<T> fromCollection(Collection<T> collection) {
+        Counter<T> counter = new Counter<>();
+        for (T item : collection) {
+            counter.add(item);
+        }
+        return counter;
+    }
 
     public void add(T t) {
         counts.merge(t, 1, Integer::sum);
@@ -130,13 +157,5 @@ class Counter<T> {
 
     public Set<T> getItems() {
         return counts.keySet();
-    }
-
-    public static <T> Counter<T> fromCollection(Collection<T> collection) {
-        Counter<T> counter = new Counter<>();
-        for (T item : collection) {
-            counter.add(item);
-        }
-        return counter;
     }
 }

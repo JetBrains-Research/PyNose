@@ -1,6 +1,7 @@
 package pytestsmelldetector;
 
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -52,12 +53,15 @@ public class SleepyTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasSleepWithoutComment.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testHasSleepWithoutComment, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public Map<PyFunction, Boolean> getTestHasSleepWithoutComment() {
-        return testHasSleepWithoutComment;
+    @Override
+    public boolean hasSmell() {
+        return testHasSleepWithoutComment.containsValue(true);
     }
 
     class SleepTestVisitor extends MyPsiElementVisitor {

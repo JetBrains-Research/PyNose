@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallExpression;
@@ -49,12 +50,15 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasDuplicateAssert.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testHasDuplicateAssert, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public Map<PyFunction, Boolean> getTestHasDuplicateAssert() {
-        return testHasDuplicateAssert;
+    @Override
+    public boolean hasSmell() {
+        return testHasDuplicateAssert.containsValue(true);
     }
 
     class DuplicateAssertionVisitor extends MyPsiElementVisitor {

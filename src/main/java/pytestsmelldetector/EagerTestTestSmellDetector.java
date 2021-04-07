@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallExpression;
@@ -11,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class EagerTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(EagerTestTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasEagerTestTestSmell;
     private final Map<String, String> eagerTestCheck;
     private final EagerTestVisitor visitor;
+
     public EagerTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         currentMethod = null;
@@ -55,12 +58,15 @@ public class EagerTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasEagerTestTestSmell.toString();
+    public boolean hasSmell() {
+        return testHasEagerTestTestSmell.containsValue(true);
     }
 
-    public Map<PyFunction, Boolean> getTestHasEagerTestTestSmell() {
-        return testHasEagerTestTestSmell;
+    @Override
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testHasEagerTestTestSmell, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
     class EagerTestVisitor extends MyPsiElementVisitor {

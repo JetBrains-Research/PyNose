@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.psi.PyClass;
 
@@ -43,11 +44,12 @@ public class DefaultTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return Boolean.toString(isDefaultTest);
+    public JsonObject getSmellDetailJSON() {
+        return templateSmellDetailJSON();
     }
 
-    public boolean isDefaultTest() {
+    @Override
+    public boolean hasSmell() {
         return isDefaultTest;
     }
 }

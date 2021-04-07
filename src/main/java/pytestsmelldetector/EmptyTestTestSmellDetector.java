@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -8,11 +9,13 @@ import com.jetbrains.python.psi.PyStatement;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(EmptyTestTestSmellDetector.class);
     private final HashMap<PyFunction, Boolean> testMethodEmptiness;
     private final EmptyTestVisitor visitor;
+
     public EmptyTestTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
         testMethodEmptiness = new HashMap<>();
@@ -49,12 +52,15 @@ public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return testMethodEmptiness.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testMethodEmptiness, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public HashMap<PyFunction, Boolean> getTestMethodEmptiness() {
-        return testMethodEmptiness;
+    @Override
+    public boolean hasSmell() {
+        return testMethodEmptiness.containsValue(true);
     }
 
     class EmptyTestVisitor extends MyPsiElementVisitor {

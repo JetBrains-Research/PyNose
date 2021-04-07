@@ -1,13 +1,12 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(AssertionRouletteTestSmellDetector.class);
@@ -84,8 +83,16 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasAssertionRoulette.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        JsonArray detailArray = Util.mapToJsonArray(testHasAssertionRoulette, PyFunction::getName, Objects::toString);
+        jsonObject.add("detail", detailArray);
+        return jsonObject;
+    }
+
+    @Override
+    public boolean hasSmell() {
+        return testHasAssertionRoulette.containsValue(true);
     }
 
     class AssertionRouletteVisitor extends MyPsiElementVisitor {

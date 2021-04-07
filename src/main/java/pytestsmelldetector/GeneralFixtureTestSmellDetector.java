@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
@@ -68,12 +69,15 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return testCaseFieldsUsage.toString();
+    public boolean hasSmell() {
+        return testCaseFieldsUsage.values().stream().anyMatch(strings -> strings.size() > 0);
     }
 
-    public Map<PyFunction, Set<String>> getTestCaseFieldsUsage() {
-        return testCaseFieldsUsage;
+    @Override
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.stringSetMapToJsonArray(testCaseFieldsUsage, PyFunction::getName));
+        return jsonObject;
     }
 
     class GeneralFixtureVisitor extends MyPsiElementVisitor {

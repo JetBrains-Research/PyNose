@@ -1,6 +1,7 @@
 package pytestsmelldetector;
 
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallExpression;
@@ -10,6 +11,7 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(UnknownTestTestSmellDetector.class);
@@ -50,12 +52,15 @@ public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return assertCounts.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(assertCounts, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public HashMap<PyFunction, Integer> getAssertCounts() {
-        return assertCounts;
+    @Override
+    public boolean hasSmell() {
+        return assertCounts.values().stream().anyMatch(c -> c == 0);
     }
 
     class UnknownTestVisitor extends MyPsiElementVisitor {

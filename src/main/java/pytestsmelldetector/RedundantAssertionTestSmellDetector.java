@@ -1,11 +1,13 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(RedundantAssertionTestSmellDetector.class);
@@ -47,12 +49,15 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
     }
 
     @Override
-    public String getSmellDetail() {
-        return testMethodHaveRedundantAssertion.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testMethodHaveRedundantAssertion, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public HashMap<PyFunction, Integer> getTestMethodHaveRedundantAssertion() {
-        return testMethodHaveRedundantAssertion;
+    @Override
+    public boolean hasSmell() {
+        return testMethodHaveRedundantAssertion.values().stream().anyMatch(c -> c > 0);
     }
 
     class RedundantAssertionVisitor extends MyPsiElementVisitor {

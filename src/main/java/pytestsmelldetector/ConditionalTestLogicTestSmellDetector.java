@@ -1,11 +1,14 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.psi.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(ConditionalTestLogicTestSmellDetector.class);
@@ -48,8 +51,16 @@ public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDete
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasConditionalTestLogic.toString();
+    public boolean hasSmell() {
+        return testHasConditionalTestLogic.containsValue(true);
+    }
+
+    @Override
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        JsonArray detailArray = Util.mapToJsonArray(testHasConditionalTestLogic, PyFunction::getName, Objects::toString);
+        jsonObject.add("detail", detailArray);
+        return jsonObject;
     }
 
     class ConditionalTestLogicVisitor extends MyPsiElementVisitor {

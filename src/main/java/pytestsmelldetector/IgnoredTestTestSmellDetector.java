@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyClass;
@@ -8,6 +9,7 @@ import com.jetbrains.python.psi.PyFunction;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class IgnoredTestTestSmellDetector extends AbstractTestSmellDetector {
@@ -50,12 +52,15 @@ public class IgnoredTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasSkipDecorator.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testHasSkipDecorator, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public Map<PyFunction, Boolean> getTestHasSkipDecorator() {
-        return testHasSkipDecorator;
+    @Override
+    public boolean hasSmell() {
+        return testHasSkipDecorator.containsValue(true);
     }
 
     class IgnoredTestVisitor extends MyPsiElementVisitor {

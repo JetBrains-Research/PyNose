@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonArray;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -167,5 +168,33 @@ public class Util {
                 new TestMaverickTestSmellDetector(testCase),
                 new LackCohesionTestSmellDetector(testCase)
         );
+    }
+
+    public static <K, V> JsonArray mapToJsonArray(Map<K, V> map, Serializer<K> kSerializer, Serializer<V> vSerializer) {
+        JsonArray mapArray = new JsonArray();
+        map.forEach((k, v) -> {
+            JsonArray mapEntry = new JsonArray();
+            mapEntry.add(kSerializer.serialize(k));
+            mapEntry.add(vSerializer.serialize(v));
+            mapArray.add(mapEntry);
+        });
+        return mapArray;
+    }
+
+    public static <K> JsonArray stringSetMapToJsonArray(Map<K, Set<String>> map, Serializer<K> kSerializer) {
+        JsonArray mapArray = new JsonArray();
+        map.forEach((k, vSet) -> {
+            JsonArray mapEntry = new JsonArray();
+            mapEntry.add(kSerializer.serialize(k));
+            JsonArray setArray = new JsonArray();
+            vSet.forEach(setArray::add);
+            mapEntry.add(setArray);
+            mapArray.add(mapEntry);
+        });
+        return mapArray;
+    }
+
+    public interface Serializer<T> {
+        String serialize(T t);
     }
 }

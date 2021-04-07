@@ -1,13 +1,11 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(MagicNumberTestTestSmellDetector.class);
@@ -49,12 +47,15 @@ public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector 
     }
 
     @Override
-    public String getSmellDetail() {
-        return testMethodHasMagicNumber.toString();
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testMethodHasMagicNumber, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
-    public Map<PyFunction, Boolean> getTestMethodHasMagicNumber() {
-        return testMethodHasMagicNumber;
+    @Override
+    public boolean hasSmell() {
+        return testMethodHasMagicNumber.containsValue(true);
     }
 
     class MagicNumberTestVisitor extends MyPsiElementVisitor {

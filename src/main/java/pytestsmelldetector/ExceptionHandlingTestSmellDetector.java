@@ -1,5 +1,6 @@
 package pytestsmelldetector;
 
+import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -8,6 +9,7 @@ import com.jetbrains.python.psi.PyTryExceptStatement;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(ExceptionHandlingTestSmellDetector.class);
@@ -48,12 +50,15 @@ public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetecto
     }
 
     @Override
-    public String getSmellDetail() {
-        return testHasExceptionHandlingLogic.toString();
+    public boolean hasSmell() {
+        return testHasExceptionHandlingLogic.containsValue(true);
     }
 
-    public Map<PyFunction, Boolean> getTestHasExceptionHandlingLogic() {
-        return testHasExceptionHandlingLogic;
+    @Override
+    public JsonObject getSmellDetailJSON() {
+        JsonObject jsonObject = templateSmellDetailJSON();
+        jsonObject.add("detail", Util.mapToJsonArray(testHasExceptionHandlingLogic, PyFunction::getName, Objects::toString));
+        return jsonObject;
     }
 
     class ExceptionHandlingVisitor extends MyPsiElementVisitor {
