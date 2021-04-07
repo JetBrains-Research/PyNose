@@ -1,3 +1,4 @@
+import com.google.gson.*;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationStarter;
 import com.intellij.openapi.application.WriteAction;
@@ -38,32 +39,43 @@ public class PluginRunner implements ApplicationStarter {
             WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
         }
         if (p.isInitialized()) {
-            LOG.warn("Project \"" + p.getName() + "\" is initialized");
-
-            StringBuilder stringBuilder = new StringBuilder();
+            System.out.println("Project \"" + p.getName() + "\" is initialized");
+            JsonArray jsonArray = new JsonArray();
             List<PsiFile> projectPsiFiles = Util.extractPsiFromProject(p);
             projectPsiFiles.forEach(psiFile -> {
-                stringBuilder.append(psiFile.toString()).append('\n');
+                JsonArray testCaseResultArray = new JsonArray();
                 Util.gatherTestCases(psiFile).forEach(testCase -> {
-                    stringBuilder.append(testCase.toString()).append('\n');
+                    JsonObject testCaseResultObject = new JsonObject();
+                    testCaseResultObject.addProperty("name", testCase.getName());
+                    JsonArray detectorResultArray = new JsonArray();
                     Util.newAllDetectors(testCase).forEach(detector -> {
                         detector.analyze();
-                        stringBuilder.append(detector.getSmellName()).append('\n');
-                        stringBuilder.append(detector.getSmellDetail()).append("\n\n");
+                        detectorResultArray.add(detector.getSmellDetailJSON());
                     });
+                    testCaseResultObject.add("detectorResults", detectorResultArray);
+                    testCaseResultArray.add(testCaseResultObject);
                 });
-                stringBuilder.append("\n\n");
+                if (testCaseResultArray.size() > 0) {
+                    JsonObject pyFileResultObject = new JsonObject();
+                    pyFileResultObject.addProperty("name", psiFile.getName());
+                    pyFileResultObject.add("testCases", testCaseResultArray);
+                    jsonArray.add(pyFileResultObject);
+                }
             });
 
-            LOG.warn(stringBuilder.toString());
+            String jsonString = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(JsonParser.parseString(jsonArray.toString()));
+            System.out.println(jsonString);
             try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathString + ".txt"));
-                bufferedWriter.write(stringBuilder.toString());
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathString + ".json"));
+                bufferedWriter.write(jsonString);
                 bufferedWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            LOG.warn("done");
+            System.out.println("done");
         }
         System.exit(0);
     }
