@@ -73,16 +73,14 @@ public class Util {
             return false;
         }
 
-        PyClass[] superClasses = pyClass.getSuperClasses(null);
-        for (PyClass c : superClasses) {
-            if (isTestCaseClass(c)) {
-                return true;
-            }
+        if (isTestCaseClass(pyClass)) {
+            return true;
+        }
 
-            for (PyClass cSuper : c.getSuperClasses(null)) {
-                if (isValidUnittestCaseRecursively(cSuper, maxRecursionDepth, currentRecursionDepth + 1)) {
-                    return true;
-                }
+        PyClass[] superClasses = pyClass.getSuperClasses(null);
+        for (PyClass superClass : superClasses) {
+            if (superClass.equals(pyClass) || isValidUnittestCaseRecursively(superClass, maxRecursionDepth, currentRecursionDepth + 1)) {
+                return true;
             }
         }
 
@@ -90,7 +88,7 @@ public class Util {
     }
 
     public static boolean isValidUnittestCase(PyClass pyClass) {
-        return isValidUnittestCaseRecursively(pyClass, Integer.MAX_VALUE, 0);
+        return isValidUnittestCaseRecursively(pyClass, 20, 0);
     }
 
     public static boolean isValidUnittestMethod(PyFunction pyFunction) {

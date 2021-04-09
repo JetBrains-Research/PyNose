@@ -9,12 +9,11 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(DuplicateAssertionTestSmellDetector.class);
     private final Map<PyFunction, Boolean> testHasDuplicateAssert = new HashMap<>();
-    private final Set<Set<String>> asserts = new HashSet<>();
+    private final Set<String> asserts = new HashSet<>();
     private final DuplicateAssertionVisitor visitor = new DuplicateAssertionVisitor();
 
     public DuplicateAssertionTestSmellDetector(PyClass aTestCase) {
@@ -68,14 +67,11 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
                 return;
             }
 
-            final Set<String> args = Arrays.stream(callExpression.getArguments())
-                    .map(PsiElement::getText)
-                    .collect(Collectors.toSet());
-
-            if (asserts.contains(args)) {
+            String assertionCall = callExpression.getText();
+            if (asserts.contains(assertionCall)) {
                 testHasDuplicateAssert.replace(currentMethod, true);
             } else {
-                asserts.add(args);
+                asserts.add(assertionCall);
             }
         }
     }

@@ -63,7 +63,7 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
 
     @Override
     public boolean hasSmell() {
-        return testMethodSetUpFieldsUsage.values().stream().anyMatch(Set::isEmpty);
+        return testMethodSetUpFieldsUsage.values().stream().anyMatch(Set::isEmpty) && !setUpFields.isEmpty();
     }
 
     @Override
@@ -90,14 +90,11 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
         }
 
         public void visitPyReferenceExpression(PyReferenceExpression referenceExpression) {
-            if (inSetUpMode) {
+            if (inSetUpMode || !setUpFields.contains(referenceExpression.getText())) {
                 for (PsiElement child : referenceExpression.getChildren()) {
                     visitElement(child);
                 }
-                return;
-            }
-
-            if (setUpFields.contains(referenceExpression.getText())) {
+            } else {
                 testMethodSetUpFieldsUsage.get(currentMethod).add(referenceExpression.getText());
             }
         }
