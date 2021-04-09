@@ -152,7 +152,7 @@ public class Util {
                 new ConstructorInitializationTestSmellDetector(testCase),
                 new DefaultTestTestSmellDetector(testCase),
                 new DuplicateAssertionTestSmellDetector(testCase),
-                new EagerTestTestSmellDetector(testCase),
+                // new EagerTestTestSmellDetector(testCase),
                 new EmptyTestTestSmellDetector(testCase),
                 new ExceptionHandlingTestSmellDetector(testCase),
                 new GeneralFixtureTestSmellDetector(testCase),
