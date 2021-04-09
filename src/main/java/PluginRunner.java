@@ -12,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import pytestsmelldetector.Util;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
@@ -26,8 +28,31 @@ public class PluginRunner implements ApplicationStarter {
 
     @Override
     public void main(@NotNull List<String> args) {
-        String pathString = "C:\\Users\\tjwan\\PycharmProjects\\PythonTestSmellTestProject";
-        Project p = ProjectUtil.openOrImport(pathString, null, true);
+        System.out.println("args = " + args);
+        if (args.size() != 4) {
+            System.err.println("incorrect command line arguments");
+            System.err.println("usage: test_smell projectPath pythonInterpreter outputDir");
+            System.exit(0);
+        }
+
+        String path = args.get(1);
+        if (path.charAt(path.length() - 1) == File.separatorChar) {
+            path = path.substring(0, path.length() - 1);
+        }
+        String pythonInterpreter = args.get(2);
+        String outputDir = args.get(3);
+        if (outputDir.charAt(outputDir.length() - 1)  == File.separatorChar) {
+            outputDir = outputDir.substring(0, outputDir.length() - 1);
+        }
+        System.out.println("path = " + path);
+        System.out.println("outputDir = " + outputDir);
+
+        String splitter = File.separator.replace("\\","\\\\");
+        String[] pathComponents = path.split(splitter);
+        String outputFileName = outputDir + File.separatorChar + pathComponents[pathComponents.length - 1] + ".json";
+        System.out.println("outputFileName = " + outputFileName);
+
+        Project p = ProjectUtil.openOrImport(path, null, true);
 
         if (p == null) {
             System.exit(1);
@@ -35,7 +60,13 @@ public class PluginRunner implements ApplicationStarter {
         ProjectRootManager projectRootManager = ProjectRootManager.getInstance(p);
         if (projectRootManager.getProjectSdk() == null) {
             // the value depends on what Python interpreter you have on your computer
-            Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk("Python 3.9");
+            Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk(pythonInterpreter);
+            if (pythonSdk == null) {
+                Arrays.stream(ProjectJdkTableImpl.getInstance().getAllJdks()).forEach(pythonCandidate ->
+                    System.out.println("pythonCandidate = " + pythonCandidate)
+                );
+                System.exit(0);
+            }
             WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
         }
         if (p.isInitialized()) {
@@ -67,9 +98,8 @@ public class PluginRunner implements ApplicationStarter {
                     .setPrettyPrinting()
                     .create()
                     .toJson(JsonParser.parseString(jsonArray.toString()));
-            System.out.println(jsonString);
             try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathString + ".json"));
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFileName));
                 bufferedWriter.write(jsonString);
                 bufferedWriter.close();
             } catch (IOException e) {
