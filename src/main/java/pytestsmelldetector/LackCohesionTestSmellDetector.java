@@ -32,7 +32,7 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
                     "with", "yield")
     );
     private final Map<Pair<PyFunction, PyFunction>, Double> cosineSimilarityScores;
-    public boolean splitIdentifier = false;
+    public boolean splitIdentifier = true;
     public boolean removeStopWords = false;
     public double threshold = 0.6;  // from the paper
 
@@ -114,8 +114,6 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
 
     private double calculateCosineSimilarityBetweenMethods(PyFunction m1, PyFunction m2) {
         List<String> tokens1 = extractMethodBody(m1), tokens2 = extractMethodBody(m2);
-        LOGGER.warn("tokens1=" + tokens1.toString());
-        LOGGER.warn("tokens2=" + tokens2.toString());
         Counter<String> vec1 = Counter.fromCollection(tokens1), vec2 = Counter.fromCollection(tokens2);
 
         Set<String> intersection = vec1.getItems().stream()
