@@ -20,7 +20,7 @@ The IDE may also prompt that this is a project from the web. Click "Trust Projec
 
 Since this tool is developed in PyCharm Professional, a license is required. We have to modify some files in order to enter the license.
 
-Navigate to `build.gradle` in the project root, select line 31-41 and press ` Ctrl+/` (`Cmd+/` on macOS) to comment them out. The `intellij` section will look like this.
+Navigate to [`build.gradle`](./build.gradle) in the project root, select line 31-41 and press ` Ctrl+/` (`Cmd+/` on macOS) to comment them out. The `intellij` section will look like this.
 
 ```groovy
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -43,7 +43,7 @@ intellij {
 }
 ```
 
-Then, navigate to `src/main/resources/META-INF/plugin.xml`, select line 43 and press `Ctrl+/` (`Cmd+/` on macOS) to comment it out. The `extensions` section will look like this.
+Then, navigate to [`src/main/resources/META-INF/plugin.xml`](./src/main/resources/META-INF/plugin.xml), select line 43 and press `Ctrl+/` (`Cmd+/` on macOS) to comment it out. The `extensions` section will look like this.
 
 ```xml
   <extensions defaultExtensionNs="com.intellij">
