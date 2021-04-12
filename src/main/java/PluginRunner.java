@@ -55,7 +55,8 @@ public class PluginRunner implements ApplicationStarter {
         Project p = ProjectUtil.openOrImport(path, null, true);
 
         if (p == null) {
-            System.exit(1);
+            System.out.println("project is null");
+            System.exit(0);
         }
         ProjectRootManager projectRootManager = ProjectRootManager.getInstance(p);
         if (projectRootManager.getProjectSdk() == null) {
