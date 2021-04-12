@@ -62,6 +62,7 @@ public class PluginRunner implements ApplicationStarter {
             // the value depends on what Python interpreter you have on your computer
             Sdk pythonSdk = ProjectJdkTableImpl.getInstance().findJdk(pythonInterpreter);
             if (pythonSdk == null) {
+                System.out.println("Cannot find specified Python interpreter; printing available ones...");
                 Arrays.stream(ProjectJdkTableImpl.getInstance().getAllJdks()).forEach(pythonCandidate ->
                     System.out.println("pythonCandidate = " + pythonCandidate)
                 );
