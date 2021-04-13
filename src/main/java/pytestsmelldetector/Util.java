@@ -164,7 +164,8 @@ public class Util {
                 new UnknownTestTestSmellDetector(testCase),
                 new ObscureInLineSetupTestSmellDetector(testCase),
                 new TestMaverickTestSmellDetector(testCase),
-                new LackCohesionTestSmellDetector(testCase)
+                new LackCohesionTestSmellDetector(testCase),
+                new SuboptimalAssertTestSmellDetector(testCase)
         );
     }
 
