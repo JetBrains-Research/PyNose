@@ -42,11 +42,6 @@ public class MagicNumberTestTestSmellDetector extends AbstractTestSmellDetector 
     }
 
     @Override
-    public String getSmellName() {
-        return "Magic Number Test";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         jsonObject.add("detail", Util.mapToJsonArray(testMethodHasMagicNumber, PyFunction::getName, Objects::toString));

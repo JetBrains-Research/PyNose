@@ -47,11 +47,6 @@ public class EmptyTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Empty Test";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         jsonObject.add("detail", Util.mapToJsonArray(testMethodEmptiness, PyFunction::getName, Objects::toString));

@@ -53,11 +53,6 @@ public class EagerTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Eager Test";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testHasEagerTestTestSmell.containsValue(true);
     }

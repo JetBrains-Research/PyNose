@@ -25,7 +25,10 @@ public abstract class AbstractTestSmellDetector {
 
     public abstract void reset(PyClass testCase);
 
-    public abstract String getSmellName();
+    public String getSmellName() {
+        String className = getClass().getName();
+        return className.substring("pytestsmelldetector.".length(), className.length() - "TestSmellDetector".length());
+    }
 
     public abstract boolean hasSmell();
 

@@ -44,11 +44,6 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
     }
 
     @Override
-    public String getSmellName() {
-        return "Redundant Assertion";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         jsonObject.add("detail", Util.mapToJsonArray(testMethodHaveRedundantAssertion, PyFunction::getName, Objects::toString));

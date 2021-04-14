@@ -46,11 +46,6 @@ public class ConditionalTestLogicTestSmellDetector extends AbstractTestSmellDete
     }
 
     @Override
-    public String getSmellName() {
-        return "Conditional Test Logic";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testHasConditionalTestLogic.containsValue(true);
     }

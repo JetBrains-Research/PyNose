@@ -43,11 +43,6 @@ public class ObscureInLineSetupTestSmellDetector extends AbstractTestSmellDetect
     }
 
     @Override
-    public String getSmellName() {
-        return "ObscureInLineSetup";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testMethodLocalVarCount.values().stream().anyMatch(s -> s.size() > 10);
     }

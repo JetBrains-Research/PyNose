@@ -39,11 +39,6 @@ public class DefaultTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Default Test";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         return templateSmellDetailJSON();
     }

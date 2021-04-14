@@ -52,11 +52,6 @@ public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Redundant Print";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testMethodHavePrint.containsValue(true);
     }

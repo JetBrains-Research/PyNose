@@ -71,11 +71,6 @@ public class LackCohesionTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Lack Cohesion";
-    }
-
-    @Override
     public boolean hasSmell() {
         return (1 - testClassCohesionScore) >= threshold && cosineSimilarityScores.size() >= 1;
     }

@@ -45,11 +45,6 @@ public class ExceptionHandlingTestSmellDetector extends AbstractTestSmellDetecto
     }
 
     @Override
-    public String getSmellName() {
-        return "Exception Handling";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testHasExceptionHandlingLogic.containsValue(true);
     }

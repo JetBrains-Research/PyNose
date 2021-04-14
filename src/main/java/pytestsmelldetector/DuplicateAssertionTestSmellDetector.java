@@ -44,11 +44,6 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
     }
 
     @Override
-    public String getSmellName() {
-        return "Duplicate Assertion";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         jsonObject.add("detail", Util.mapToJsonArray(testHasDuplicateAssert, PyFunction::getName, Objects::toString));

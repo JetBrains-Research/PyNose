@@ -48,11 +48,6 @@ public class SleepyTestTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Sleepy Test";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         jsonObject.add("detail", Util.mapToJsonArray(testHasSleepWithoutComment, PyFunction::getName, Objects::toString));

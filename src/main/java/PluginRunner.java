@@ -73,7 +73,16 @@ public class PluginRunner implements ApplicationStarter {
         }
         if (p.isInitialized()) {
             System.out.println("Project \"" + p.getName() + "\" is initialized");
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObject = new JsonObject();
+            JsonArray listOfSmells = new JsonArray();
+            Util.allDetectorClass().forEach(
+                    cls -> listOfSmells.add(cls.getName().substring(
+                            "pytestsmelldetector.".length(),
+                            cls.getName().length() - "TestSmellDetector".length()))
+            );
+            jsonObject.add("smells", listOfSmells);
+
+            JsonArray fileResultArray = new JsonArray();
             List<PsiFile> projectPsiFiles = Util.extractPsiFromProject(p);
             projectPsiFiles.forEach(psiFile -> {
                 JsonArray testCaseResultArray = new JsonArray();
@@ -92,14 +101,15 @@ public class PluginRunner implements ApplicationStarter {
                     JsonObject pyFileResultObject = new JsonObject();
                     pyFileResultObject.addProperty("name", psiFile.getName());
                     pyFileResultObject.add("testCases", testCaseResultArray);
-                    jsonArray.add(pyFileResultObject);
+                    fileResultArray.add(pyFileResultObject);
                 }
             });
+            jsonObject.add("result", fileResultArray);
 
             String jsonString = new GsonBuilder()
                     .setPrettyPrinting()
                     .create()
-                    .toJson(JsonParser.parseString(jsonArray.toString()));
+                    .toJson(JsonParser.parseString(jsonObject.toString()));
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFileName));
                 bufferedWriter.write(jsonString);

@@ -57,11 +57,6 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "Test Maverick";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testMethodSetUpFieldsUsage.values().stream().anyMatch(Set::isEmpty) && !setUpFields.isEmpty();
     }

@@ -78,11 +78,6 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
     }
 
     @Override
-    public String getSmellName() {
-        return "Assertion Roulette";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
         JsonArray detailArray = Util.mapToJsonArray(testHasAssertionRoulette, PyFunction::getName, Objects::toString);

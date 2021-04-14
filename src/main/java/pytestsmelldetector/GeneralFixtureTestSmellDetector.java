@@ -64,11 +64,6 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
     }
 
     @Override
-    public String getSmellName() {
-        return "General Fixture";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testCaseFieldsUsage.values().stream().anyMatch(strings -> strings.size() > 0);
     }

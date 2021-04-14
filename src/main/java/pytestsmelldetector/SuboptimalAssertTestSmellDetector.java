@@ -74,11 +74,6 @@ public class SuboptimalAssertTestSmellDetector extends AbstractTestSmellDetector
     }
 
     @Override
-    public String getSmellName() {
-        return "Suboptimal Assert";
-    }
-
-    @Override
     public boolean hasSmell() {
         return testMethodHasSuboptimalAssert.containsValue(true);
     }

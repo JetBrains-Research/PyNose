@@ -34,11 +34,6 @@ public class ConstructorInitializationTestSmellDetector extends AbstractTestSmel
     }
 
     @Override
-    public String getSmellName() {
-        return "Constructor Initialization";
-    }
-
-    @Override
     public JsonObject getSmellDetailJSON() {
         return templateSmellDetailJSON();
     }
