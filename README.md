@@ -12,7 +12,7 @@ Select the project in the pop-up window and open the project. The IDE will promp
 
 ![load-gradle-project-prompt](./README.assets/load-gradle-project-prompt.png)
 
-The IDE may also prompt that this is a project from the web. Click "Trust Project" if you trust this project.
+The IDE may also prompt that this is a project from the web. Click "Trust Project" if you trust this project. You may need to check if JDK is 1.8 and manually install and set up it to be 1.8.
 
 ![trust-project-prompt](./README.assets/trust-project-prompt.png)
 
