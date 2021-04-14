@@ -101,3 +101,7 @@ Then open the `runner.py` in the project root. We need to modify four variables.
 - `PYTHON_INTERPRETER_NAME` is the name of the Python interpreter. Use the one shown in the last step of ["Set up License and Python"](#set-up-license-and-python) section (in my case it is "Python 3.8").
 
 Just save and run this script. The script will then start the tool.
+
+### Generate Test Smell Statistics
+
+You can run `get_csv_stats.py` to generate an aggregated statistics for all analyzed repositories. Remember to set `DETECTOR_OUTPUT` variable in that file.
