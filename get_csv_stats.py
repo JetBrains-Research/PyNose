@@ -1,39 +1,96 @@
+from dataclasses import dataclass
 from pathlib import Path
-import json
+from typing import List, Optional
+
 import pandas as pd
+from dataclasses_json import dataclass_json, LetterCase
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class DetectorResult:
+    name: str
+    has_smell: bool
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class TestCaseResult:
+    name: str
+    detector_results: List[DetectorResult]
+    number_of_methods: Optional[int] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class FileResult:
+    name: str
+    test_cases: List[TestCaseResult]
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class Result:
+    result: List[FileResult]
 
 
 DETECTOR_OUTPUT = Path('C:\\Users\\tjwan\\PycharmProjects\\new_test_repo_outDir')
 JSON_FILE_PATHS = [p for p in DETECTOR_OUTPUT.iterdir() if p.is_file() and p.suffix == '.json']
-all_test_smells = {}
+ALL_SMELLS = sorted([
+    'AssertionRoulette',
+    'ConditionalTestLogic',
+    'ConstructorInitialization',
+    'DefaultTest',
+    'DuplicateAssertion',
+    'EmptyTest',
+    'ExceptionHandling',
+    'GeneralFixture',
+    'IgnoredTest',
+    'MagicNumberTest',
+    'RedundantAssertion',
+    'RedundantPrint',
+    'SleepyTest',
+    'UnknownTest',
+    'ObscureInLineSetup',
+    'TestMaverick',
+    'LackCohesion',
+    'SuboptimalAssert'
+])
+
 count = 0
-
-aggregated_lines = []
-
+REPO_DATA_FRAMES = []
 for json_file_path in JSON_FILE_PATHS:
     with json_file_path.open() as f:
-        repo_stats = json.load(f)
-
+        result = Result.from_json(f.read())
     lines = []
+    for test_file, test_case in ((tf, tc) for tf in result.result for tc in tf.test_cases):
+        line = [json_file_path.stem, test_file.name, test_case.name]
 
-    for test_file_stats in repo_stats:
-        for test_case in test_file_stats['testCases']:
-            test_case['detectorResults'].sort(key=lambda r: r['name'])
-            smell_result = []
-            for smell in test_case['detectorResults']:
-                all_test_smells[smell['name']] = None
-                smell_result.append(smell['hasSmell'])
-            lines.append([test_file_stats['name'], test_case['name']] + smell_result)
+        detector_results = sorted(test_case.detector_results, key=lambda dr: dr.name)
+        assert ALL_SMELLS == [dr.name for dr in detector_results]
 
-    df = pd.DataFrame(lines, columns=['file_name', 'test_case'] + list(all_test_smells.keys()))
+        for detector_result in detector_results:
+            line.append(detector_result.has_smell)
+
+        lines.append(line)
+    df = pd.DataFrame(lines, columns=['repo_name', 'test_file', 'test_case'] + ALL_SMELLS)
     df.to_csv(json_file_path.parent / f'{json_file_path.stem}.csv', index=False)
+    REPO_DATA_FRAMES.append(df)
     count += 1
-
-    smell_count = [sum(df[smell]) for smell in all_test_smells.keys()]
-    aggregated_lines.append([json_file_path.stem] + smell_count)
 
 print(f'Converted {count} JSON file(s).')
 
-aggregated_df = pd.DataFrame(aggregated_lines, columns=['repo_name'] + list(all_test_smells.keys()))
-aggregated_df.to_csv(DETECTOR_OUTPUT / 'aggregated.csv', index=False)
-print('Aggregated result saved')
+aggregated_lines = []
+for repo_df in REPO_DATA_FRAMES:
+    repo_name = repo_df['repo_name'][0]
+    repo_test_file_count = len(set(repo_df['test_file']))
+    repo_test_case_count = len(set(repo_df['test_case']))
+    line = [repo_name, repo_test_file_count, repo_test_case_count]
+
+    for smell in ALL_SMELLS:
+        line.append(sum(repo_df[smell]))
+    aggregated_lines.append(line)
+
+aggregated_df = pd.DataFrame(aggregated_lines, columns=['repo_name', 'test_file_count', 'test_case_count'] + ALL_SMELLS)
+aggregated_df.to_csv(JSON_FILE_PATHS[0].parent / 'aggregated.csv', index=False)
+print('Aggregated result generated')

@@ -95,6 +95,7 @@ public class PluginRunner implements ApplicationStarter {
                         detectorResultArray.add(detector.getSmellDetailJSON());
                     });
                     testCaseResultObject.add("detectorResults", detectorResultArray);
+                    testCaseResultObject.addProperty("numberOfMethods", Util.gatherTestMethods(testCase).size());
                     testCaseResultArray.add(testCaseResultObject);
                 });
                 if (testCaseResultArray.size() > 0) {
