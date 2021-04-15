@@ -48,7 +48,8 @@ public class SuboptimalAssertTestSmellDetector extends AbstractTestSmellDetector
         }
 
         PyExpression[] args = assertCall.getArguments();
-        return args.length >= 2 && ((args[1] instanceof PyBoolLiteralExpression) || (args[1] instanceof PyNoneLiteralExpression));
+        return args.length >= 2 && Arrays.stream(args)
+                .anyMatch(arg -> arg instanceof PyBoolLiteralExpression || arg instanceof PyNoneLiteralExpression);
     }
 
     @Override
