@@ -41,6 +41,7 @@ ALL_SMELLS = None
 
 count = 0
 REPO_DATA_FRAMES = []
+REPO_RESULTS = []
 for json_file_path in JSON_FILE_PATHS:
     with json_file_path.open() as f:
         json_str = f.read()
@@ -68,17 +69,18 @@ for json_file_path in JSON_FILE_PATHS:
     df = pd.DataFrame(lines, columns=['repo_name', 'test_file', 'test_case'] + ALL_SMELLS)
     df.to_csv(json_file_path.parent / f'{json_file_path.stem}.csv', index=False)
     REPO_DATA_FRAMES.append(df)
+    REPO_RESULTS.append(result)
     count += 1
 
 print(f'Converted {count} JSON file(s).')
 
 aggregated_lines = []
-for repo_df in REPO_DATA_FRAMES:
+for repo_df, result in zip(REPO_DATA_FRAMES, REPO_RESULTS):
     if len(repo_df) == 0:
         continue
     repo_name = repo_df['repo_name'][0]
-    repo_test_file_count = len(set(repo_df['test_file']))
-    repo_test_case_count = len(set(repo_df['test_case']))
+    repo_test_file_count = len(result.result)
+    repo_test_case_count = sum(len(tf.test_cases) for tf in result.result)
     line = [repo_name, repo_test_file_count, repo_test_case_count]
 
     for smell in ALL_SMELLS:
