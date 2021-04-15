@@ -86,8 +86,11 @@ public class PluginRunner implements ApplicationStarter {
                         detectorResultArray.add(detector.getSmellDetailJSON());
                     });
                     testCaseResultObject.add("detectorResults", detectorResultArray);
-                    testCaseResultObject.addProperty("numberOfMethods", Util.gatherTestMethods(testCase).size());
-                    testCaseResultArray.add(testCaseResultObject);
+                    int testMethodCount = Util.gatherTestMethods(testCase).size();
+                    testCaseResultObject.addProperty("numberOfMethods", testMethodCount);
+                    if (testMethodCount > 0) {
+                        testCaseResultArray.add(testCaseResultObject);
+                    }
                 });
                 if (testCaseResultArray.size() > 0) {
                     JsonObject pyFileResultObject = new JsonObject();
