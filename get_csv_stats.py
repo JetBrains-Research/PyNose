@@ -74,6 +74,8 @@ print(f'Converted {count} JSON file(s).')
 
 aggregated_lines = []
 for repo_df in REPO_DATA_FRAMES:
+    if len(repo_df) == 0:
+        continue
     repo_name = repo_df['repo_name'][0]
     repo_test_file_count = len(set(repo_df['test_file']))
     repo_test_case_count = len(set(repo_df['test_case']))
