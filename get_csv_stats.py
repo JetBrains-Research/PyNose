@@ -81,12 +81,13 @@ for repo_df, result in zip(REPO_DATA_FRAMES, REPO_RESULTS):
     repo_name = repo_df['repo_name'][0]
     repo_test_file_count = len(result.result)
     repo_test_case_count = sum(len(tf.test_cases) for tf in result.result)
-    line = [repo_name, repo_test_file_count, repo_test_case_count]
+    repo_test_method_count = sum(tc.number_of_methods for tf in result.result for tc in tf.test_cases)
+    line = [repo_name, repo_test_file_count, repo_test_case_count, repo_test_method_count]
 
     for smell in ALL_SMELLS:
         line.append(sum(repo_df[smell]))
     aggregated_lines.append(line)
 
-aggregated_df = pd.DataFrame(aggregated_lines, columns=['repo_name', 'test_file_count', 'test_case_count'] + ALL_SMELLS)
+aggregated_df = pd.DataFrame(aggregated_lines, columns=['repo_name', 'test_file_count', 'test_case_count', 'test_method_count'] + ALL_SMELLS)
 aggregated_df.to_csv(JSON_FILE_PATHS[0].parent / 'aggregated.csv', index=False)
 print('Aggregated result generated')
