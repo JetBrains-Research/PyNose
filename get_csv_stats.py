@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import json
 from pathlib import Path
 from typing import List, Optional
 
@@ -36,38 +37,29 @@ class Result:
 
 DETECTOR_OUTPUT = Path('C:\\Users\\tjwan\\PycharmProjects\\new_test_repo_outDir')
 JSON_FILE_PATHS = [p for p in DETECTOR_OUTPUT.iterdir() if p.is_file() and p.suffix == '.json']
-ALL_SMELLS = sorted([
-    'AssertionRoulette',
-    'ConditionalTestLogic',
-    'ConstructorInitialization',
-    'DefaultTest',
-    'DuplicateAssertion',
-    'EmptyTest',
-    'ExceptionHandling',
-    'GeneralFixture',
-    'IgnoredTest',
-    'MagicNumberTest',
-    'RedundantAssertion',
-    'RedundantPrint',
-    'SleepyTest',
-    'UnknownTest',
-    'ObscureInLineSetup',
-    'TestMaverick',
-    'LackCohesion',
-    'SuboptimalAssert'
-])
+ALL_SMELLS = None
 
 count = 0
 REPO_DATA_FRAMES = []
 for json_file_path in JSON_FILE_PATHS:
     with json_file_path.open() as f:
-        result = Result.from_json(f.read())
+        json_str = f.read()
+
+    json_root = json.loads(json_str)
+    if isinstance(json_root, list):
+        json_root = {'result': json_root}
+        result = Result.from_json(json.dumps(json_root))
+    else:
+        result = Result.from_json(json_str)
     lines = []
     for test_file, test_case in ((tf, tc) for tf in result.result for tc in tf.test_cases):
         line = [json_file_path.stem, test_file.name, test_case.name]
 
         detector_results = sorted(test_case.detector_results, key=lambda dr: dr.name)
-        assert ALL_SMELLS == [dr.name for dr in detector_results]
+        if ALL_SMELLS is None:
+            ALL_SMELLS = [dr.name for dr in detector_results]
+        else:
+            assert ALL_SMELLS == [dr.name for dr in detector_results]
 
         for detector_result in detector_results:
             line.append(detector_result.has_smell)
