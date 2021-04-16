@@ -4,10 +4,7 @@ package pytestsmelldetector;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,10 +61,15 @@ public class UnknownTestTestSmellDetector extends AbstractTestSmellDetector {
             if (!(child instanceof PyReferenceExpression)) {
                 return;
             }
-
-            if (Util.isCallAssertMethod((PyReferenceExpression) child)) {
+            PyReferenceExpression pyReferenceExpression = (PyReferenceExpression) child;
+            String name = pyReferenceExpression.getName();
+            if (name != null && name.toLowerCase().contains("assert")) {
                 assertCounts.put(currentMethod, assertCounts.get(currentMethod) + 1);
             }
+        }
+
+        public void visitPyAssertStatement(PyAssertStatement assertStatement) {
+            assertCounts.put(currentMethod, assertCounts.get(currentMethod) + 1);
         }
     }
 }

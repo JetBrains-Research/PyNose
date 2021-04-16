@@ -27,6 +27,8 @@ public class Util {
             "assertNotEqual",
             "assertIs",
             "assertIsNot",
+            "assertIn",
+            "assertNotIn",
             "assertAlmostEqual",
             "assertNotAlmostEqual",
             "assertGreater",
