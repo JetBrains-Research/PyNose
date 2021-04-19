@@ -1,6 +1,5 @@
 package pytestsmelldetector;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
@@ -10,7 +9,8 @@ import java.util.*;
 
 public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(AssertionRouletteTestSmellDetector.class);
-    private final Map<PyFunction, List<PyCallExpression>> assertionsInTests = new HashMap<>();
+    private final Map<PyFunction, List<PyCallExpression>> assertionCallsInTests = new HashMap<>();
+    private final Map<PyFunction, List<PyAssertStatement>> assertStatementsInTests = new HashMap<>();
     private final Map<PyFunction, Boolean> testHasAssertionRoulette = new HashMap<>();
     private final AssertionRouletteVisitor visitor = new AssertionRouletteVisitor();
 
@@ -24,14 +24,14 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
         for (PyFunction testMethod : testMethods) {
             currentMethod = testMethod;
             testHasAssertionRoulette.put(currentMethod, false);
-            assertionsInTests.put(currentMethod, new ArrayList<>());
+            assertionCallsInTests.put(currentMethod, new ArrayList<>());
             visitor.visitElement(currentMethod);
         }
         currentMethod = null;
 
-        for (PyFunction testMethod : assertionsInTests.keySet()) {
+        for (PyFunction testMethod : assertionCallsInTests.keySet()) {
 
-            List<PyCallExpression> calls = assertionsInTests.get(testMethod);
+            List<PyCallExpression> calls = assertionCallsInTests.get(testMethod);
 
             if (calls.size() < 2) {
                 continue;
@@ -56,32 +56,42 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
                 }
             }
         }
+
+        for (PyFunction testMethod : assertStatementsInTests.keySet()) {
+            List<PyAssertStatement> asserts = assertStatementsInTests.get(testMethod);
+            if (asserts.size() < 2) {
+                continue;
+            }
+
+            for (PyAssertStatement assertStatement : asserts) {
+                PyExpression[] expressions = assertStatement.getArguments();
+                if (expressions.length < 2) {
+                    testHasAssertionRoulette.replace(testMethod, true);
+                }
+            }
+        }
     }
 
     @Override
     public void reset() {
         currentMethod = null;
         testHasAssertionRoulette.clear();
-        assertionsInTests.clear();
+        assertionCallsInTests.clear();
     }
 
     @Override
     public void reset(PyClass aTestCase) {
         testCase = aTestCase;
-        currentMethod = null;
-        testHasAssertionRoulette.clear();
-        assertionsInTests.clear();
-    }
-
-    public Map<PyFunction, Boolean> getTestHasAssertionRoulette() {
-        return testHasAssertionRoulette;
+        reset();
     }
 
     @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
-        JsonArray detailArray = Util.mapToJsonArray(testHasAssertionRoulette, PyFunction::getName, Objects::toString);
-        jsonObject.add("detail", detailArray);
+        JsonObject detail = new JsonObject();
+        detail.add("assertionCallsInTests", Util.mapToJsonArray(assertionCallsInTests, PyFunction::getName, Objects::toString));
+        detail.add("assertStatementsInTests", Util.mapToJsonArray(assertStatementsInTests, PyFunction::getName, Objects::toString));
+        jsonObject.add("detail", detail);
         return jsonObject;
     }
 
@@ -98,7 +108,11 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
                 return;
             }
 
-            assertionsInTests.get(currentMethod).add(callExpression);
+            assertionCallsInTests.get(currentMethod).add(callExpression);
+        }
+
+        public void visitPyAssertStatement(PyAssertStatement assertStatement) {
+            assertStatementsInTests.get(currentMethod).add(assertStatement);
         }
     }
 }
