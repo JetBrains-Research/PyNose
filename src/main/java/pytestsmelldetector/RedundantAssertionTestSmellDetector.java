@@ -5,18 +5,18 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(RedundantAssertionTestSmellDetector.class);
-    private final HashMap<PyFunction, Integer> testMethodHaveRedundantAssertion;
+    private final HashMap<PyFunction, Integer> testMethodHaveRedundantAssertCall;
+    private final HashMap<PyFunction, Integer> testMethodHaveRedundantAssertStatement;
     private final RedundantAssertionVisitor visitor = new RedundantAssertionVisitor();
 
     public RedundantAssertionTestSmellDetector(PyClass aTestCase) {
         testCase = aTestCase;
-        testMethodHaveRedundantAssertion = new HashMap<>();
+        testMethodHaveRedundantAssertCall = new HashMap<>();
+        testMethodHaveRedundantAssertStatement = new HashMap<>();
     }
 
     @Override
@@ -24,7 +24,8 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
         List<PyFunction> testMethods = Util.gatherTestMethods(testCase);
         for (PyFunction testMethod : testMethods) {
             currentMethod = testMethod;
-            testMethodHaveRedundantAssertion.put(currentMethod, 0);
+            testMethodHaveRedundantAssertCall.put(currentMethod, 0);
+            testMethodHaveRedundantAssertStatement.put(currentMethod, 0);
             visitor.visitElement(currentMethod);
         }
         currentMethod = null;
@@ -33,26 +34,28 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
     @Override
     public void reset() {
         currentMethod = null;
-        testMethodHaveRedundantAssertion.clear();
+        testMethodHaveRedundantAssertCall.clear();
+        testMethodHaveRedundantAssertStatement.clear();
     }
 
     @Override
     public void reset(PyClass aTestCase) {
         testCase = aTestCase;
         currentMethod = null;
-        testMethodHaveRedundantAssertion.clear();
+        reset();
     }
 
     @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
-        jsonObject.add("detail", Util.mapToJsonArray(testMethodHaveRedundantAssertion, PyFunction::getName, Objects::toString));
+        jsonObject.add("detail", Util.mapToJsonArray(testMethodHaveRedundantAssertCall, PyFunction::getName, Objects::toString));
         return jsonObject;
     }
 
     @Override
     public boolean hasSmell() {
-        return testMethodHaveRedundantAssertion.values().stream().anyMatch(c -> c > 0);
+        return testMethodHaveRedundantAssertCall.values().stream().anyMatch(c -> c > 0) ||
+                testMethodHaveRedundantAssertStatement.values().stream().anyMatch(s -> s > 0);
     }
 
     class RedundantAssertionVisitor extends MyPsiElementVisitor {
@@ -65,18 +68,47 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
             List<PyExpression> argList = callExpression.getArguments(null);
             if (Util.ASSERT_METHOD_ONE_PARAM.containsKey(((PyReferenceExpression) child).getName())) {
                 if (argList.get(0).getText().equals(Util.ASSERT_METHOD_ONE_PARAM.get(((PyReferenceExpression) child).getName()))) {
-                    testMethodHaveRedundantAssertion.replace(
+                    testMethodHaveRedundantAssertCall.replace(
                             currentMethod,
-                            testMethodHaveRedundantAssertion.get(currentMethod) + 1
+                            testMethodHaveRedundantAssertCall.get(currentMethod) + 1
                     );
                 }
             } else if (Util.ASSERT_METHOD_TWO_PARAMS.contains(((PyReferenceExpression) child).getName())) {
                 if (argList.get(0).getText().equals(argList.get(1).getText())) {
-                    testMethodHaveRedundantAssertion.replace(
+                    testMethodHaveRedundantAssertCall.replace(
                             currentMethod,
-                            testMethodHaveRedundantAssertion.get(currentMethod) + 1
+                            testMethodHaveRedundantAssertCall.get(currentMethod) + 1
                     );
                 }
+            }
+        }
+
+        public void visitPyAssertStatement(PyAssertStatement assertStatement) {
+            PyExpression[] expressions = assertStatement.getArguments();
+            if (expressions.length < 1) {
+                return;
+            }
+
+            if (!(expressions[0] instanceof PyBinaryExpression)) {
+                return;
+            }
+
+            PyBinaryExpression binaryExpression = (PyBinaryExpression) expressions[0];
+            PsiElement psiOperator = binaryExpression.getPsiOperator();
+            if (psiOperator == null) {
+                return;
+            }
+
+            if (binaryExpression.getChildren().length < 2) {
+                return;
+            }
+            final Set<String> operatorText = new HashSet<>(Arrays.asList("==", "!=", ">", ">=", "<=", "<", "is"));
+            if (operatorText.contains(psiOperator.getText()) &&
+                    binaryExpression.getChildren()[0].getText().equals(binaryExpression.getChildren()[1].getText())) {
+                testMethodHaveRedundantAssertStatement.replace(
+                        currentMethod,
+                        testMethodHaveRedundantAssertStatement.get(currentMethod) + 1
+                );
             }
         }
     }
