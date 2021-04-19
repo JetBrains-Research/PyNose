@@ -70,6 +70,12 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
                 }
             }
         }
+
+        for (PyFunction testMethod : assertStatementsInTests.keySet()) {
+            if (assertStatementsInTests.get(testMethod).size() == 1 && assertionCallsInTests.get(testMethod).size() == 1) {
+                testHasAssertionRoulette.replace(testMethod, true);
+            }
+        }
     }
 
     @Override
