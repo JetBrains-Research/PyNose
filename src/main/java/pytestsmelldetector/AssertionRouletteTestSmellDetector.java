@@ -25,6 +25,7 @@ public class AssertionRouletteTestSmellDetector extends AbstractTestSmellDetecto
             currentMethod = testMethod;
             testHasAssertionRoulette.put(currentMethod, false);
             assertionCallsInTests.put(currentMethod, new ArrayList<>());
+            assertStatementsInTests.put(currentMethod, new ArrayList<>());
             visitor.visitElement(currentMethod);
         }
         currentMethod = null;
