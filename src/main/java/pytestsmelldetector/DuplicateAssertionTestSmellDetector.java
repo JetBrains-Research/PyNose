@@ -3,17 +3,16 @@ package pytestsmelldetector;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 
 import java.util.*;
 
 public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(DuplicateAssertionTestSmellDetector.class);
-    private final Map<PyFunction, Boolean> testHasDuplicateAssert = new HashMap<>();
-    private final Set<String> asserts = new HashSet<>();
+    private final Map<PyFunction, Boolean> testHasDuplicateAssertCall = new HashMap<>();
+    private final Map<PyFunction, Boolean> testHasDuplicateAssertStatement = new HashMap<>();
+    private final Set<String> assertCalls = new HashSet<>();
+    private final Set<String> assertStatements = new HashSet<>();
     private final DuplicateAssertionVisitor visitor = new DuplicateAssertionVisitor();
 
     public DuplicateAssertionTestSmellDetector(PyClass aTestCase) {
@@ -25,8 +24,10 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
         List<PyFunction> testMethods = Util.gatherTestMethods(testCase);
         for (PyFunction testMethod : testMethods) {
             currentMethod = testMethod;
-            asserts.clear();
-            testHasDuplicateAssert.put(currentMethod, false);
+            assertCalls.clear();
+            assertStatements.clear();
+            testHasDuplicateAssertCall.put(currentMethod, false);
+            testHasDuplicateAssertStatement.put(currentMethod, false);
             visitor.visitElement(currentMethod);
         }
         currentMethod = null;
@@ -34,25 +35,29 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
 
     @Override
     public void reset() {
-        testHasDuplicateAssert.clear();
+        testHasDuplicateAssertCall.clear();
+        testHasDuplicateAssertStatement.clear();
     }
 
     @Override
     public void reset(PyClass aTestCase) {
         testCase = aTestCase;
-        testHasDuplicateAssert.clear();
+        reset();
     }
 
     @Override
     public JsonObject getSmellDetailJSON() {
         JsonObject jsonObject = templateSmellDetailJSON();
-        jsonObject.add("detail", Util.mapToJsonArray(testHasDuplicateAssert, PyFunction::getName, Objects::toString));
+        JsonObject detail = new JsonObject();
+        detail.add("testHasDuplicateAssertCall", Util.mapToJsonArray(testHasDuplicateAssertCall, PyFunction::getName, Objects::toString));
+        detail.add("testHasDuplicateAssertStatement", Util.mapToJsonArray(testHasDuplicateAssertStatement, PyFunction::getName, Objects::toString));
+        jsonObject.add("detail", detail);
         return jsonObject;
     }
 
     @Override
     public boolean hasSmell() {
-        return testHasDuplicateAssert.containsValue(true);
+        return testHasDuplicateAssertCall.containsValue(true) || testHasDuplicateAssertStatement.containsValue(true);
     }
 
     class DuplicateAssertionVisitor extends MyPsiElementVisitor {
@@ -63,10 +68,24 @@ public class DuplicateAssertionTestSmellDetector extends AbstractTestSmellDetect
             }
 
             String assertionCall = callExpression.getText();
-            if (asserts.contains(assertionCall)) {
-                testHasDuplicateAssert.replace(currentMethod, true);
+            if (assertCalls.contains(assertionCall)) {
+                testHasDuplicateAssertCall.replace(currentMethod, true);
             } else {
-                asserts.add(assertionCall);
+                assertCalls.add(assertionCall);
+            }
+        }
+
+        public void visitPyAssertStatement(PyAssertStatement assertStatement) {
+            PyExpression[] assertArgs = assertStatement.getArguments();
+            if (assertArgs.length < 1) {
+                return;
+            }
+
+            String assertStatementBody = assertArgs[0].getText();
+            if (assertStatements.contains(assertStatementBody)) {
+                testHasDuplicateAssertStatement.replace(currentMethod, true);
+            } else {
+                assertStatements.add(assertStatementBody);
             }
         }
     }
