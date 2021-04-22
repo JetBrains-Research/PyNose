@@ -2,10 +2,7 @@ package pytestsmelldetector;
 
 import com.google.gson.JsonObject;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.*;
 
 import java.util.*;
 
@@ -26,7 +23,11 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
             testMethodSetUpFieldsUsage.put(testMethod, new HashSet<>());
         }
 
-        Optional<PyFunction> optSetUp = Arrays.stream(testCase.getStatementList().getStatements()).filter(PyFunction.class::isInstance).map(PyFunction.class::cast).filter(pyFunction -> Objects.equals(pyFunction.getName(), "setUp")).findFirst();
+        Optional<PyFunction> optSetUp = Arrays.stream(testCase.getStatementList().getStatements())
+                .filter(PyFunction.class::isInstance)
+                .map(PyFunction.class::cast)
+                .filter(pyFunction -> Objects.equals(pyFunction.getName(), "setUp"))
+                .findFirst();
 
         if (!optSetUp.isPresent()) {
             return;
@@ -34,6 +35,18 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
 
         visitor.inSetUpMode = true;
         visitor.visitElement(optSetUp.get());
+
+        Optional<PyFunction> optSetUpClass = Arrays.stream(testCase.getStatementList().getStatements())
+                .filter(PyFunction.class::isInstance)
+                .map(PyFunction.class::cast)
+                .filter(pyFunction -> Objects.equals(pyFunction.getName(), "setUpClass"))
+                .findFirst();
+
+        if (!optSetUpClass.isPresent()) {
+            return;
+        }
+        visitor.visitElement(optSetUpClass.get());
+
         visitor.inSetUpMode = false;
 
         for (PyFunction testMethod : testMethods) {
@@ -70,6 +83,20 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
 
     class TestMaverickVisitor extends MyPsiElementVisitor {
         boolean inSetUpMode = true;
+        String methodFirstParamName;
+
+        public void visitPyFunction(PyFunction function) {
+            if (inSetUpMode) {
+                if (Objects.equals(function.getName(), "setUp") || Objects.equals(function.getName(), "setUpClass")) {
+                    if (function.getParameterList().getParameters().length > 0) {
+                        methodFirstParamName = function.getParameterList().getParameters()[0].getName();
+                    }
+                }
+            }
+            for (PsiElement element : function.getChildren()) {
+                visitElement(element);
+            }
+        }
 
         public void visitPyTargetExpression(PyTargetExpression targetExpression) {
             if (!inSetUpMode) {
@@ -79,8 +106,8 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
                 return;
             }
 
-            if (targetExpression.getText().startsWith("self.")) {
-                setUpFields.add(targetExpression.getText());
+            if (targetExpression.getText().startsWith(methodFirstParamName + ".")) {
+                setUpFields.add(targetExpression.getText().replace(methodFirstParamName + ".", "self."));
             }
         }
 

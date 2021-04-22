@@ -41,6 +41,22 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
             visitor.visitElement(setUpFunction.get());
         }
 
+        Optional<PyFunction> setUpClassFunction = Arrays.stream(testCase.getStatementList().getStatements())
+                .filter(PyFunction.class::isInstance)
+                .map(PyFunction.class::cast)
+                .filter(f ->
+                        Objects.equals(f.getName(), "setUpClass") &&
+                        f.getParent() instanceof PyStatementList &&
+                        f.getParent().getParent() instanceof PyClass &&
+                        Util.isValidUnittestCase((PyClass) f.getParent().getParent())
+                )
+                .findFirst();
+
+        if (setUpClassFunction.isPresent()) {
+            visitor.elementToCheck = PyAssignmentStatement.class;
+            visitor.visitElement(setUpClassFunction.get());
+        }
+
         visitor.elementToCheck = PyReferenceExpression.class;
         for (PyFunction testMethod : Util.gatherTestMethods(testCase)) {
             currentMethod = testMethod;
@@ -77,6 +93,20 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
 
     class GeneralFixtureVisitor extends MyPsiElementVisitor {
         Class<? extends PyElement> elementToCheck;
+        String methodFirstParamName;
+
+        public void visitPyFunction(PyFunction function) {
+            if (elementToCheck.equals(PyAssignmentStatement.class)) {
+                if (Objects.equals(function.getName(), "setUp") || Objects.equals(function.getName(), "setUpClass")) {
+                    if (function.getParameterList().getParameters().length > 0) {
+                        methodFirstParamName = function.getParameterList().getParameters()[0].getName();
+                    }
+                }
+            }
+            for (PsiElement element : function.getChildren()) {
+                visitElement(element);
+            }
+        }
 
         public void visitPyAssignmentStatement(PyAssignmentStatement assignmentStatement) {
             if (!elementToCheck.equals(PyAssignmentStatement.class)) {
@@ -92,8 +122,8 @@ public class GeneralFixtureTestSmellDetector extends AbstractTestSmellDetector {
                 }
 
                 PyTargetExpression target = (PyTargetExpression) expression;
-                if (target.getText().startsWith("self.")) {
-                    assignmentStatementTexts.add(target.getText());
+                if (target.getText().startsWith(methodFirstParamName + ".")) {
+                    assignmentStatementTexts.add(target.getText().replace(methodFirstParamName + ".", "self."));
                 }
             }
         }

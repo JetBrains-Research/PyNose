@@ -147,29 +147,6 @@ public class Util {
                 isTestCaseClass((PyClass) e.getParent().getParent());
     }
 
-    public static List<Class<? extends AbstractTestSmellDetector>> allDetectorClass() {
-        return Arrays.asList(
-                AssertionRouletteTestSmellDetector.class,
-                ConditionalTestLogicTestSmellDetector.class,
-                ConstructorInitializationTestSmellDetector.class,
-                DefaultTestTestSmellDetector.class,
-                // EagerTestTestSmellDetector.class,
-                EmptyTestTestSmellDetector.class,
-                ExceptionHandlingTestSmellDetector.class,
-                GeneralFixtureTestSmellDetector.class,
-                IgnoredTestTestSmellDetector.class,
-                MagicNumberTestTestSmellDetector.class,
-                RedundantAssertionTestSmellDetector.class,
-                RedundantPrintTestSmellDetector.class,
-                SleepyTestTestSmellDetector.class,
-                UnknownTestTestSmellDetector.class,
-                ObscureInLineSetupTestSmellDetector.class,
-                TestMaverickTestSmellDetector.class,
-                LackCohesionTestSmellDetector.class,
-                SuboptimalAssertTestSmellDetector.class
-        );
-    }
-
     public static List<AbstractTestSmellDetector> newAllDetectors(PyClass testCase) {
         return Arrays.asList(
                 new AssertionRouletteTestSmellDetector(testCase),
