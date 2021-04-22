@@ -29,12 +29,10 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
                 .filter(pyFunction -> Objects.equals(pyFunction.getName(), "setUp"))
                 .findFirst();
 
-        if (!optSetUp.isPresent()) {
-            return;
+        if (optSetUp.isPresent()) {
+            visitor.inSetUpMode = true;
+            visitor.visitElement(optSetUp.get());
         }
-
-        visitor.inSetUpMode = true;
-        visitor.visitElement(optSetUp.get());
 
         Optional<PyFunction> optSetUpClass = Arrays.stream(testCase.getStatementList().getStatements())
                 .filter(PyFunction.class::isInstance)
@@ -42,10 +40,10 @@ public class TestMaverickTestSmellDetector extends AbstractTestSmellDetector {
                 .filter(pyFunction -> Objects.equals(pyFunction.getName(), "setUpClass"))
                 .findFirst();
 
-        if (!optSetUpClass.isPresent()) {
-            return;
+        if (optSetUpClass.isPresent()) {
+            visitor.inSetUpMode = true;
+            visitor.visitElement(optSetUpClass.get());
         }
-        visitor.visitElement(optSetUpClass.get());
 
         visitor.inSetUpMode = false;
 
