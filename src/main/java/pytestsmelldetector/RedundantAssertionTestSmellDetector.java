@@ -92,6 +92,14 @@ public class RedundantAssertionTestSmellDetector extends AbstractTestSmellDetect
                 return;
             }
 
+            if (expressions[0] instanceof PyLiteralExpression) {
+                testMethodHaveRedundantAssertStatement.replace(
+                        currentMethod,
+                        testMethodHaveRedundantAssertStatement.get(currentMethod) + 1
+                );
+                return;
+            }
+
             if (!(expressions[0] instanceof PyBinaryExpression)) {
                 return;
             }
