@@ -1,12 +1,10 @@
-<!-- Copyright 2000-2020 JetBrains s.r.o. and other contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file. -->
-
 <idea-plugin>
 
   <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-  <id>org.intellij.sdk.pycharm</id>
+  <id>org.intellij.sdk.pycharm</id>  <!-- TODO: anonymize this? -->
 
   <!-- Text to display as name on Preferences/Settings | Plugin page -->
-  <name>SDK: PyCharm Sample</name>
+  <name>Python Test Smell Detector</name>
 
   <!-- Requires the python plugin to run -->
   <depends>com.intellij.modules.python</depends>
@@ -14,32 +12,32 @@
   <!-- Text to display as description on Preferences/Settings | Plugin page -->
   <description>
     <![CDATA[
-      Demonstrates how to configure a plugin project for a PyCharm plugin.
+      This is a test smell detector for Python.
     ]]>
   </description>
   <change-notes>
     <![CDATA[
-      <b>0.1.0</b> First release v2019.1 IntelliJ Platform / PyCharm<br>
+      <b>0.1.0</b> First release<br>
     ]]>
   </change-notes>
 
   <!-- Text to display as company information on Preferences/Settings | Plugin page -->
-  <vendor url="https://plugins.jetbrains.com">IntelliJ Platform SDK</vendor>
+  <vendor url="https://plugins.jetbrains.com">IntelliJ Platform SDK</vendor>  <!-- TODO: anonymize this? -->
 
   <actions>
     <!-- Define a new menu group as a last entry in the main menu -->
-    <group id="org.intellij.sdk.pycharm.NewGroupedActions" text="SDK: Plugin" popup="true">
+    <group id="org.intellij.sdk.pycharm.NewGroupedActions" text="SDK: Plugin" popup="true">  <!-- TODO: anonymize this? -->
       <add-to-group group-id="MainMenu" anchor="last"/>
       <!-- Add a single action to the new group -->
-      <action id="org.intellij.sdk.pycharm.PopupDialogAction" class="org.intellij.sdk.pycharm.PopupDialogAction"
+      <action id="ui.pycharm.PopupDialogAction" class="ui.pycharm.PopupDialogAction"
               text="Pop a Dialog" description="SDK PyCharm basics example" icon="SdkIcons.Sdk_default_icon">
       </action>
     </group>
   </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
+  <extensions defaultExtensionNs="com.intellij">  <!-- TODO: anonymize this? -->
     <toolWindow id="Test Smell Detector" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                factoryClass="org.intellij.sdk.toolWindow.MyToolWindowFactory"/>
+                factoryClass="ui.toolWindow.MyToolWindowFactory"/>
     <appStarter implementation="PluginRunner"/>
   </extensions>
 

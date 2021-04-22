@@ -35,7 +35,7 @@ class Result:
     result: List[FileResult]
 
 
-DETECTOR_OUTPUT = Path('C:\\Users\\tjwan\\PycharmProjects\\new_test_repo_outDir')
+DETECTOR_OUTPUT = Path('/Path/to/Detector/Output')
 JSON_FILE_PATHS = [p for p in DETECTOR_OUTPUT.iterdir() if p.is_file() and p.suffix == '.json']
 ALL_SMELLS = None
 

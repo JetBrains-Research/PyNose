@@ -4,9 +4,9 @@ from pathlib import Path
 
 import tqdm
 
-DETECTOR_OUTPUT = Path('C:\\Users\\tjwan\\PycharmProjects\\new_test_repo_outDir')
-PLUGIN_ROOT = Path('C:\\Users\\tjwan\\IdeaProjects\\pycharm')
-REPO_PREFIX = Path('C:\\Users\\tjwan\\PycharmProjects\\new_test_repo')
+DETECTOR_OUTPUT = Path('/Path/to/Detector/Output')
+PLUGIN_ROOT = Path('.')
+REPO_PREFIX = Path('/Path/to/Folder/Having/Repositories')
 PYTHON_INTERPRETER_NAME = 'Python 3.8'
 
 PROJECT_LIST = [p for p in REPO_PREFIX.iterdir() if p.is_dir()]
