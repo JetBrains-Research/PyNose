@@ -80,9 +80,7 @@ public class RedundantPrintTestSmellDetector extends AbstractTestSmellDetector {
             if (e.getParent() instanceof PyiFile &&
                     ((PyiFile) e.getParent()).getName().equals("builtins.pyi") &&
                     e.getParent().getParent() instanceof PsiDirectory &&
-                    ((PsiDirectory) e.getParent().getParent()).getName().equals("3") &&
-                    e.getParent().getParent().getParent() instanceof PsiDirectory &&
-                    ((PsiDirectory) e.getParent().getParent().getParent()).getName().equals("stdlib")
+                    ((PsiDirectory) e.getParent().getParent()).getName().equals("stdlib")
             ) {
                 testMethodHavePrint.replace(currentMethod, true);
             }
