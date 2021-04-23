@@ -130,7 +130,7 @@ Click the gear icon at the top and then select "Install Plugin from Disk...".
 
 ![install-from-disk](./README.assets/install-from-disk.png)
 
-Navigate to and then select the `.zip` file just generate. When you see the "Python Test Smell Detector" appears, it means the plugin is successfully installed.
+Navigate to and then select the `.zip` file just generate. When you see the "PyNose" appears, it means the plugin is successfully installed (the icon may be different).
 
 ![plugin-installed](./README.assets/plugin-installed.png)
 
