@@ -134,6 +134,6 @@ Navigate to and then select the `.zip` file just generate. When you see the "PyN
 
 ![plugin-installed](./README.assets/plugin-installed.png)
 
-Click the "Test Smell Detector" in the bottom right corner, and you can see the tool listing all `.py` files and all test cases in it, with detected smells highlighted in red.
+Click the "PyNose" in the bottom right corner, and you can see the tool listing all `.py` files and all test cases in it, with detected smells highlighted in red.
 
 ![tool-screenshot](./README.assets/tool-screenshot.png)
