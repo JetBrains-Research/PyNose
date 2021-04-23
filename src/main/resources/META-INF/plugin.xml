@@ -1,33 +1,23 @@
 <idea-plugin>
+    <id>pynose.PyNose</id>
+    <name>PyNose</name>
+    <vendor>PyNose</vendor>
 
-  <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-  <id>python_test_smell_detector</id>
+    <description><![CDATA[
+    This is a test smell detector for Python.
+    ]]></description>
 
-  <!-- Text to display as name on Preferences/Settings | Plugin page -->
-  <name>PyNose</name>
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.python</depends>
 
-  <!-- Requires the python plugin to run -->
-  <depends>com.intellij.modules.python</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow factoryClass="pynose.ui.PyNoseGUIFactory" id="PyNose" anchor="right" secondary="true" icon="AllIcons.Json.Object"/>
+        <appStarter implementation="pynose.PluginRunner"/>
+    </extensions>
 
-  <!-- Text to display as description on Preferences/Settings | Plugin page -->
-  <description>
-    <![CDATA[
-      This is a test smell detector for Python.
-    ]]>
-  </description>
-  <change-notes>
-    <![CDATA[
-      <b>0.1.0</b> First release<br>
-    ]]>
-  </change-notes>
-
-  <!-- Text to display as company information on Preferences/Settings | Plugin page -->
-  <vendor url="https://example.com">Python Test Smell Detector</vendor>
-
-  <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="PyNose" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                factoryClass="ui.toolWindow.MyToolWindowFactory"/>
-    <appStarter implementation="PluginRunner"/>
-  </extensions>
-
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
 </idea-plugin>
