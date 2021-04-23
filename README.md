@@ -1,11 +1,18 @@
 # PyCharm Test Smell Plugin
 
-## Get Started
+## GUI Mode
+
+1. Download the prebuilt plugin from [here](https://example.com);
+2. Install the plugin into PyCharm 2021.1. [This](https://www.jetbrains.com/help/pycharm/managing-plugins.html#install_plugin_from_disk) official instruction can help.
+
+![gui-screenshot](./README.assets/gui-screenshot.png)
+
+## Command Line Mode
 
 ### Dependencies
 
 - IntelliJ IDEA (Community Edition or Ultimate)
-- A modern Python 3 interpreter like Python 3.8 or newer
+- A modern Python 3 interpreter something like Python 3.8 or newer
 - JDK 11
 
 ### Download and Open Project
@@ -77,8 +84,6 @@ You should be able to see the interpreter as well as all its packages from PyPI 
 
 Click "OK" and then close the welcome screen. Now the Python interpreter is set up.
 
-## Command-line Mode
-
 ### Run the Tool for Test Smell Analysis
 
 First, we need to undo the two modifications to the code we have done above. If you get this project by cloning with git, and you did not modify anything else, you can open a terminal, navigate to the project root, and type
@@ -119,25 +124,3 @@ Just save and run this script. The script will then start the tool.
 ### Generate Test Smell Statistics
 
 You can run `get_csv_stats.py` to generate an aggregated statistics for all analyzed repositories. Remember to set `DETECTOR_OUTPUT` variable in that file.
-
-## GUI Mode
-
-### Overview
-
-PyNose will show a list of `.py` files and test cases where at least one test smell is detected. Here is a screenshot of the tool running with a real-world project in GUI mode.
-
-![gui-screenshot](./README.assets/gui-screenshot.png)
-
-### Debugging
-
-Modifying [`build.gradle`](./build.gradle) and [`src/main/resources/META-INF/plugin.xml`](./src/main/resources/META-INF/plugin.xml), and then execute the "runIde" task, similar to the steps in the ["Set up License and Python"](#set-up-license-and-python) section. PyCharm will start, and you can use IntelliJ IDEA to see logs and debug the tool.
-
-### Building as a Plugin
-
-Run the "buildPlugin" task instead as shown below.
-
-![build-plugin](./README.assets/build-plugin.png)
-
-You can find the plugin at `build/distributions/PyNose-1.0-SNAPSHOT.zip` when the building process is done. Now you can install it into PyCharm. [This official tutorial](https://www.jetbrains.com/help/pycharm/managing-plugins.html#install_plugin_from_disk) may be helpful.
-
-
