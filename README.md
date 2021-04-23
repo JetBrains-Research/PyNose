@@ -65,7 +65,7 @@ The PyCharm splash screen should appear. Now we need to set up Python interprete
 
 Go to "Python Interpreter" section. If no interpreter is shown, click the top-right gear icon and choose "Add..." from its small pop-up menu.
 
-![add-python-interpreter](C:\Users\tjwan\IdeaProjects\pycharm\README.assets\add-python-interpreter.png)
+![add-python-interpreter](./README.assets/add-python-interpreter.png)
 
 You can just choose an existed system interpreter.
 
