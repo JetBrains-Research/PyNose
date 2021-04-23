@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.python.psi.PyClass;
 import pytestsmelldetector.AbstractTestSmellDetector;
 import pytestsmelldetector.Util;
@@ -52,11 +53,21 @@ public class MyToolWindow {
                     stringBuilder.append("<ul>");
                     for (AbstractTestSmellDetector detector : allDetectors) {
                         detector.analyze();
-                        stringBuilder.append("<li>")
-                                .append(detector.getSmellName())
-                                .append(": ")
-                                .append(detector.hasSmell())
-                                .append("</li>");
+                        stringBuilder.append("<li>");
+
+                        boolean hasSmell = detector.hasSmell();
+                        if (hasSmell) {
+                            stringBuilder.append("<font color=red>")
+                                    .append(detector.getSmellName())
+                                    .append(": ")
+                                    .append(true)
+                                    .append("</font></li>");
+                        } else {
+                            stringBuilder.append(detector.getSmellName())
+                                    .append(": ")
+                                    .append(false)
+                                    .append("</li>");
+                        }
                     }
                     stringBuilder.append("</ul></div>");
                 }
@@ -69,6 +80,7 @@ public class MyToolWindow {
         }
 
         resultLabel.setText(message);
+        resultLabel.setBorder(JBUI.Borders.empty(10));
     }
 
     public JPanel getContent() {

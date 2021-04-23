@@ -24,17 +24,6 @@
   <!-- Text to display as company information on Preferences/Settings | Plugin page -->
   <vendor url="https://example.com">Python Test Smell Detector</vendor>
 
-  <actions>
-    <!-- Define a new menu group as a last entry in the main menu -->
-    <group id="python_test_smell_detector.NewGroupedActions" text="PyNose" popup="true">
-      <add-to-group group-id="MainMenu" anchor="last"/>
-      <!-- Add a single action to the new group -->
-      <action id="ui.pycharm.PopupDialogAction" class="ui.pycharm.PopupDialogAction"
-              text="Pop a Dialog" description="Pop a Dialog" icon="SdkIcons.Sdk_default_icon">
-      </action>
-    </group>
-  </actions>
-
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Test Smell Detector" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                 factoryClass="ui.toolWindow.MyToolWindowFactory"/>
