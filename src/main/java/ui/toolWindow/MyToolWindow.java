@@ -35,22 +35,36 @@ public class MyToolWindow {
             Collection<VirtualFile> files = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project));
 
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("<html>");
+            stringBuilder.append("<body>");
+            stringBuilder.append("<h1>Python Test Smell Detector</h1>");
 
             for (VirtualFile f : files) {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
 
                 if (psiFile == null) continue;
 
+                stringBuilder.append("<div>");
+                stringBuilder.append("<h2>").append(psiFile.getName()).append("</h2>");
                 for (PyClass testCase : Util.gatherTestCases(psiFile)) {
+                    stringBuilder.append("<div><h3>").append(testCase.getName()).append("</h3>");
                     List<AbstractTestSmellDetector> allDetectors = Util.newAllDetectors(testCase);
+                    stringBuilder.append("<ul>");
                     for (AbstractTestSmellDetector detector : allDetectors) {
                         detector.analyze();
-                        stringBuilder.append(detector.getSmellName()).append('\n');
-                        stringBuilder.append(detector.getSmellDetail()).append("\n\n");
+                        stringBuilder.append("<li>")
+                                .append(detector.getSmellName())
+                                .append(": ")
+                                .append(detector.hasSmell())
+                                .append("</li>");
                     }
+                    stringBuilder.append("</ul></div>");
                 }
+                stringBuilder.append("</div>");
             }
 
+            stringBuilder.append("</body>");
+            stringBuilder.append("</html>");
             message = stringBuilder.toString();
         }
 
