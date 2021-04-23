@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class MyToolWindow {
-
+    private static final String CSS = "h2 { margin-left: 5px; } h3 { margin-left: 10px; }";
     private final Project project;
     private JButton refreshToolWindowButton;
     private JLabel resultLabel;
@@ -37,41 +37,48 @@ public class MyToolWindow {
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("<html>");
+            stringBuilder.append("<style>").append(CSS).append("</style>");
             stringBuilder.append("<body>");
-            stringBuilder.append("<h1>Python Test Smell Detector</h1>");
+            stringBuilder.append("<h1>Smells Detected by PyNose</h1>");
 
             for (VirtualFile f : files) {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(f);
 
                 if (psiFile == null) continue;
 
-                stringBuilder.append("<div>");
-                stringBuilder.append("<h2>").append(psiFile.getName()).append("</h2>");
-                for (PyClass testCase : Util.gatherTestCases(psiFile)) {
-                    stringBuilder.append("<div><h3>").append(testCase.getName()).append("</h3>");
+                StringBuilder fileHtml = new StringBuilder();
+                List<PyClass> testCases = Util.gatherTestCases(psiFile);
+                int totalSmellCount = 0;
+                for (PyClass testCase : testCases) {
                     List<AbstractTestSmellDetector> allDetectors = Util.newAllDetectors(testCase);
-                    stringBuilder.append("<ul>");
+
+                    StringBuilder ulli = new StringBuilder();
+                    ulli.append("<ul>");
+                    int smellCount = 0;
                     for (AbstractTestSmellDetector detector : allDetectors) {
                         detector.analyze();
-                        stringBuilder.append("<li>");
-
                         boolean hasSmell = detector.hasSmell();
                         if (hasSmell) {
-                            stringBuilder.append("<font color=red>")
+                            ulli.append("<li>")
                                     .append(detector.getSmellName())
-                                    .append(": ")
-                                    .append(true)
-                                    .append("</font></li>");
-                        } else {
-                            stringBuilder.append(detector.getSmellName())
-                                    .append(": ")
-                                    .append(false)
                                     .append("</li>");
+                            ++smellCount;
                         }
                     }
-                    stringBuilder.append("</ul></div>");
+                    ulli.append("</ul>");
+                    if (smellCount > 0) {
+                        fileHtml.append("<div class=\"test-case\"><h3>").append(testCase.getName()).append("</h3>");
+                        fileHtml.append(ulli);
+                        fileHtml.append("</div>");
+                    }
+                    totalSmellCount += smellCount;
                 }
-                stringBuilder.append("</div>");
+                if (testCases.size() > 0 && totalSmellCount > 0) {
+                    stringBuilder.append("<div class=\"test-file\">");
+                    stringBuilder.append("<h2>").append(psiFile.getName()).append("</h2>");
+                    stringBuilder.append(fileHtml);
+                    stringBuilder.append("</div>");
+                }
             }
 
             stringBuilder.append("</body>");
