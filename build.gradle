@@ -1,12 +1,10 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.22'
+    id 'org.jetbrains.intellij' version '0.7.2'
 }
 
-group 'python_test_smell_detector'
-version '0.1.0'
-
-sourceCompatibility = 1.8
+group 'pynose'
+version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -22,14 +20,14 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version = '2020.2.1'
-    type = 'PY'
-    downloadSources = false
-    plugins 'Pythonid'
+    version '2021.1.1'
+    type 'PC'
+    downloadSources false
+    plugins = ['PythonCore']
     tasks {
         runIde {
             args(
-                    'test_smell',
+                    'pynose',
                     project.hasProperty('myPath') ? myPath : '',
                     project.hasProperty('myPython') ? myPython : '',
                     project.hasProperty('myOutDir') ? myOutDir : ''
@@ -38,13 +36,11 @@ intellij {
         }
     }
 }
-
-buildSearchableOptions {
-    enabled = false
-}
-
 patchPluginXml {
-    version = project.version
-    sinceBuild = '202'
-    untilBuild = '202.*'
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}
+test {
+    useJUnitPlatform()
 }
