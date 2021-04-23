@@ -6,13 +6,6 @@ import com.jetbrains.python.psi.PyClass;
 
 import java.util.Objects;
 
-/**
- * Created with IntelliJ IDEA on MacBook.
- * Description:
- * User: Tongjie Wang
- * Date: 2020-11-15
- * Time: 9:13 PM
- */
 public class DefaultTestTestSmellDetector extends AbstractTestSmellDetector {
     private static final Logger LOG = Logger.getInstance(DefaultTestTestSmellDetector.class);
     private boolean isDefaultTest;
