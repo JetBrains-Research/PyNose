@@ -30,7 +30,7 @@ public class PluginRunner implements ApplicationStarter {
     @Override
     public void main(@NotNull List<String> args) {
         System.out.println("args = " + args);
-        if (args.size() != 4) {
+        if (args.size() != 4 || args.subList(1, args.size()).stream().anyMatch(String::isBlank)) {
             System.err.println("incorrect command line arguments");
             System.err.println("usage: test_smell projectPath pythonInterpreter outputDir");
             System.exit(0);
