@@ -37,9 +37,7 @@ intellij {
     }
 }
 patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    changeNotes """Initial release."""
 }
 test {
     useJUnitPlatform()
