@@ -61,7 +61,7 @@ The PyCharm splash screen should appear, then an error about the license should 
 
 ![license-issue-prompt](./README.assets/license-issue-prompt.png)
 
-If you are using JetBrains account, just enter the username and password and click "Activate".
+If you have a JetBrains account, just enter the username and password and click "Activate". Otherwise, there are [free education licenses](https://www.jetbrains.com/community/education/#students) available.
 
 ![enter-license](./README.assets/enter-license.png)
 
@@ -82,6 +82,8 @@ You should be able to see the interpreter as well as all its packages from PyPI 
 ![python-interpreter-final-step](./README.assets/python-interpreter-final-step.png)
 
 Click "OK" and then close the welcome screen. Now the license and Python is set up.
+
+## Commandline Mode
 
 ### Run the Tool for Test Smell Analysis
 
@@ -105,3 +107,29 @@ Just save and run this script. The script will then start the tool.
 ### Generate Test Smell Statistics
 
 You can run `get_csv_stats.py` to generate an aggregated statistics for all analyzed repositories. Remember to set `DETECTOR_OUTPUT` variable in that file.
+
+## GUI Mode
+
+### Debugging
+
+Modifying [`build.gradle`](./build.gradle) and [`src/main/resources/META-INF/plugin.xml`](./src/main/resources/META-INF/plugin.xml), and then execute the "runIde" task, similar to the steps in the ["Set up License and Python"](#set-up-license-and-python) section. PyCharm will start, and you can use IntelliJ IDEA to see logs and debug the tool.
+
+### Building as a Plugin
+
+Run the "buildPlugin" task instead as shown below.
+
+![buildPlugin](./README.assets/buildPlugin.png)
+
+You can find the plugin at `build/distributions/pycharm-0.1.0.zip` when the building process is done.
+
+Open PyCharm 2020.2.*, and go to "Configure" and then "Plugins" menu.
+
+![plugin-menu](./README.assets/plugin-menu.png)
+
+Click the gear icon at the top and then select "Install Plugin from Disk...".
+
+![install-from-disk](./README.assets/install-from-disk.png)
+
+Navigate to and then select the `.zip` file just generate. When you see the "Python Test Smell Detector" appears, it means the plugin is successfully installed.
+
+![plugin-installed](./README.assets/plugin-installed.png)
