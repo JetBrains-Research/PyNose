@@ -1,7 +1,7 @@
 <idea-plugin>
 
   <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
-  <id>org.intellij.sdk.pycharm</id>  <!-- TODO: anonymize this? -->
+  <id>python_test_smell_detector</id>
 
   <!-- Text to display as name on Preferences/Settings | Plugin page -->
   <name>Python Test Smell Detector</name>
@@ -22,20 +22,20 @@
   </change-notes>
 
   <!-- Text to display as company information on Preferences/Settings | Plugin page -->
-  <vendor url="https://plugins.jetbrains.com">IntelliJ Platform SDK</vendor>  <!-- TODO: anonymize this? -->
+  <vendor url="https://example.com">Python Test Smell Detector</vendor>
 
   <actions>
     <!-- Define a new menu group as a last entry in the main menu -->
-    <group id="org.intellij.sdk.pycharm.NewGroupedActions" text="SDK: Plugin" popup="true">  <!-- TODO: anonymize this? -->
+    <group id="python_test_smell_detector.NewGroupedActions" text="PyNose" popup="true">
       <add-to-group group-id="MainMenu" anchor="last"/>
       <!-- Add a single action to the new group -->
       <action id="ui.pycharm.PopupDialogAction" class="ui.pycharm.PopupDialogAction"
-              text="Pop a Dialog" description="SDK PyCharm basics example" icon="SdkIcons.Sdk_default_icon">
+              text="Pop a Dialog" description="Pop a Dialog" icon="SdkIcons.Sdk_default_icon">
       </action>
     </group>
   </actions>
 
-  <extensions defaultExtensionNs="com.intellij">  <!-- TODO: anonymize this? -->
+  <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Test Smell Detector" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                 factoryClass="ui.toolWindow.MyToolWindowFactory"/>
     <appStarter implementation="PluginRunner"/>

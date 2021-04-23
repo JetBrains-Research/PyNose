@@ -65,8 +65,6 @@ public abstract class AbstractTestSmellDetector {
 
                 Class<?> anInterface = interfaces.get(0);
                 try {
-                    // TODO: maybe scanning child class first to get a list of methods is faster
-                    //  than going through all python psi interfaces
                     Method customVisitMethod = this.getClass().getMethod(
                             "visit" + anInterface.getSimpleName(),
                             anInterface
