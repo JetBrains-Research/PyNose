@@ -60,19 +60,17 @@ public class PluginRunner implements ApplicationStarter {
             System.exit(0);
         }
         var projectRootManager = ProjectRootManager.getInstance(p);
-        if (projectRootManager.getProjectSdk() == null) {
-            // the value depends on what Python interpreter you have on your computer
-            var pythonSdk = ProjectJdkTableImpl.getInstance().findJdk(pythonInterpreter);
-            if (pythonSdk == null) {
-                System.out.println("Cannot find specified Python interpreter; printing available ones...");
-                Arrays.stream(ProjectJdkTableImpl.getInstance().getAllJdks()).forEach(pythonCandidate ->
-                        System.out.println("pythonCandidate = " + pythonCandidate)
-                );
-                System.out.println("If nothing printed, you may have to go to GUI mode to configure a Python interpreter");
-                System.exit(0);
-            }
-            WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
+        var pythonSdk = ProjectJdkTableImpl.getInstance().findJdk(pythonInterpreter);
+        if (pythonSdk == null) {
+            System.out.println("Cannot find specified Python interpreter \"" + pythonInterpreter + "\"; printing available ones...");
+            Arrays.stream(ProjectJdkTableImpl.getInstance().getAllJdks()).forEach(pythonCandidate ->
+                    System.out.println("pythonCandidate = " + pythonCandidate)
+            );
+            System.out.println("If nothing printed, you may have to go to GUI mode to configure a Python interpreter");
+            System.exit(0);
         }
+        WriteAction.run(() -> projectRootManager.setProjectSdk(pythonSdk));
+        System.out.println("Python interpreter \"" + pythonSdk + "\" is chosen");
         if (p.isInitialized()) {
             System.out.println("Project \"" + p.getName() + "\" is initialized");
             var fileResultArray = new JsonArray();
