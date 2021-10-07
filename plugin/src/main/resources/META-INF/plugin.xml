@@ -3,7 +3,7 @@
     <name>PyNose</name>
     <vendor>JetBrains Research</vendor>
 
-    <idea-version since-build="211.*" until-build="213.*"/>
+    <idea-version since-build="211.7628.24"/>
 
     <description><![CDATA[
     This is a test smell detector for Python.

@@ -32,7 +32,7 @@ subprojects {
     intellij {
         type.set("PC")
         version.set("PC-2021.1.3")
-        // updateSinceUntilBuild.set(false)
+        updateSinceUntilBuild.set(false)
         plugins.set(listOf("PythonCore:211.7628.24"))
     }
 
