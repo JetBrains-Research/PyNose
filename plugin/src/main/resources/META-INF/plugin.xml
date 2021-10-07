@@ -1,0 +1,25 @@
+<idea-plugin>
+    <id>org.jetbrains.research.pynose.plugin</id>
+    <name>PyNose</name>
+    <vendor>JetBrains Research</vendor>
+
+    <idea-version since-build="211.*" until-build="213.*"/>
+
+    <description><![CDATA[
+    This is a test smell detector for Python.
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.python</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow factoryClass="org.jetbrains.research.pynose.plugin.ui.PyNoseGUIFactory" id="PyNose" anchor="right" secondary="true" icon="AllIcons.Json.Object"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
