@@ -16,7 +16,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow factoryClass="org.jetbrains.research.pynose.plugin.ui.PyNoseGUIFactory" id="PyNose" anchor="right" secondary="true" icon="AllIcons.Json.Object"/>
+        <toolWindow factoryClass="org.jetbrains.research.pynose.plugin.ui.PyNoseGUIFactory" id="PyNose" anchor="right"
+                    secondary="true" icon="AllIcons.Json.Object"/>
+        <localInspection language="Python"
+                         groupPath="Python"
+                         groupName="PyNose"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.DefaultTestTestSmellInspection"
+                         displayName="Default test"
+                         shortName="DefaultTestTestSmellInspection"/>
     </extensions>
 
     <actions>
