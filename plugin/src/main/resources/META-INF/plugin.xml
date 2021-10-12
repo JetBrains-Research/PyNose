@@ -26,6 +26,22 @@
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.DefaultTestTestSmellInspection"
                          displayName="Default test"
                          shortName="DefaultTestTestSmellInspection"/>
+        <localInspection language="Python"
+                         groupPath="Python"
+                         groupName="PyNose"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.ConstructorInitializationTestSmellInspection"
+                         displayName="Constructor initialization test"
+                         shortName="ConstructorInitializationTestSmellInspection"/>
+        <localInspection language="Python"
+                         groupPath="Python"
+                         groupName="PyNose"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.IgnoredTestTestSmellInspection"
+                         displayName="Ignored test"
+                         shortName="IgnoredTestTestSmellInspection"/>
     </extensions>
 
     <actions>
