@@ -32,7 +32,16 @@ open class IgnoredTestTestSmellInspection : AbstractTestSmellInspection() {
                         visitor.visitElement(currentMethod!!)
                     }
                     currentMethod = null
-                    if (testHasSkipDecorator.containsValue(true)) {
+                    var classDecorator = false
+                    val decoratorList = node.decoratorList
+                    if (decoratorList != null) {
+                        for (decorator in decoratorList.decorators) {
+                            if (decorator.text.startsWith("@unittest.skip")) {
+                                classDecorator = true
+                            }
+                        }
+                    }
+                    if (testHasSkipDecorator.containsValue(true) or classDecorator) {
                         holder.registerProblem(
                             node,
                             "Test smell: Ignored Test in class `${node.name}`",

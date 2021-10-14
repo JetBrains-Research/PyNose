@@ -25,12 +25,12 @@ class ConstructorInitializationTestSmellInspection : PyInspection() {
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? ->
                             PyFunction::class.java.cast(obj)
-                        }.anyMatch { pyFunction: PyFunction ->
+                        }.filter { pyFunction: PyFunction ->
                             pyFunction.name == "__init__"
                         }
-                    if (init) {
+                    for (cr in init) {
                         holder.registerProblem(
-                            node,
+                            cr.nameIdentifier!!,
                             "Test smell: Constructor Initialization Test in class `${node.name}`",
                             ProblemHighlightType.WARNING
                         )
