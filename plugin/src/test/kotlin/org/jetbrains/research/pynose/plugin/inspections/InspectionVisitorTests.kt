@@ -16,7 +16,7 @@ class InspectionVisitorTests : ParametrizedBaseWithPythonSdkTest(getResourcesRoo
 
     @Test
     fun `test inspection's visitor independently`() {
-        myFixture.configureByFile("test_default.py")
+        myFixture.configureByFile("test_default_highlighted.py")
         val project: Project = myFixture.project
         val psiFile: PsiFile = myFixture.file
         val defaultTestInspection = DefaultTestTestSmellInspection()
