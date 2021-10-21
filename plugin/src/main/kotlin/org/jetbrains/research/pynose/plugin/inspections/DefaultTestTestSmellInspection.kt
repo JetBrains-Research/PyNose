@@ -19,7 +19,8 @@ open class DefaultTestTestSmellInspection : PyInspection() {
                 if (PyNoseUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
                     holder.registerProblem(
                         node.nameIdentifier!!,
-                        "Test smell: Default Test in class `${node.name}`",
+                        "Consider changing the name of your test suite to a non-default one" +
+                                " to better reflect its content",
                         ProblemHighlightType.WARNING
                     )
                 }

@@ -1,12 +1,11 @@
 package org.jetbrains.research.pynose.plugin.util
 
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.PyClass
-import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyElement
+import com.jetbrains.python.psi.PyElementVisitor
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import java.lang.reflect.InvocationTargetException
 import java.util.*
@@ -15,15 +14,12 @@ import java.util.stream.Collectors
 abstract class AbstractTestSmellInspection : PyInspection() {
 
     protected var testCase: PyClass? = null
-    protected var currentMethod: PyFunction? = null
-
-    abstract override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor
 
     companion object {
         private val LOG = Logger.getInstance(AbstractTestSmellInspection::class.java)
 
-        abstract class MyPsiElementVisitor() : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement) {
+        abstract class MyPyElementVisitor : PyElementVisitor() {
+            override fun visitPyElement(element: PyElement) {
                 val interfaces = Arrays.stream(element.javaClass.interfaces)
                     .filter { i: Class<*> ->
                         i.name.startsWith("com.jetbrains.python.psi")
@@ -60,7 +56,7 @@ abstract class AbstractTestSmellInspection : PyInspection() {
                     }
                 }
                 for (child: PsiElement in element.children) {
-                    visitElement(child)
+                    visitPyElement(child as PyElement)
                 }
             }
         }
