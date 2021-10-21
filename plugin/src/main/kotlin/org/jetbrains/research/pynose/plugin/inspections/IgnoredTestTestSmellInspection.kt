@@ -36,7 +36,7 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
                             registerIgnored(node.nameIdentifier!!)
                         }
                     }
-                    testHasSkipDecorator.filter { x -> x.value }.forEach { decorator ->
+                    testHasSkipDecorator.filter { element -> element.value }.forEach { decorator ->
                         registerIgnored(decorator.key.nameIdentifier!!)
                     }
                 }
