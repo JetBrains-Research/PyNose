@@ -4,6 +4,6 @@ class SomeClass(unittest.TestCase):
     def some_fun(self):
         pass
 
-class <warning descr="Test smell: Default Test in class `MyTestCase`">MyTestCase</warning>(SomeClass):
+class <warning descr="Consider changing the name of your test suite to a non-default one to better reflect its content">MyTestCase</warning>(SomeClass):
     def test_something(self):
         pass

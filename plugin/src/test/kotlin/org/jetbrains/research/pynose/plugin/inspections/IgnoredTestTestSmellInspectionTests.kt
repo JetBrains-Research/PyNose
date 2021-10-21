@@ -46,11 +46,11 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test skip class with unittest dependency`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "<warning descr=\"Test smell: Ignored Test in class `SomeClass`\">" +
                     "@unittest.skip(\"reason\")\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+                    "class <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "SomeClass</warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        pass</warning>"
+                    "        pass"
         )
         myFixture.checkHighlighting()
     }
@@ -59,11 +59,11 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test basic skip with unittest dependency`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "<warning descr=\"Test smell: Ignored Test in class `SomeClass`\">" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skip(\"reason\")\n" +
-                    "    def test_something(self):\n" +
-                    "        pass</warning>"
+                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "test_something</warning>(self):\n" +
+                    "        pass"
         )
         myFixture.checkHighlighting()
     }
@@ -72,11 +72,11 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test skip if with unittest dependency`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "<warning descr=\"Test smell: Ignored Test in class `SomeClass`\">" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipIf(mylib.__version__ < (1, 3), \"reason\")\n" +
-                    "    def test_something(self):\n" +
-                    "        pass</warning>"
+                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "test_something</warning>(self):\n" +
+                    "        pass"
         )
         myFixture.checkHighlighting()
     }
@@ -85,11 +85,11 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test skip unless with unittest dependency`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "<warning descr=\"Test smell: Ignored Test in class `SomeClass`\">" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipUnless(mylib.__version__ < (1, 3), \"reason\")\n" +
-                    "    def test_something(self):\n" +
-                    "        pass</warning>"
+                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "test_something</warning>(self):\n" +
+                    "        pass"
         )
         myFixture.checkHighlighting()
     }

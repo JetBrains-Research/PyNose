@@ -7,13 +7,6 @@ import org.junit.jupiter.api.BeforeAll
 
 class DefaultTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
-//    @Test
-//    fun `test SDK setup`() {
-//        val inPsiFile = getPsiFile(inFile!!, myFixture) as PyFile
-//        val builtinsCache = PyBuiltinCache.getInstance(inPsiFile)
-//        builtinsCache.boolType ?: error("Python SDK was not configured in the tests")
-//    }
-
     override fun getTestDataPath(): String {
         return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/default"
     }
@@ -58,7 +51,8 @@ class DefaultTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test default highlighting`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "class <warning descr=\"Test smell: Default Test in class `MyTestCase`\">MyTestCase" +
+                    "class <warning descr=\"Consider changing the name of your test suite to a non-default one " +
+                    "to better reflect its content\">MyTestCase" +
                     "</warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
