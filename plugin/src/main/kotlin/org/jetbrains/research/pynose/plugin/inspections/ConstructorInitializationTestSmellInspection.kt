@@ -14,6 +14,11 @@ import org.jetbrains.research.pynose.core.detectors.impl.ConstructorInitializati
 class ConstructorInitializationTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector::class.java)
 
+    companion object {
+        const val warningDescription = "You can use the setUp() method to create the test fixture, " +
+                "instead of initializing the constructor";
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PyElementVisitor() {
             override fun visitPyClass(node: PyClass) {
@@ -25,8 +30,7 @@ class ConstructorInitializationTestSmellInspection : PyInspection() {
                         .forEach {
                             holder.registerProblem(
                                 it.nameIdentifier!!,
-                                "You can use the setUp() method to create the test fixture, " +
-                                        "instead of initializing the constructor",
+                                warningDescription,
                                 ProblemHighlightType.WARNING
                             )
                         }

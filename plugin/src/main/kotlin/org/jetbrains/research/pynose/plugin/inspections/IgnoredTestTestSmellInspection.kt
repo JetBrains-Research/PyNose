@@ -14,12 +14,17 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
     private val testHasSkipDecorator: MutableMap<PyFunction, Boolean> = mutableMapOf()
     private val decoratorText = "@unittest.skip"
 
+    companion object {
+        const val warningDescription = "Consider removing or modifying ignored tests to avoid overhead " +
+                "and improve code comprehension"
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
 
         fun registerIgnored(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,
-                "Consider removing or modifying ignored tests to avoid overhead and improve code comprehension",
+                warningDescription,
                 ProblemHighlightType.WARNING
             )
         }
@@ -44,6 +49,7 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
             }
 
             override fun visitPyDecorator(decorator: PyDecorator) {
+                super.visitPyDecorator(decorator)
                 if (!decorator.text.startsWith(decoratorText)) {
                     for (element in decorator.children) {
                         visitPyElement(element!! as PyElement)

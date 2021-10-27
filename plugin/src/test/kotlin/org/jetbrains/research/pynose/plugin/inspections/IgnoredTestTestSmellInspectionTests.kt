@@ -47,7 +47,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "@unittest.skip(\"reason\")\n" +
-                    "class <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "class <warning descr=\"${IgnoredTestTestSmellInspection.warningDescription}\">" +
                     "SomeClass</warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
@@ -61,7 +61,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skip(\"reason\")\n" +
-                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "    def <warning descr=\"${IgnoredTestTestSmellInspection.warningDescription}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
         )
@@ -74,7 +74,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipIf(mylib.__version__ < (1, 3), \"reason\")\n" +
-                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "    def <warning descr=\"${IgnoredTestTestSmellInspection.warningDescription}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
         )
@@ -87,7 +87,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipUnless(mylib.__version__ < (1, 3), \"reason\")\n" +
-                    "    def <warning descr=\"Consider removing or modifying ignored tests to avoid overhead and improve code comprehension\">" +
+                    "    def <warning descr=\"${IgnoredTestTestSmellInspection.warningDescription}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
         )

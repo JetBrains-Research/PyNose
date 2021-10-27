@@ -22,8 +22,8 @@ class ConstructorInitializationTestSmellInspectionTests : AbstractTestSmellInspe
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"You can use the setUp() method to create the test fixture, " +
-                    "instead of initializing the constructor\">__init__</warning>(self):\n" +
+                    "    def <warning descr=\"${ConstructorInitializationTestSmellInspection.warningDescription}\">" +
+                    "__init__</warning>(self):\n" +
                     "        pass"
         )
         myFixture.checkHighlighting()

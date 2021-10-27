@@ -12,6 +12,11 @@ import org.jetbrains.research.pynose.core.PyNoseUtils
 open class DefaultTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(this::class.java)
 
+    companion object {
+        const val warningDescription = "Consider changing the name of your test suite to a non-default one" +
+                " to better reflect its content"
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PyElementVisitor() {
             override fun visitPyClass(node: PyClass) {
@@ -19,8 +24,7 @@ open class DefaultTestTestSmellInspection : PyInspection() {
                 if (PyNoseUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
                     holder.registerProblem(
                         node.nameIdentifier!!,
-                        "Consider changing the name of your test suite to a non-default one" +
-                                " to better reflect its content",
+                        warningDescription,
                         ProblemHighlightType.WARNING
                     )
                 }

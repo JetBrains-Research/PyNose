@@ -51,8 +51,7 @@ class DefaultTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     fun `test default highlighting`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
-                    "class <warning descr=\"Consider changing the name of your test suite to a non-default one " +
-                    "to better reflect its content\">MyTestCase" +
+                    "class <warning descr=\"${DefaultTestTestSmellInspection.warningDescription}\">MyTestCase" +
                     "</warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
