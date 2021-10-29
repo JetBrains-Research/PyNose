@@ -2,6 +2,7 @@ package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
+import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
@@ -22,7 +23,7 @@ class ConstructorInitializationTestSmellInspectionTests : AbstractTestSmellInspe
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"${ConstructorInitializationTestSmellInspection.warningDescription}\">" +
+                    "    def <warning descr=\"${TestSmellBundle.message("inspections.constructor.initialization.description")}\">" +
                     "__init__</warning>(self):\n" +
                     "        pass"
         )

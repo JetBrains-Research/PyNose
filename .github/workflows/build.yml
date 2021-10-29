@@ -62,7 +62,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Run tests
-        run: ./gradlew test -Djdk.home.path="${{ steps.setup-java-11.outputs.path }}"
+        run: ./gradlew test
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2

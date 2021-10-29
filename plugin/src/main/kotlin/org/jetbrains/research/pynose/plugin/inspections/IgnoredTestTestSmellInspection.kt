@@ -8,23 +8,19 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.core.detectors.impl.ConstructorInitializationTestSmellDetector
+import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class IgnoredTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector::class.java)
     private val testHasSkipDecorator: MutableMap<PyFunction, Boolean> = mutableMapOf()
     private val decoratorText = "@unittest.skip"
 
-    companion object {
-        const val warningDescription = "Consider removing or modifying ignored tests to avoid overhead " +
-                "and improve code comprehension"
-    }
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
 
         fun registerIgnored(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,
-                warningDescription,
+                TestSmellBundle.message("inspections.ignored.description"),
                 ProblemHighlightType.WARNING
             )
         }
