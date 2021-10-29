@@ -8,8 +8,9 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyElementVisitor
 import org.jetbrains.research.pynose.core.PyNoseUtils
+import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-class DefaultTestTestSmellInspection : PyInspection() {
+open class DefaultTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(this::class.java)
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -18,12 +19,13 @@ class DefaultTestTestSmellInspection : PyInspection() {
                 super.visitPyClass(node)
                 if (PyNoseUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
                     holder.registerProblem(
-                        node,
-                        "Test smell: Default Test in class `${node.name}`",
+                        node.nameIdentifier!!,
+                        TestSmellBundle.message("inspections.default.description"),
                         ProblemHighlightType.WARNING
                     )
                 }
             }
         }
     }
+
 }
