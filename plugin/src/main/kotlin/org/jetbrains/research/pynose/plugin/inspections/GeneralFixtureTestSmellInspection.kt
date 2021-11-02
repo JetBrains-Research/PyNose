@@ -10,7 +10,6 @@ import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import java.util.*
-import java.util.function.Predicate
 
 class GeneralFixtureTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(GeneralFixtureTestSmellInspection::class.java)
