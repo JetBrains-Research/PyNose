@@ -9,7 +9,6 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.*
 
 class MagicNumberTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(MagicNumberTestTestSmellInspection::class.java)
@@ -44,13 +43,12 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
                 ) {
                     return
                 }
-                if (Arrays.stream(callExpression.arguments).anyMatch { obj: PyExpression? ->
+                if (callExpression.arguments.any { obj: PyExpression? ->
                         PyNumericLiteralExpression::class.java.isInstance(obj)
                                 || (PyBinaryExpression::class.java.isInstance(obj)
-                                && Arrays.stream(obj!!.children)
-                            .anyMatch { child ->
-                                PyNumericLiteralExpression::class.java.isInstance(child)
-                            })
+                                && obj!!.children.any { child ->
+                            PyNumericLiteralExpression::class.java.isInstance(child)
+                        })
                     }) {
                     registerMagicNumber(callExpression)
                 }
@@ -62,13 +60,12 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
                 if (assertArgs.isEmpty() || !checkParent(assertStatement)) {
                     return
                 }
-                if (Arrays.stream(assertArgs).anyMatch { obj: PyExpression? ->
+                if (assertArgs.any { obj: PyExpression? ->
                         PyNumericLiteralExpression::class.java.isInstance(obj)
                                 || (PyBinaryExpression::class.java.isInstance(obj)
-                                && Arrays.stream(obj!!.children)
-                            .anyMatch { child ->
-                                PyNumericLiteralExpression::class.java.isInstance(child)
-                            })
+                                && obj!!.children.any { child ->
+                            PyNumericLiteralExpression::class.java.isInstance(child)
+                        })
                     }) {
                     registerMagicNumber(assertStatement)
                 }
