@@ -25,16 +25,6 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
             )
         }
 
-        fun checkParent(element: PsiElement): Boolean {
-            return (PyNoseUtils.isValidUnittestMethod(
-                PsiTreeUtil.getParentOfType(
-                    element,
-                    PyFunction::class.java
-                )
-            )
-                    )
-        }
-
         return object : PyElementVisitor() {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
@@ -52,7 +42,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                 val child = callExpression.firstChild
                 val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
                 if (child !is PyReferenceExpression || !PyNoseUtils.isCallAssertMethod(child)
-                    || !checkParent(callExpression)
+                    || !PyNoseUtils.isValidUnittestMethod(testMethod)
                 ) {
                     return
                 }
@@ -68,7 +58,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                 super.visitPyAssertStatement(assertStatement)
                 val assertArgs = assertStatement.arguments
                 val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (assertArgs.isEmpty() || !checkParent(assertStatement)) {
+                if (assertArgs.isEmpty() || !PyNoseUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 val assertStatementBody = assertArgs[0].text
