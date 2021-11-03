@@ -35,7 +35,8 @@ class UnknownTestTestSmellInspection : PyInspection() {
                             assertCounts[testMethod] = 0
                         }
                     }
-                    assertCounts.keys.filter { x -> assertCounts[x] == 0 }.forEach { x -> registerUnknown(x.nameIdentifier!!) }
+                    assertCounts.keys.filter { x -> assertCounts[x] == 0 }
+                        .forEach { x -> registerUnknown(x.nameIdentifier!!) }
                     assertCounts.clear()
                 }
             }
@@ -66,7 +67,6 @@ class UnknownTestTestSmellInspection : PyInspection() {
                 }
                 assertCounts[testMethod] = assertCounts[testMethod]!! + 1
             }
-
         }
     }
 }
