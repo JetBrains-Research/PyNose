@@ -44,7 +44,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     }
 
     @Test
-    fun `test skip class with unittest dependency`() {
+    fun `test highlighted skip class`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "@unittest.skip(\"reason\")\n" +
@@ -57,7 +57,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     }
 
     @Test
-    fun `test basic skip with unittest dependency`() {
+    fun `test highlighted basic skip`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
@@ -70,7 +70,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     }
 
     @Test
-    fun `test skip if with unittest dependency`() {
+    fun `test highlighted skip if`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
@@ -83,7 +83,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     }
 
     @Test
-    fun `test skip unless with unittest dependency`() {
+    fun `test highlighted skip unless`() {
         myFixture.configureByText(
             "file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +

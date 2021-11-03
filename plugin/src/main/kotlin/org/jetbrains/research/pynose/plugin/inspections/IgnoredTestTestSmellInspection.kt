@@ -7,11 +7,10 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
-import org.jetbrains.research.pynose.core.detectors.impl.ConstructorInitializationTestSmellDetector
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class IgnoredTestTestSmellInspection : PyInspection() {
-    private val LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector::class.java)
+    private val LOG = Logger.getInstance(IgnoredTestTestSmellInspection::class.java)
     private val testHasSkipDecorator: MutableMap<PyFunction, Boolean> = mutableMapOf()
     private val decoratorText = "@unittest.skip"
 
