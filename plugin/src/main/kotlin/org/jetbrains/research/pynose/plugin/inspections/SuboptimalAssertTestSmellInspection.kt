@@ -9,7 +9,6 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.*
 import kotlin.reflect.KFunction1
 
 class SuboptimalAssertTestSmellInspection : PyInspection() {
@@ -47,8 +46,8 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
                 return false
             }
             val args = assertCall.arguments
-            return args.size >= 2 && Arrays.stream(args)
-                .anyMatch { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
+            return args.size >= 2 && args
+                .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
         }
     }
 
@@ -73,7 +72,7 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
         }
 
         return object : PyElementVisitor() {
-            
+
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 if (!checkParent(callExpression)) {
