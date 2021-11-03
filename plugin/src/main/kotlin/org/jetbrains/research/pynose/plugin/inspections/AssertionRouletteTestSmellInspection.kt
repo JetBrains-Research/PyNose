@@ -26,16 +26,6 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
             )
         }
 
-        fun checkParent(element: PsiElement): Boolean {
-            return (PyNoseUtils.isValidUnittestMethod(
-                PsiTreeUtil.getParentOfType(
-                    element,
-                    PyFunction::class.java
-                )
-            )
-                    )
-        }
-
         return object : PyElementVisitor() {
 
             // todo: issues with highlighting in runIde mode
@@ -106,12 +96,12 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 val child = callExpression.firstChild
+                val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
                 if (child !is PyReferenceExpression || !PyNoseUtils.isCallAssertMethod(child)
-                    || !checkParent(callExpression)
+                    || !PyNoseUtils.isValidUnittestMethod(testMethod)
                 ) {
                     return
                 }
-                val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
                 if (assertionCallsInTests[testMethod!!] == null) {
                     assertionCallsInTests[testMethod] = mutableSetOf()
                 }
@@ -120,10 +110,10 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
 
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
-                if (!checkParent(assertStatement)) {
+                val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
+                if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
-                val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
                 if (assertStatementsInTests[testMethod!!] == null) {
                     assertStatementsInTests[testMethod] = mutableSetOf()
                 }
