@@ -87,6 +87,7 @@ class ObscureInLineSetupTestSmellInspectionTests : AbstractTestSmellInspectionTe
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
+    @Test
     fun `test obscure in-line setup multiple`() {
         myFixture.configureByFile("test_obscure_multiple.py")
         myFixture.checkHighlighting()
