@@ -9,7 +9,6 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.*
 
 class GeneralFixtureTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(GeneralFixtureTestSmellInspection::class.java)
@@ -33,36 +32,34 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
             override fun visitPyClass(node: PyClass) {
                 if (PyNoseUtils.isValidUnittestCase(node)) {
-                    val setUpFunction = Arrays.stream(node.statementList.statements)
+                    val setUpFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .filter { f: PyFunction ->
+                        .first { f: PyFunction ->
                             f.name == "setUp" &&
                                     f.parent is PyStatementList &&
                                     f.parent.parent is PyClass &&
                                     PyNoseUtils.isValidUnittestCase(f.parent.parent as PyClass)
                         }
-                        .findFirst()
 
-                    if (setUpFunction.isPresent) {
+                    if (setUpFunction != null) {
                         elementToCheck = PyAssignmentStatement::class.java
-                        visitElement(setUpFunction.get())
+                        visitElement(setUpFunction)
                     }
 
-                    val setUpClassFunction = Arrays.stream(node.statementList.statements)
+                    val setUpClassFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .filter { function: PyFunction ->
+                        .first { function: PyFunction ->
                             function.name == "setUpClass" &&
                                     function.parent is PyStatementList &&
                                     function.parent.parent is PyClass &&
                                     PyNoseUtils.isValidUnittestCase(function.parent.parent as PyClass)
                         }
-                        .findFirst()
 
-                    if (setUpClassFunction.isPresent) {
+                    if (setUpClassFunction != null) {
                         elementToCheck = PyAssignmentStatement::class.java
-                        super.visitElement(setUpClassFunction.get())
+                        super.visitElement(setUpClassFunction)
                     }
 
                     elementToCheck = PyReferenceExpression::class.java
