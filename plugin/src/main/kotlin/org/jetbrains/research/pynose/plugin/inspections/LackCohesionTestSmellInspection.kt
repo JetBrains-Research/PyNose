@@ -12,9 +12,9 @@ import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.*
-import java.util.stream.Collectors
+import kotlin.collections.HashMap
 import kotlin.math.sqrt
+import java.util.Locale
 
 class LackCohesionTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(LackCohesionTestSmellInspection::class.java)
@@ -60,27 +60,17 @@ class LackCohesionTestSmellInspection : PyInspection() {
                 val vec1 = Counter.fromCollection(tokens1)
                 val vec2 = Counter.fromCollection(tokens2)
                 val intersection = vec1.getItems()
-                    .stream()
                     .filter { o: String -> vec2.getItems().contains(o) }
-                    .collect(Collectors.toSet())
-                val numerator = intersection
-                    .stream()
-                    .mapToInt { commonToken: String ->
+                    .toSet()
+                val numerator = intersection.sumOf { commonToken: String ->
                         vec1.getCount(commonToken) * vec2.getCount(commonToken)
                     }
-                    .sum()
-                val sum1 = vec1.getItems()
-                    .stream()
-                    .mapToInt { t: String ->
-                        vec1.getCount(t) * vec1.getCount(t)
-                    }
-                    .sum()
-                val sum2 = vec2.getItems()
-                    .stream()
-                    .mapToInt { t: String ->
-                        vec2.getCount(t) * vec2.getCount(t)
-                    }
-                    .sum()
+                val sum1 = vec1.getItems().sumOf { t: String ->
+                    vec1.getCount(t) * vec1.getCount(t)
+                }
+                val sum2 = vec2.getItems().sumOf { t: String ->
+                    vec2.getCount(t) * vec2.getCount(t)
+                }
                 val denominator = sqrt(sum1.toDouble()) * sqrt(sum2.toDouble())
                 return if (denominator == 0.0) {
                     0.0
@@ -93,13 +83,13 @@ class LackCohesionTestSmellInspection : PyInspection() {
                 val tokens = body.split(
                     if (splitIdentifier) "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|\\s+|_|\\d+" else "\\s+"
                 ).toTypedArray()
-                return Arrays.stream(tokens)
+                return tokens
                     .map { obj: String ->
                         obj.toLowerCase(Locale.getDefault())
                     }
                     .filter { t: String? -> !removeStopWords || !STOP_WORDS.contains(t) }
                     .map { s: String? -> STEMMER.stem(s) }
-                    .collect(Collectors.toList())
+                    .toList()
             }
 
             override fun visitPyClass(node: PyClass) {
@@ -114,10 +104,8 @@ class LackCohesionTestSmellInspection : PyInspection() {
                     }
                     testClassCohesionScore = cosineSimilarityScores
                         .values
-                        .stream()
-                        .mapToDouble { d: Double? -> d!! }
+                        .map{ d: Double? -> d!! }
                         .average()
-                        .orElse(0.0)
                 }
 
                 if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
