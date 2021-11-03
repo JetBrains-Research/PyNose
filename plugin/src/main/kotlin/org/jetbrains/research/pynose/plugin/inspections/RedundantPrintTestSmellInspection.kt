@@ -44,9 +44,9 @@ class RedundantPrintTestSmellInspection : PyInspection() {
                 if (child.text != "print" || !checkParent(callExpression)) {
                     return
                 }
-                val e = child.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return
-                if (e.parent is PyiFile && (e.parent as PyiFile).name == "builtins.pyi" &&
-                    e.parent.parent is PsiDirectory && (e.parent.parent as PsiDirectory).name == "stdlib"
+                val element = child.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return
+                if (element.parent is PyiFile && (element.parent as PyiFile).name == "builtins.pyi" &&
+                    element.parent.parent is PsiDirectory && (element.parent.parent as PsiDirectory).name == "stdlib"
                 ) {
                     registerRedundantPrint(callExpression)
                 }
