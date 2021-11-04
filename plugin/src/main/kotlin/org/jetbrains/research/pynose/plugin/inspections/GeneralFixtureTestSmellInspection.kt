@@ -1,12 +1,15 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -15,7 +18,11 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
     private val assignmentStatementTexts: MutableSet<String> = mutableSetOf()
     private val testCaseFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        @NotNull session: LocalInspectionToolSession
+    ): PyElementVisitor {
 
         fun registerGeneralFixture(valueParam: PsiElement) {
             holder.registerProblem(
@@ -25,8 +32,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
             )
         }
 
-        return object : PyElementVisitor() {
-
+        return object : PyInspectionVisitor(holder, session) {
             var elementToCheck: Class<out PyElement?>? = null
             var methodFirstParamName: String? = null
 
@@ -35,7 +41,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                     val setUpFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .first { f: PyFunction ->
+                        .firstOrNull { f: PyFunction ->
                             f.name == "setUp" &&
                                     f.parent is PyStatementList &&
                                     f.parent.parent is PyClass &&
@@ -50,7 +56,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                     val setUpClassFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .first { function: PyFunction ->
+                        .firstOrNull() { function: PyFunction ->
                             function.name == "setUpClass" &&
                                     function.parent is PyStatementList &&
                                     function.parent.parent is PyClass &&

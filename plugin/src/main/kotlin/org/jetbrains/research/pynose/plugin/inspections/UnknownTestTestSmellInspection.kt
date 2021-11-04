@@ -1,12 +1,15 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -14,7 +17,11 @@ class UnknownTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(UnknownTestTestSmellInspection::class.java)
     private val assertCounts: MutableMap<PyFunction, Int> = mutableMapOf()
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        @NotNull session: LocalInspectionToolSession
+    ): PyElementVisitor {
 
         fun registerUnknown(valueParam: PsiElement) {
             holder.registerProblem(
@@ -24,7 +31,7 @@ class UnknownTestTestSmellInspection : PyInspection() {
             )
         }
 
-        return object : PyElementVisitor() {
+        return object : PyInspectionVisitor(holder, session) {
 
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)

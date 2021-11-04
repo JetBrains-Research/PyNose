@@ -1,12 +1,15 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -16,7 +19,11 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
     private val assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>> = mutableMapOf()
     private val testHasAssertionRoulette: MutableMap<PyFunction, Boolean> = mutableMapOf()
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        @NotNull session: LocalInspectionToolSession
+    ): PyElementVisitor {
 
         fun registerRoulette(valueParam: PsiElement) {
             holder.registerProblem(
@@ -26,8 +33,7 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
             )
         }
 
-        return object : PyElementVisitor() {
-
+        return object : PyInspectionVisitor(holder, session) {
             // todo: issues with highlighting in runIde mode
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)

@@ -1,15 +1,18 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import kotlin.collections.HashMap
@@ -42,7 +45,11 @@ class LackCohesionTestSmellInspection : PyInspection() {
 
     private var testClassCohesionScore = 0.0
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        @NotNull session: LocalInspectionToolSession
+    ): PyElementVisitor {
 
         fun registerLackCohesion(valueParam: PsiElement) {
             holder.registerProblem(
@@ -52,8 +59,7 @@ class LackCohesionTestSmellInspection : PyInspection() {
             )
         }
 
-        return object : PyElementVisitor() {
-
+        return object : PyInspectionVisitor(holder, session) {
             private fun calculateCosineSimilarityBetweenMethods(m1: PyFunction, m2: PyFunction): Double {
                 val tokens1: List<String> = extractMethodBody(m1)
                 val tokens2: List<String> = extractMethodBody(m2)

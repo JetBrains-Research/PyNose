@@ -1,5 +1,6 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
@@ -7,14 +8,20 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class ConditionalTestLogicTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ConditionalTestLogicTestSmellInspection::class.java)
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        @NotNull session: LocalInspectionToolSession
+    ): PyElementVisitor {
 
         fun registerConditional(valueParam: PsiElement, offset: Int = 0, textLength: Int = valueParam.textLength) {
             holder.registerProblem(
@@ -35,8 +42,7 @@ class ConditionalTestLogicTestSmellInspection : PyInspection() {
                     )
         }
 
-        return object : PyElementVisitor() {
-
+        return object : PyInspectionVisitor(holder, session) {
             override fun visitPyIfStatement(ifStatement: PyIfStatement) {
                 super.visitPyIfStatement(ifStatement)
                 if (checkParent(ifStatement)) {
