@@ -15,8 +15,9 @@ class SomeClass(unittest.TestCase):
 
     def test_something(self):
         assert self.x == 10
-        assert self.x != self.w
+        assert self.z != self.s
 
     def test_something_else(self):
+        self.assertEqual(self.x, 10)
         assert self.s != "bye"
-        assert self.x != 15
+        assert self.z == "bye"
