@@ -41,7 +41,8 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
                     PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
                         visitPyElement(testMethod)
                     }
-                    testMethodLocalVarCount.keys.stream().filter { x -> testMethodLocalVarCount[x]!!.size > 10 }
+                    testMethodLocalVarCount.keys
+                        .filter { x -> testMethodLocalVarCount[x]!!.size > 10 }
                         .forEach { x ->
                             registerObscureInLineSetup(x.nameIdentifier!!)
                         }
@@ -59,11 +60,9 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
                     testMethodLocalVarCount[testMethod!!] = mutableSetOf()
                 }
                 val localVars: MutableSet<String?>? = testMethodLocalVarCount[testMethod]
-                for (target in assignmentStatement.targets) {
-                    if (target.children.isEmpty()) {
-                        localVars!!.add(target.name)
-                    }
-                }
+                assignmentStatement.targets
+                    .filter { target -> target.children.isEmpty() }
+                    .forEach { target -> localVars!!.add(target.name) }
             }
         }
     }

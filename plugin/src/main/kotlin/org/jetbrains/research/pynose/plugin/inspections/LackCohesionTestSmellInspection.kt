@@ -39,9 +39,9 @@ class LackCohesionTestSmellInspection : PyInspection() {
         "with", "yield"
     )
     private val cosineSimilarityScores: MutableMap<Pair<PyFunction, PyFunction>, Double> = mutableMapOf()
-    var splitIdentifier = true
-    var removeStopWords = false
-    var threshold = 0.6 // from the paper
+    private var splitIdentifier = true
+    private var removeStopWords = false
+    private var threshold = 0.6 // from the paper
 
     private var testClassCohesionScore = 0.0
 
@@ -69,8 +69,8 @@ class LackCohesionTestSmellInspection : PyInspection() {
                     .filter { o: String -> vec2.getItems().contains(o) }
                     .toSet()
                 val numerator = intersection.sumOf { commonToken: String ->
-                        vec1.getCount(commonToken) * vec2.getCount(commonToken)
-                    }
+                    vec1.getCount(commonToken) * vec2.getCount(commonToken)
+                }
                 val sum1 = vec1.getItems().sumOf { t: String ->
                     vec1.getCount(t) * vec1.getCount(t)
                 }
@@ -110,10 +110,9 @@ class LackCohesionTestSmellInspection : PyInspection() {
                     }
                     testClassCohesionScore = cosineSimilarityScores
                         .values
-                        .map{ d: Double? -> d!! }
+                        .map { d: Double? -> d!! }
                         .average()
                 }
-
                 if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
                     registerLackCohesion(node.nameIdentifier!!)
                 }

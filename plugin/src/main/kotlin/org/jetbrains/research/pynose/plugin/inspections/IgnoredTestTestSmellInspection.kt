@@ -53,9 +53,7 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
             override fun visitPyDecorator(decorator: PyDecorator) {
                 super.visitPyDecorator(decorator)
                 if (!decorator.text.startsWith(decoratorText)) {
-                    for (element in decorator.children) {
-                        visitPyElement(element!! as PyElement)
-                    }
+                    decorator.children.forEach { child -> visitPyElement(child!! as PyElement) }
                     return
                 }
                 if (decorator.target != null) {

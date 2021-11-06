@@ -16,7 +16,7 @@ import kotlin.reflect.KFunction1
 
 class SuboptimalAssertTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellInspection::class.java)
-    
+
     private val CHECKERS: MutableList<KFunction1<PyCallExpression, Boolean>> = mutableListOf(
         this::checkAssertTrueFalseRelatedSmell,
         this::checkAssertEqualNotEqualIsIsNotRelatedSmell
@@ -24,10 +24,8 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
 
     private fun checkAssertTrueFalseRelatedSmell(assertCall: PyCallExpression): Boolean {
         var callee: PyExpression
-        if (assertCall.callee.also { callee = it!! } == null) {
-            return false
-        }
-        if (callee.name != "assertTrue" && callee.name != "assertFalse") {
+        if (assertCall.callee.also { callee = it!! } == null
+            || callee.name != "assertTrue" && callee.name != "assertFalse") {
             return false
         }
         val args = assertCall.arguments
@@ -36,13 +34,11 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
 
     private fun checkAssertEqualNotEqualIsIsNotRelatedSmell(assertCall: PyCallExpression): Boolean {
         var callee: PyExpression
-        if (assertCall.callee.also { callee = it!! } == null) {
-            return false
-        }
-        if (callee.name != "assertEqual" &&
-            callee.name != "assertNotEqual" &&
-            callee.name != "assertIs" &&
-            callee.name != "assertIsNot"
+        if (assertCall.callee.also { callee = it!! } == null ||
+            (callee.name != "assertEqual"
+                    && callee.name != "assertNotEqual"
+                    && callee.name != "assertIs"
+                    && callee.name != "assertIsNot")
         ) {
             return false
         }
@@ -82,7 +78,7 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
                 if (!checkParent(callExpression)) {
                     return
                 }
-                if (CHECKERS.stream().anyMatch { checker -> checker(callExpression) }) {
+                if (CHECKERS.any { checker -> checker(callExpression) }) {
                     registerSuboptimal(callExpression)
                 }
             }

@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.intellij.markdown.flavours.gfm.table.GitHubTableMarkerProvider.Companion.contains
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -37,8 +36,8 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
         return object : PyInspectionVisitor(holder, session) {
 
-            var elementToCheck: Class<out PyElement?>? = null
-            var methodFirstParamName: String? = null
+            private var elementToCheck: Class<out PyElement?>? = null
+            private var methodFirstParamName: String? = null
 
             override fun visitPyClass(node: PyClass) {
                 if (PyNoseUtils.isValidUnittestCase(node)) {
@@ -89,7 +88,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                 testCaseFieldsUsage.clear()
             }
 
-            fun processPyFunction(function: PyFunction) {
+            private fun processPyFunction(function: PyFunction) {
                 if (elementToCheck == PyAssignmentStatement::class.java) {
                     if (function.name == "setUp" || function.name == "setUpClass") {
                         if (function.parameterList.parameters.isNotEmpty()) {

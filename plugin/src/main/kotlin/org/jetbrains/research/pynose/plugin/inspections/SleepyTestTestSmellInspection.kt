@@ -50,23 +50,17 @@ class SleepyTestTestSmellInspection : PyInspection() {
                     return
                 }
                 if (callExpression.firstChild !is PyReferenceExpression) {
-                    for (child in callExpression.children) {
-                        visitElement(child!!)
-                    }
+                    callExpression.children.forEach { child -> visitElement(child!!) }
                     return
                 }
                 val callExprRef = callExpression.firstChild as? PyReferenceExpression ?: return
                 val element = callExprRef.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return
                 if (element !is PyFunction || element.name != "sleep") {
-                    for (child in callExpression.children) {
-                        visitElement(child!!)
-                    }
+                    callExpression.children.forEach { child -> visitElement(child!!) }
                     return
                 }
                 if (element.parent !is PyiFile || (element.parent as PyiFile).name != "time.pyi") {
-                    for (child in callExpression.children) {
-                        visitElement(child!!)
-                    }
+                    callExpression.children.forEach { child -> visitElement(child!!) }
                     return
                 }
 

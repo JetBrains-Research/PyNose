@@ -34,9 +34,8 @@ class TestMaverickTestSmellInspection : PyInspection() {
         }
 
         return object : PyInspectionVisitor(holder, session) {
-
-            var inSetUpMode: Boolean = true
-            var methodFirstParamName: String? = null
+            private var inSetUpMode: Boolean = true
+            private var methodFirstParamName: String? = null
 
             override fun visitPyClass(node: PyClass) {
                 if (PyNoseUtils.isValidUnittestCase(node)) {
@@ -84,7 +83,7 @@ class TestMaverickTestSmellInspection : PyInspection() {
                 setUpFields.clear()
             }
 
-            fun processPyFunction(function: PyFunction) {
+            private fun processPyFunction(function: PyFunction) {
                 if (inSetUpMode) {
                     if (function.name == "setUp" || function.name == "setUpClass") {
                         if (function.parameterList.parameters.isNotEmpty()) {
