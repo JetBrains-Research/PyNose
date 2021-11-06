@@ -107,14 +107,7 @@ class UnittestInspectionsUtils : GeneralInspectionsUtils() {
         }
 
         fun isValidUnittestParent(element: PsiElement): Boolean {
-            return (isValidUnittestMethod(
-                PsiTreeUtil.getParentOfType(
-                    element,
-                    PyFunction::class.java
-                )
-            )
-                    )
+            return isValidUnittestMethod(PsiTreeUtil.getParentOfType(element, PyFunction::class.java))
         }
-
     }
 }
