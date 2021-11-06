@@ -50,6 +50,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                 val child = callExpression.firstChild
                 val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
                 if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
+                    || !UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
                 ) {
                     return
                 }

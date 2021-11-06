@@ -13,6 +13,12 @@ class SomeClass(unittest.TestCase):
         assert 1 == 1
         <warning descr="Assertion of a same condition has already happened in the prior code, consider removing this duplicate">assert 1 == 1</warning>
 
+    def not_a_test(self):
+        self.assertFalse(1 == 2)
+        assert 1 == 1
+        assert 1 == 1
+        self.assertFalse(1 == 2)
+
 
 class OtherClass(unittest.TestCase):
 
