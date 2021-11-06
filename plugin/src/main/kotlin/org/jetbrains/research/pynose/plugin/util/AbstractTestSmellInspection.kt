@@ -17,7 +17,7 @@ abstract class AbstractTestSmellInspection : PyInspection() {
 
     open fun getSmellName(): String? {
         val className = javaClass.name
-        return className.substring("pynose.".length, className.length - "TestSmellDetector".length)
+        return className.substring("pynose.".length, className.length - "TestSmellInspection".length)
     }
 
     abstract fun hasSmell(): Boolean
