@@ -55,8 +55,14 @@ class ConstructorInitializationTestSmellInspectionTests : AbstractTestSmellInspe
     }
 
     @Test
-    fun `test no highlighting transitive`() {
+    fun `test constructor transitive`() {
         myFixture.configureByFile("test_constructor_transitive.py")
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test constructor multiple`() {
+        myFixture.configureByFile("test_constructor_multiple.py")
         myFixture.checkHighlighting()
     }
 
