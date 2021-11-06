@@ -35,7 +35,6 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
         }
 
         return object : PyInspectionVisitor(holder, session) {
-
             private var elementToCheck: Class<out PyElement?>? = null
             private var methodFirstParamName: String? = null
 
