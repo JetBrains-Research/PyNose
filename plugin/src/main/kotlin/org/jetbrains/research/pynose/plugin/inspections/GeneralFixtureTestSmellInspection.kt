@@ -9,14 +9,17 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.intellij.markdown.flavours.gfm.table.GitHubTableMarkerProvider.Companion.contains
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
+
 class GeneralFixtureTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(GeneralFixtureTestSmellInspection::class.java)
-    private val assignmentStatementTexts: MutableSet<String> = mutableSetOf()
-    private val testCaseFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
+
+    val assignmentStatementTexts: MutableSet<String> = mutableSetOf()
+    val testCaseFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
 
     override fun buildVisitor(
         holder: ProblemsHolder,
@@ -33,6 +36,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
         }
 
         return object : PyInspectionVisitor(holder, session) {
+
             var elementToCheck: Class<out PyElement?>? = null
             var methodFirstParamName: String? = null
 
@@ -50,13 +54,13 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
                     if (setUpFunction != null) {
                         elementToCheck = PyAssignmentStatement::class.java
-                        visitElement(setUpFunction)
+                        processPyFunction(setUpFunction)
                     }
 
                     val setUpClassFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .firstOrNull() { function: PyFunction ->
+                        .firstOrNull { function: PyFunction ->
                             function.name == "setUpClass" &&
                                     function.parent is PyStatementList &&
                                     function.parent.parent is PyClass &&
@@ -65,52 +69,41 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
                     if (setUpClassFunction != null) {
                         elementToCheck = PyAssignmentStatement::class.java
-                        super.visitElement(setUpClassFunction)
+                        processPyFunction(setUpClassFunction)
                     }
 
                     elementToCheck = PyReferenceExpression::class.java
                     for (testMethod in PyNoseUtils.gatherTestMethods(node)) {
                         testCaseFieldsUsage[testMethod] = HashSet(assignmentStatementTexts)
-                        super.visitElement(testMethod)
+                        PsiTreeUtil
+                            .collectElements(testMethod) { element -> (element is PyReferenceExpression) }
+                            .forEach { ref -> processPyReferenceExpression(ref as PyReferenceExpression) }
                     }
-                    if (testCaseFieldsUsage.values.stream()
-                            .anyMatch { strings: Set<String?> -> strings.isNotEmpty() }
-                    ) {
+
+                    if (testCaseFieldsUsage.values.any { strings: Set<String?> -> strings.isNotEmpty() }) {
                         registerGeneralFixture(node.nameIdentifier!!)
                     }
                 }
                 super.visitPyClass(node)
+                assignmentStatementTexts.clear()
+                testCaseFieldsUsage.clear()
             }
 
-            override fun visitPyFunction(function: PyFunction) {
-                super.visitPyFunction(function)
+            fun processPyFunction(function: PyFunction) {
                 if (elementToCheck == PyAssignmentStatement::class.java) {
                     if (function.name == "setUp" || function.name == "setUpClass") {
                         if (function.parameterList.parameters.isNotEmpty()) {
                             methodFirstParamName = function.parameterList.parameters[0].name
                         }
+                        PsiTreeUtil
+                            .collectElements(function) { element -> (element is PyAssignmentStatement) }
+                            .forEach { a -> processPyAssignmentStatement(a as PyAssignmentStatement) }
                     }
-                }
-                for (element in function.children) {
-                    visitElement(element!!)
                 }
             }
 
-            override fun visitPyAssignmentStatement(assignmentStatement: PyAssignmentStatement) {
-                super.visitPyAssignmentStatement(assignmentStatement)
-                if (!PyNoseUtils.isValidUnittestMethod(
-                        PsiTreeUtil.getParentOfType(
-                            assignmentStatement,
-                            PyFunction::class.java
-                        )
-                    )
-                ) {
-                    return
-                }
+            private fun processPyAssignmentStatement(assignmentStatement: PyAssignmentStatement) {
                 if (elementToCheck != PyAssignmentStatement::class.java) {
-                    for (psiElement in assignmentStatement.children) {
-                        visitElement(psiElement!!)
-                    }
                     return
                 }
                 for (expression in assignmentStatement.targets) {
@@ -118,13 +111,17 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                         continue
                     }
                     if (expression.text.startsWith("$methodFirstParamName.")) {
-                        assignmentStatementTexts.add(expression.text.replace("$methodFirstParamName.", "self."))
+                        assignmentStatementTexts.add(
+                            expression.text.replace(
+                                "$methodFirstParamName.",
+                                "self."
+                            )
+                        )
                     }
                 }
             }
 
-            override fun visitPyReferenceExpression(referenceExpression: PyReferenceExpression) {
-                super.visitPyReferenceExpression(referenceExpression)
+            private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression) {
                 val testMethod = PsiTreeUtil.getParentOfType(referenceExpression, PyFunction::class.java)
                 if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
                     return
@@ -132,14 +129,10 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                 if (elementToCheck != PyReferenceExpression::class.java ||
                     !assignmentStatementTexts.contains(referenceExpression.text)
                 ) {
-                    for (psiElement in referenceExpression.children) {
-                        visitElement(psiElement!!)
-                    }
                     return
                 }
                 testCaseFieldsUsage[testMethod]!!.remove(referenceExpression.text)
             }
         }
     }
-
 }

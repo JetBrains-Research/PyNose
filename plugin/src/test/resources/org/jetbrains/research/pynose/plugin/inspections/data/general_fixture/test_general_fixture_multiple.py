@@ -23,7 +23,7 @@ class <warning descr="Test suite fixture is too general">SomeClass</warning>(uni
         assert self.x != 15
 
 
-class  <warning descr="Test suite fixture is too general">OtherClass</warning>(unittest.TestCase):
+class <warning descr="Test suite fixture is too general">OtherClass</warning>(unittest.TestCase):
 
     x: int
     s: str

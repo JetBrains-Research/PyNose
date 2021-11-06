@@ -30,6 +30,12 @@ class GeneralFixtureTestSmellInspectionTests : AbstractTestSmellInspectionTestWi
     }
 
     @Test
+    fun `test highlighted general fixture multiple`() {
+        myFixture.configureByFile("test_general_fixture_multiple.py")
+        myFixture.checkHighlighting()
+    }
+
+    @Test
     fun `test general fixture without unittest dependency`() {
         myFixture.configureByFile("test_general_fixture_no_dependency.py")
         val highlightInfos = myFixture.doHighlighting()
@@ -38,6 +44,7 @@ class GeneralFixtureTestSmellInspectionTests : AbstractTestSmellInspectionTestWi
 
     @Test
     fun `test general fixture normal`() {
+        println("here")
         myFixture.configureByFile("test_general_fixture_normal.py")
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })

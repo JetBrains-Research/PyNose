@@ -6,10 +6,9 @@ class <warning descr="Test suite fixture is too general">SomeClass</warning>(uni
     x: int
     s: str
 
-    @classmethod
-    def setUpClass(cls):
-        cls.x = 10
-        cls.s = "hello"
+    def setUpClass(self):
+        self.x = 10
+        self.s = "hello"
 
     def test_something(self):
         assert self.x == 10
