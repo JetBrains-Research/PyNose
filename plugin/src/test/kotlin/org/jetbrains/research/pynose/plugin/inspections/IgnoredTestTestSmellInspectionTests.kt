@@ -95,4 +95,10 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
         myFixture.checkHighlighting()
     }
 
+    @Test
+    fun `test ignored tests multiple`() {
+        myFixture.configureByFile("test_ignored_multiple.py")
+        myFixture.checkHighlighting()
+    }
+
 }

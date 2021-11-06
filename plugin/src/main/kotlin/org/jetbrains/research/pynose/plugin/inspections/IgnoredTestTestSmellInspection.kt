@@ -9,8 +9,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 open class IgnoredTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(IgnoredTestTestSmellInspection::class.java)
@@ -34,25 +34,28 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
-                        visitPyElement(testMethod)
-                    }
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node)
+                        .forEach { testMethod ->
+                            visitPyElement(testMethod)
+                        }
                     node.decoratorList?.decorators?.forEach { decorator ->
                         if (decorator.text.startsWith(decoratorText)) {
                             registerIgnored(node.nameIdentifier!!)
                         }
                     }
-                    testHasSkipDecorator.filter { element -> element.value }.forEach { decorator ->
-                        registerIgnored(decorator.key.nameIdentifier!!)
-                    }
+                    testHasSkipDecorator.filter { element -> element.value }
+                        .forEach { decorator ->
+                            registerIgnored(decorator.key.nameIdentifier!!)
+                        }
                 }
                 testHasSkipDecorator.clear()
             }
 
             override fun visitPyDecorator(decorator: PyDecorator) {
                 super.visitPyDecorator(decorator)
-                if (!decorator.text.startsWith(decoratorText)) {
+                if (!decorator.text.startsWith(decoratorText)
+                    || !UnittestInspectionsUtils.isValidUnittestParent(decorator)) {
                     decorator.children.forEach { child -> visitPyElement(child!! as PyElement) }
                     return
                 }
