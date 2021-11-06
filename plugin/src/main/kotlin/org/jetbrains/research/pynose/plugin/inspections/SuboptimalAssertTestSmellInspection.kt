@@ -16,43 +16,41 @@ import kotlin.reflect.KFunction1
 
 class SuboptimalAssertTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellInspection::class.java)
+    
+    private val CHECKERS: MutableList<KFunction1<PyCallExpression, Boolean>> = mutableListOf(
+        this::checkAssertTrueFalseRelatedSmell,
+        this::checkAssertEqualNotEqualIsIsNotRelatedSmell
+    )
 
-    companion object {
-
-        private val CHECKERS: MutableList<KFunction1<PyCallExpression, Boolean>> = mutableListOf(
-            this::checkAssertTrueFalseRelatedSmell,
-            this::checkAssertEqualNotEqualIsIsNotRelatedSmell
-        )
-
-        private fun checkAssertTrueFalseRelatedSmell(assertCall: PyCallExpression): Boolean {
-            var callee: PyExpression
-            if (assertCall.callee.also { callee = it!! } == null) {
-                return false
-            }
-            if (callee.name != "assertTrue" && callee.name != "assertFalse") {
-                return false
-            }
-            val args = assertCall.arguments
-            return args.isNotEmpty() && args[0] is PyBinaryExpression
+    private fun checkAssertTrueFalseRelatedSmell(assertCall: PyCallExpression): Boolean {
+        var callee: PyExpression
+        if (assertCall.callee.also { callee = it!! } == null) {
+            return false
         }
-
-        private fun checkAssertEqualNotEqualIsIsNotRelatedSmell(assertCall: PyCallExpression): Boolean {
-            var callee: PyExpression
-            if (assertCall.callee.also { callee = it!! } == null) {
-                return false
-            }
-            if (callee.name != "assertEqual" &&
-                callee.name != "assertNotEqual" &&
-                callee.name != "assertIs" &&
-                callee.name != "assertIsNot"
-            ) {
-                return false
-            }
-            val args = assertCall.arguments
-            return args.size >= 2 && args
-                .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
+        if (callee.name != "assertTrue" && callee.name != "assertFalse") {
+            return false
         }
+        val args = assertCall.arguments
+        return args.isNotEmpty() && args[0] is PyBinaryExpression
     }
+
+    private fun checkAssertEqualNotEqualIsIsNotRelatedSmell(assertCall: PyCallExpression): Boolean {
+        var callee: PyExpression
+        if (assertCall.callee.also { callee = it!! } == null) {
+            return false
+        }
+        if (callee.name != "assertEqual" &&
+            callee.name != "assertNotEqual" &&
+            callee.name != "assertIs" &&
+            callee.name != "assertIsNot"
+        ) {
+            return false
+        }
+        val args = assertCall.arguments
+        return args.size >= 2 && args
+            .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
+    }
+
 
     override fun buildVisitor(
         holder: ProblemsHolder,
