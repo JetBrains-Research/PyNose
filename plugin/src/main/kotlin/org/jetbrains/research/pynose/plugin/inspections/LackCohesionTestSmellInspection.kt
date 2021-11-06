@@ -15,9 +15,8 @@ import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import kotlin.collections.HashMap
+import java.util.*
 import kotlin.math.sqrt
-import java.util.Locale
 
 class LackCohesionTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(LackCohesionTestSmellInspection::class.java)
@@ -122,7 +121,7 @@ class LackCohesionTestSmellInspection : PyInspection() {
     }
 
     internal class Counter<T> {
-        private val counts: MutableMap<T, Int> = HashMap()
+        private val counts: MutableMap<T, Int> = mutableMapOf()
 
         fun add(t: T) {
             counts.merge(t, 1) { a: Int?, b: Int? -> Integer.sum(a!!, b!!) }

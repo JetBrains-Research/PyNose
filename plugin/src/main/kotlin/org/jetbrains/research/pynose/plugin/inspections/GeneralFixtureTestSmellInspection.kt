@@ -16,7 +16,6 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class GeneralFixtureTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(GeneralFixtureTestSmellInspection::class.java)
-
     val assignmentStatementTexts: MutableSet<String> = mutableSetOf()
     val testCaseFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
 
