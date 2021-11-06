@@ -154,6 +154,14 @@
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.GeneralFixtureTestSmellInspection"
                          displayName="General fixture test"
                          shortName="GeneralFixtureTestSmellInspection"/>
+        <localInspection language="Python"
+                         groupPath="Python"
+                         groupName="PyNose"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.TestMaverickTestSmellInspection"
+                         displayName="Test maverick"
+                         shortName="TestMaverickTestSmellInspection"/>
 
     </extensions>
 
