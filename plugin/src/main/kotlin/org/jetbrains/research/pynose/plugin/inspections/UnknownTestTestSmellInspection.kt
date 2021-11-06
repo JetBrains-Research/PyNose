@@ -10,8 +10,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class UnknownTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(UnknownTestTestSmellInspection::class.java)
@@ -35,8 +35,8 @@ class UnknownTestTestSmellInspection : PyInspection() {
 
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node).forEach { testMethod ->
                         visitPyElement(testMethod)
                         if (assertCounts[testMethod] == null) {
                             assertCounts[testMethod] = 0
@@ -54,7 +54,7 @@ class UnknownTestTestSmellInspection : PyInspection() {
                 val name = child.name
                 val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
                 if (name != null && name.toLowerCase().contains("assert")
-                    && PyNoseUtils.isValidUnittestMethod(testMethod)
+                    && UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
                 ) {
                     if (assertCounts[testMethod!!] == null) {
                         assertCounts[testMethod] = 0
@@ -66,7 +66,7 @@ class UnknownTestTestSmellInspection : PyInspection() {
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
                 val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
+                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 if (assertCounts[testMethod!!] == null) {

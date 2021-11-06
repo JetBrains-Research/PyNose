@@ -10,12 +10,11 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
-import org.jetbrains.research.pynose.core.detectors.impl.TestMaverickTestSmellDetector
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class TestMaverickTestSmellInspection : PyInspection() {
-    private val LOG = Logger.getInstance(TestMaverickTestSmellDetector::class.java)
+    private val LOG = Logger.getInstance(TestMaverickTestSmellInspection::class.java)
     private val testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
     private val setUpFields: MutableSet<String> = mutableSetOf()
 
@@ -38,8 +37,8 @@ class TestMaverickTestSmellInspection : PyInspection() {
             private var methodFirstParamName: String? = null
 
             override fun visitPyClass(node: PyClass) {
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    val testMethods = PyNoseUtils.gatherTestMethods(node)
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    val testMethods = UnittestInspectionsUtils.gatherUnittestTestMethods(node)
                     for (testMethod in testMethods) {
                         testMethodSetUpFieldsUsage[testMethod] = mutableSetOf()
                     }
@@ -111,7 +110,7 @@ class TestMaverickTestSmellInspection : PyInspection() {
 
             private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression) {
                 val testMethod = PsiTreeUtil.getParentOfType(referenceExpression, PyFunction::class.java)
-                if (!PyNoseUtils.isValidUnittestMethod(testMethod) || inSetUpMode
+                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod) || inSetUpMode
                     || !setUpFields.contains(referenceExpression.text)
                 ) {
                     return

@@ -10,8 +10,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class AssertionRouletteTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(AssertionRouletteTestSmellInspection::class.java)
@@ -37,10 +37,10 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
             // todo: issues with highlighting in runIde mode
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                     testHasAssertionRoulette.clear()
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
-                        testHasAssertionRoulette[testMethod!!] = false
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node).forEach { testMethod ->
+                        testHasAssertionRoulette[testMethod] = false
                         visitPyElement(testMethod)
                     }
 
@@ -58,12 +58,12 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
                             if (argumentList.getKeywordArgument("msg") != null) {
                                 continue
                             }
-                            if (PyNoseUtils.ASSERT_METHOD_TWO_PARAMS
+                            if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS
                                     .contains((call.firstChild as PyReferenceExpression).name) &&
                                 argumentList.arguments.size < 3
                             ) {
                                 testHasAssertionRoulette.replace(testMethod, true)
-                            } else if (PyNoseUtils.ASSERT_METHOD_ONE_PARAM
+                            } else if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM
                                     .containsKey((call.firstChild as PyReferenceExpression).name) &&
                                 argumentList.arguments.size < 2
                             ) {
@@ -103,9 +103,7 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
                 super.visitPyCallExpression(callExpression)
                 val child = callExpression.firstChild
                 val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
-                if (child !is PyReferenceExpression || !PyNoseUtils.isCallAssertMethod(child)
-                    || !PyNoseUtils.isValidUnittestMethod(testMethod)
-                ) {
+                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)) {
                     return
                 }
                 if (assertionCallsInTests[testMethod!!] == null) {
@@ -117,7 +115,7 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
                 val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
+                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 if (assertStatementsInTests[testMethod!!] == null) {

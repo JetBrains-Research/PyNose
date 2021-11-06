@@ -13,8 +13,8 @@ import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ObscureInLineSetupTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ObscureInLineSetupTestSmellInspection::class.java)
@@ -37,10 +37,11 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
-                        visitPyElement(testMethod)
-                    }
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node)
+                        .forEach { testMethod ->
+                            visitPyElement(testMethod)
+                        }
                     testMethodLocalVarCount.keys
                         .filter { x -> testMethodLocalVarCount[x]!!.size > 10 }
                         .forEach { x ->
@@ -53,7 +54,7 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
             override fun visitPyAssignmentStatement(assignmentStatement: PyAssignmentStatement) {
                 super.visitPyAssignmentStatement(assignmentStatement)
                 val testMethod = PsiTreeUtil.getParentOfType(assignmentStatement, PyFunction::class.java)
-                if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
+                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 if (testMethodLocalVarCount[testMethod] == null) {

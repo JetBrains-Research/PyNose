@@ -10,8 +10,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class DuplicateAssertionTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellInspection::class.java)
@@ -35,12 +35,13 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
-                        assertCalls.clear()
-                        assertStatements.clear()
-                        visitPyElement(testMethod)
-                    }
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node)
+                        .forEach { testMethod ->
+                            assertCalls.clear()
+                            assertStatements.clear()
+                            visitPyElement(testMethod)
+                        }
                 }
             }
 
@@ -48,8 +49,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                 super.visitPyCallExpression(callExpression)
                 val child = callExpression.firstChild
                 val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
-                if (child !is PyReferenceExpression || !PyNoseUtils.isCallAssertMethod(child)
-                    || !PyNoseUtils.isValidUnittestMethod(testMethod)
+                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
                 ) {
                     return
                 }
@@ -65,7 +65,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                 super.visitPyAssertStatement(assertStatement)
                 val assertArgs = assertStatement.arguments
                 val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (assertArgs.isEmpty() || !PyNoseUtils.isValidUnittestMethod(testMethod)) {
+                if (assertArgs.isEmpty() || !UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 val assertStatementBody = assertArgs[0].text

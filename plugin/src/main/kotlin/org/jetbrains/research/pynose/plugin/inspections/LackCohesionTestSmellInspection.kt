@@ -13,8 +13,8 @@ import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 import java.util.*
 import kotlin.math.sqrt
 
@@ -99,8 +99,8 @@ class LackCohesionTestSmellInspection : PyInspection() {
 
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    val methodList = PyNoseUtils.gatherTestMethods(node)
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    val methodList = UnittestInspectionsUtils.gatherUnittestTestMethods(node)
                     for (i in methodList.indices) {
                         for (j in i + 1 until methodList.size) {
                             val score: Double = calculateCosineSimilarityBetweenMethods(methodList[i], methodList[j])

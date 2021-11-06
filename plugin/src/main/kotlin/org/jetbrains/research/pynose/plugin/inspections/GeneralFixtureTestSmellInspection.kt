@@ -10,8 +10,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 
 class GeneralFixtureTestSmellInspection : PyInspection() {
@@ -38,7 +38,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
             private var methodFirstParamName: String? = null
 
             override fun visitPyClass(node: PyClass) {
-                if (PyNoseUtils.isValidUnittestCase(node)) {
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                     val setUpFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
@@ -46,7 +46,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                             f.name == "setUp" &&
                                     f.parent is PyStatementList &&
                                     f.parent.parent is PyClass &&
-                                    PyNoseUtils.isValidUnittestCase(f.parent.parent as PyClass)
+                                    UnittestInspectionsUtils.isValidUnittestCase(f.parent.parent as PyClass)
                         }
 
                     if (setUpFunction != null) {
@@ -61,7 +61,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                             function.name == "setUpClass" &&
                                     function.parent is PyStatementList &&
                                     function.parent.parent is PyClass &&
-                                    PyNoseUtils.isValidUnittestCase(function.parent.parent as PyClass)
+                                    UnittestInspectionsUtils.isValidUnittestCase(function.parent.parent as PyClass)
                         }
 
                     if (setUpClassFunction != null) {
@@ -70,7 +70,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                     }
 
                     elementToCheck = PyReferenceExpression::class.java
-                    for (testMethod in PyNoseUtils.gatherTestMethods(node)) {
+                    for (testMethod in UnittestInspectionsUtils.gatherUnittestTestMethods(node)) {
                         testCaseFieldsUsage[testMethod] = HashSet(assignmentStatementTexts)
                         PsiTreeUtil
                             .collectElements(testMethod) { element -> (element is PyReferenceExpression) }
@@ -120,7 +120,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
             private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression) {
                 val testMethod = PsiTreeUtil.getParentOfType(referenceExpression, PyFunction::class.java)
-                if (!PyNoseUtils.isValidUnittestMethod(testMethod)) {
+                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
                     return
                 }
                 if (elementToCheck != PyReferenceExpression::class.java ||

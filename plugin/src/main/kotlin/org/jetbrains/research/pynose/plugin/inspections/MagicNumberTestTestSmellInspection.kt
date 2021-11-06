@@ -10,8 +10,8 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.research.pynose.core.PyNoseUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class MagicNumberTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(MagicNumberTestTestSmellInspection::class.java)
@@ -30,23 +30,12 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
             )
         }
 
-        fun checkParent(element: PsiElement): Boolean {
-            return (PyNoseUtils.isValidUnittestMethod(
-                PsiTreeUtil.getParentOfType(
-                    element,
-                    PyFunction::class.java
-                )
-            )
-                    )
-        }
-
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 val child = callExpression.firstChild
-                if (child !is PyReferenceExpression || !PyNoseUtils.isCallAssertMethod(child)
-                    || !checkParent(callExpression)
-                ) {
+                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
+                    || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
                     return
                 }
                 if (callExpression.arguments.any { obj: PyExpression? ->
@@ -63,7 +52,7 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
                 val assertArgs = assertStatement.arguments
-                if (assertArgs.isEmpty() || !checkParent(assertStatement)) {
+                if (assertArgs.isEmpty() || !UnittestInspectionsUtils.isValidUnittestParent(assertStatement)) {
                     return
                 }
                 if (assertArgs.any { obj: PyExpression? ->
