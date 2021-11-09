@@ -2,7 +2,6 @@ import unittest
 
 
 class SomeClass(unittest.TestCase):
-
     x: int = 10
     s: str = "hello"
     z: str = "bye"
@@ -23,7 +22,6 @@ class SomeClass(unittest.TestCase):
 
 
 class OtherClass(unittest.TestCase):
-
     x: int
     s: str
     z: str
@@ -43,3 +41,10 @@ class OtherClass(unittest.TestCase):
     def test_something_else_other(self):
         assert self.s != "hi"
         assert self.x != 12
+
+
+@unittest.skip("reason")
+class AnotherClass:
+    @unittest.skip("another reason")
+    def test_something(self):
+        assert 1 == 1

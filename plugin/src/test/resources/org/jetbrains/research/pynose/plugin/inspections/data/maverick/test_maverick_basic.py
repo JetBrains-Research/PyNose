@@ -2,7 +2,6 @@ import unittest
 
 
 class <warning descr="This test suite fixture's setup method is not used in some of the test cases">SomeClass</warning>(unittest.TestCase):
-
     x : int
     s : str
     w = 2

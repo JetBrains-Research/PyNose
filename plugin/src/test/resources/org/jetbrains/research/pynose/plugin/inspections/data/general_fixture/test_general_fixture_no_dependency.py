@@ -1,7 +1,7 @@
 import unittest
 
 
-class SomeClass():
+class SomeClass:
     x: int
     s: str
     z: str

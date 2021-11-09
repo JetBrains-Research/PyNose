@@ -1,5 +1,6 @@
 import unittest
 
+
 class <warning descr="Test cases in this test suite are not cohesive">SomeClass</warning>(unittest.TestCase):
 
     def __init__(self):

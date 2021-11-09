@@ -19,7 +19,7 @@ class OtherClass(unittest.TestCase):
         pass
 
 
-class AnotherClass():
+class AnotherClass:
 
     def __init__(self):
         pass

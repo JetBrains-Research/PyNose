@@ -1,10 +1,10 @@
 import unittest
 
-class SomeClass():
 
-    x : int
-    s : str
-    z : str
+class SomeClass:
+    x: int
+    s: str
+    z: str
     w = 2
 
     @classmethod

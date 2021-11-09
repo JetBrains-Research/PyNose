@@ -1,5 +1,6 @@
 import unittest
 
+
 class SomeClass:
 
     def __init__(self):
@@ -15,7 +16,7 @@ class SomeClass:
         self.z -= 1
 
     def test_print_x(self):
-        print(x)
+        print(self.x)
 
     def test_check_hi(self):
         assert self.w == "hi"

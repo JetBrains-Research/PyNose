@@ -30,3 +30,11 @@ class OtherClass(unittest.TestCase):
 
 def test_something_other():
     assert 1 == 1
+    assert 1 == 1
+
+
+class AnotherClass:
+
+    def test_something_another(self):
+        assert 1 == 1
+        assert 1 == 1

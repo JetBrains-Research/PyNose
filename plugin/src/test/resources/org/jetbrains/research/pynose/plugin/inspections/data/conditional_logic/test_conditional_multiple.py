@@ -33,3 +33,10 @@ class OtherClass(unittest.TestCase):
             for i in range(20):
                 pass
         d = list(num**2 for num in range(1, 11))
+
+
+class AnotherClass:
+
+    def test_something(self):
+        if 1 == 1:
+            assert 2 == 2

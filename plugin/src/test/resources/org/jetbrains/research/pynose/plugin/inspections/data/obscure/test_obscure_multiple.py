@@ -20,7 +20,7 @@ class SomeClass(unittest.TestCase):
         j = 10
         k = 11
         self.y += 1
-        assert y == 2
+        assert self.y == 2
 
 
     def <warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something_else</warning>(self):
@@ -50,7 +50,7 @@ class SomeClass(unittest.TestCase):
         j = 10
         k = 11
         self.y += 1
-        assert y == 3
+        assert self.y == 3
 
 class OtherClass(unittest.TestCase):
 
@@ -68,7 +68,7 @@ class OtherClass(unittest.TestCase):
         k = 11
         assert a != b
 
-class AnotherClass():
+class AnotherClass:
 
     def test_something(self):
         a = 1

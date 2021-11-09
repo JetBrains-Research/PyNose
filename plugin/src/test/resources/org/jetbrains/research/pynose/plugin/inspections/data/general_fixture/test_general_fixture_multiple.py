@@ -2,7 +2,6 @@ import unittest
 
 
 class <warning descr="Test suite fixture is too general">SomeClass</warning>(unittest.TestCase):
-
     x: int
     s: str
     z: str
@@ -24,7 +23,6 @@ class <warning descr="Test suite fixture is too general">SomeClass</warning>(uni
 
 
 class <warning descr="Test suite fixture is too general">OtherClass</warning>(unittest.TestCase):
-
     x: int
     s: str
     z: str

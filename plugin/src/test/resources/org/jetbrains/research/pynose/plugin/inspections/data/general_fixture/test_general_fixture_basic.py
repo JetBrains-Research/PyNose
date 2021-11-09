@@ -2,11 +2,10 @@ import unittest
 
 
 class <warning descr="Test suite fixture is too general">SomeClass</warning>(unittest.TestCase):
-
     x: int
     s: str
 
-    def setUpClass(self):
+    def setUp(self):
         self.x = 10
         self.s = "hello"
 

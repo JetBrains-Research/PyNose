@@ -2,9 +2,8 @@ import unittest
 
 
 class SomeClass(unittest.TestCase):
-
-    x : int
-    s : str
+    x: int
+    s: str
     w = 2
 
     @classmethod
