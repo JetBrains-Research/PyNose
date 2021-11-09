@@ -111,9 +111,10 @@ class LackCohesionTestSmellInspection : PyInspection() {
                         .values
                         .map { d: Double? -> d!! }
                         .average()
-                }
-                if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
-                    registerLackCohesion(node.nameIdentifier!!)
+
+                    if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
+                        registerLackCohesion(node.nameIdentifier!!)
+                    }
                 }
             }
 
