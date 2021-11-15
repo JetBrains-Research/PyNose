@@ -33,7 +33,7 @@ class OtherClass(unittest.TestCase):
         self.s = "hello"
         self.z = "bye"
 
-    @unittest.skipIf(mylib.__version__ < (1, 3), "reason")
+    @unittest.skipIf(w < 10, "reason")
     def <warning descr="Consider removing or modifying ignored tests to avoid overhead and improve code comprehension">test_something_other</warning>(self):
         assert self.x == 10
         self.assertEqual(self.x, self.w)

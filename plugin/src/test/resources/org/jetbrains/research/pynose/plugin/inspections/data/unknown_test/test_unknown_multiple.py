@@ -9,7 +9,7 @@ class SomeClass(unittest.TestCase):
     def do_something(self):
         pass
 
-    def <warning descr="This test case has no assertion in it">test_something_else</warning>(self):\
+    def <warning descr="This test case has no assertion in it">test_something_else</warning>(self):
         x = 2
 
 
