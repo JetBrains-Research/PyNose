@@ -12,7 +12,6 @@ import com.jetbrains.python.psi.PyAssignmentStatement
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -23,7 +22,7 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerObscureInLineSetup(valueParam: PsiElement) {
@@ -41,6 +40,14 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
                     UnittestInspectionsUtils.gatherUnittestTestMethods(node)
                         .forEach { testMethod ->
                             visitPyElement(testMethod)
+                            PsiTreeUtil
+                                .collectElements(testMethod) { element -> (element is PyAssignmentStatement) }
+                                .forEach { target ->
+                                    processPyAssignmentStatement(
+                                        target as PyAssignmentStatement,
+                                        testMethod
+                                    )
+                                }
                         }
                     testMethodLocalVarCount.keys
                         .filter { x -> testMethodLocalVarCount[x]!!.size > 10 }
@@ -51,19 +58,14 @@ class ObscureInLineSetupTestSmellInspection : PyInspection() {
                 }
             }
 
-            override fun visitPyAssignmentStatement(assignmentStatement: PyAssignmentStatement) {
-                super.visitPyAssignmentStatement(assignmentStatement)
-                val testMethod = PsiTreeUtil.getParentOfType(assignmentStatement, PyFunction::class.java)
-                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
-                    return
-                }
-                if (testMethodLocalVarCount[testMethod] == null) {
-                    testMethodLocalVarCount[testMethod!!] = mutableSetOf()
-                }
-                val localVars: MutableSet<String?>? = testMethodLocalVarCount[testMethod]
+            private fun processPyAssignmentStatement(
+                assignmentStatement: PyAssignmentStatement,
+                testMethod: PyFunction
+            ) {
+                val localVars: MutableSet<String?> = testMethodLocalVarCount.getOrPut(testMethod) { mutableSetOf() }
                 assignmentStatement.targets
                     .filter { target -> target.children.isEmpty() }
-                    .forEach { target -> localVars!!.add(target.name) }
+                    .forEach { target -> localVars.add(target.name) }
             }
         }
     }

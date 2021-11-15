@@ -8,12 +8,13 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.psi.PyCallExpression
+import com.jetbrains.python.psi.PyElementVisitor
+import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.pyi.PyiFile
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class RedundantPrintTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(RedundantPrintTestSmellInspection::class.java)
@@ -21,7 +22,7 @@ class RedundantPrintTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerRedundantPrint(valueParam: PsiElement) {
@@ -35,8 +36,8 @@ class RedundantPrintTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
-                val child = callExpression.firstChild as? PyReferenceExpression ?: return
-                if (child.text != "print" || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
+                val child = callExpression.callee as? PyReferenceExpression ?: return
+                if (child.text != "print" || !GeneralInspectionsUtils.redirectValidParentCheck(callExpression)) {
                     return
                 }
                 val element = child.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return

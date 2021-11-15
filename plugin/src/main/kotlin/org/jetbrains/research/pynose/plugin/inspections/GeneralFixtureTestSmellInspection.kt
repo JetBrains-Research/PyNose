@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -22,7 +21,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerGeneralFixture(valueParam: PsiElement) {
@@ -34,75 +33,76 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
         }
 
         return object : PyInspectionVisitor(holder, session) {
-            private var elementToCheck: Class<out PyElement?>? = null
-            private var methodFirstParamName: String? = null
-
             override fun visitPyClass(node: PyClass) {
                 if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
-                    val setUpFunction = node.statementList.statements
-                        .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
-                        .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .firstOrNull { f: PyFunction ->
-                            f.name == "setUp" &&
-                                    f.parent is PyStatementList &&
-                                    f.parent.parent is PyClass &&
-                                    UnittestInspectionsUtils.isValidUnittestCase(f.parent.parent as PyClass)
-                        }
+                    processSetUpFunction(node)
+                    processSetUpClassFunction(node)
 
-                    if (setUpFunction != null) {
-                        elementToCheck = PyAssignmentStatement::class.java
-                        processPyFunction(setUpFunction)
-                    }
-
-                    val setUpClassFunction = node.statementList.statements
-                        .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
-                        .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-                        .firstOrNull { function: PyFunction ->
-                            function.name == "setUpClass" &&
-                                    function.parent is PyStatementList &&
-                                    function.parent.parent is PyClass &&
-                                    UnittestInspectionsUtils.isValidUnittestCase(function.parent.parent as PyClass)
-                        }
-
-                    if (setUpClassFunction != null) {
-                        elementToCheck = PyAssignmentStatement::class.java
-                        processPyFunction(setUpClassFunction)
-                    }
-
-                    elementToCheck = PyReferenceExpression::class.java
                     for (testMethod in UnittestInspectionsUtils.gatherUnittestTestMethods(node)) {
                         testCaseFieldsUsage[testMethod] = HashSet(assignmentStatementTexts)
                         PsiTreeUtil
                             .collectElements(testMethod) { element -> (element is PyReferenceExpression) }
-                            .forEach { ref -> processPyReferenceExpression(ref as PyReferenceExpression) }
+                            .forEach { target -> processPyReferenceExpression(target as PyReferenceExpression, testMethod) }
                     }
 
                     if (testCaseFieldsUsage.values.any { strings: Set<String?> -> strings.isNotEmpty() }) {
                         registerGeneralFixture(node.nameIdentifier!!)
                     }
                 }
-                super.visitPyClass(node)
                 assignmentStatementTexts.clear()
                 testCaseFieldsUsage.clear()
             }
 
-            private fun processPyFunction(function: PyFunction) {
-                if (elementToCheck == PyAssignmentStatement::class.java) {
-                    if (function.name == "setUp" || function.name == "setUpClass") {
-                        if (function.parameterList.parameters.isNotEmpty()) {
-                            methodFirstParamName = function.parameterList.parameters[0].name
-                        }
-                        PsiTreeUtil
-                            .collectElements(function) { element -> (element is PyAssignmentStatement) }
-                            .forEach { a -> processPyAssignmentStatement(a as PyAssignmentStatement) }
+            private fun processSetUpFunction(node: PyClass) {
+                val setUpFunction = node.statementList.statements
+                    .filterIsInstance(PyFunction::class.java)
+                    .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
+                    .firstOrNull { function: PyFunction ->
+                        function.name == "setUp" &&
+                                function.parent is PyStatementList &&
+                                function.parent.parent is PyClass &&
+                                UnittestInspectionsUtils.isValidUnittestCase(function.parent.parent as PyClass)
                     }
+
+                if (setUpFunction != null) { // todo: null check
+                    processPyFunction(setUpFunction)
                 }
             }
 
-            private fun processPyAssignmentStatement(assignmentStatement: PyAssignmentStatement) {
-                if (elementToCheck != PyAssignmentStatement::class.java) {
-                    return
+            private fun processSetUpClassFunction(node: PyClass) {
+                val setUpClassFunction = node.statementList.statements
+                    .filterIsInstance(PyFunction::class.java)
+                    .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
+                    .firstOrNull { function: PyFunction ->
+                        function.name == "setUpClass" &&
+                                function.parent is PyStatementList &&
+                                function.parent.parent is PyClass &&
+                                UnittestInspectionsUtils.isValidUnittestCase(function.parent.parent as PyClass)
+                    }
+
+                if (setUpClassFunction != null) {
+                    processPyFunction(setUpClassFunction)
                 }
+            }
+
+            private fun processPyFunction(function: PyFunction) {
+                var methodFirstParamName: String? = null
+                if (function.name == "setUp" || function.name == "setUpClass") {
+                    if (function.parameterList.parameters.isNotEmpty()) {
+                        methodFirstParamName = function.parameterList.parameters[0].name
+                    }
+                    PsiTreeUtil
+                        .collectElements(function) { element -> (element is PyAssignmentStatement) }
+                        .forEach { target ->
+                            processPyAssignmentStatement(target as PyAssignmentStatement, methodFirstParamName)
+                        }
+                }
+            }
+
+            private fun processPyAssignmentStatement(
+                assignmentStatement: PyAssignmentStatement,
+                methodFirstParamName: String?
+            ) {
                 for (expression in assignmentStatement.targets) {
                     if (expression !is PyTargetExpression) {
                         continue
@@ -118,17 +118,11 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                 }
             }
 
-            private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression) {
-                val testMethod = PsiTreeUtil.getParentOfType(referenceExpression, PyFunction::class.java)
-                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
+            private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression, testMethod: PyFunction) {
+                if (!assignmentStatementTexts.contains(referenceExpression.text)) {
                     return
                 }
-                if (elementToCheck != PyReferenceExpression::class.java ||
-                    !assignmentStatementTexts.contains(referenceExpression.text)
-                ) {
-                    return
-                }
-                testCaseFieldsUsage[testMethod]!!.remove(referenceExpression.text)
+                testCaseFieldsUsage[testMethod]?.remove(referenceExpression.text)
             }
         }
     }

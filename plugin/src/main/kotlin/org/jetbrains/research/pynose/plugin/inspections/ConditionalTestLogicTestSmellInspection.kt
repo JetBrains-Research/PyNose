@@ -9,9 +9,8 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ConditionalTestLogicTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ConditionalTestLogicTestSmellInspection::class.java)
@@ -19,9 +18,8 @@ class ConditionalTestLogicTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
-
         fun registerConditional(valueParam: PsiElement, offset: Int = 0, textLength: Int = valueParam.textLength) {
             holder.registerProblem(
                 valueParam,
@@ -34,49 +32,49 @@ class ConditionalTestLogicTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyIfStatement(ifStatement: PyIfStatement) {
                 super.visitPyIfStatement(ifStatement)
-                if (UnittestInspectionsUtils.isValidUnittestParent(ifStatement)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(ifStatement)) {
                     registerConditional(ifStatement, 0, "if".length)
                 }
             }
 
             override fun visitPyForStatement(forStatement: PyForStatement) {
                 super.visitPyForStatement(forStatement)
-                if (UnittestInspectionsUtils.isValidUnittestParent(forStatement)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(forStatement)) {
                     registerConditional(forStatement, 0, "for".length)
                 }
             }
 
             override fun visitPyWhileStatement(whileStatement: PyWhileStatement) {
                 super.visitPyWhileStatement(whileStatement)
-                if (UnittestInspectionsUtils.isValidUnittestParent(whileStatement)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(whileStatement)) {
                     registerConditional(whileStatement, 0, "while".length)
                 }
             }
 
             override fun visitPyListCompExpression(listCompExpression: PyListCompExpression) {
                 super.visitPyListCompExpression(listCompExpression)
-                if (UnittestInspectionsUtils.isValidUnittestParent(listCompExpression)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(listCompExpression)) {
                     registerConditional(listCompExpression)
                 }
             }
 
             override fun visitPySetCompExpression(setCompExpression: PySetCompExpression) {
                 super.visitPySetCompExpression(setCompExpression)
-                if (UnittestInspectionsUtils.isValidUnittestParent(setCompExpression)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(setCompExpression)) {
                     registerConditional(setCompExpression)
                 }
             }
 
             override fun visitPyDictCompExpression(dictCompExpression: PyDictCompExpression) {
                 super.visitPyDictCompExpression(dictCompExpression)
-                if (UnittestInspectionsUtils.isValidUnittestParent(dictCompExpression)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(dictCompExpression)) {
                     registerConditional(dictCompExpression)
                 }
             }
 
             override fun visitPyGeneratorExpression(generatorExpression: PyGeneratorExpression) {
                 super.visitPyGeneratorExpression(generatorExpression)
-                if (UnittestInspectionsUtils.isValidUnittestParent(generatorExpression)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(generatorExpression)) {
                     registerConditional(generatorExpression)
                 }
             }

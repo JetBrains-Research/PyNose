@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -21,7 +20,7 @@ class TestMaverickTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerMaverick(valueParam: PsiElement) {
@@ -39,14 +38,13 @@ class TestMaverickTestSmellInspection : PyInspection() {
             override fun visitPyClass(node: PyClass) {
                 if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                     val testMethods = UnittestInspectionsUtils.gatherUnittestTestMethods(node)
-                    for (testMethod in testMethods) {
+                    testMethods.forEach { testMethod ->
                         testMethodSetUpFieldsUsage[testMethod] = mutableSetOf()
                     }
                     val setUpFunction = node.statementList.statements
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                         .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUp" }
-
                     if (setUpFunction != null) {
                         inSetUpMode = true
                         processPyFunction(setUpFunction)
@@ -56,28 +54,25 @@ class TestMaverickTestSmellInspection : PyInspection() {
                         .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                         .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUpClass" }
-
                     if (setUpClassFunction != null) {
                         inSetUpMode = true
                         processPyFunction(setUpClassFunction)
                     }
 
                     inSetUpMode = false
-
                     for (testMethod in testMethods) {
                         PsiTreeUtil
                             .collectElements(testMethod) { r -> (r is PyReferenceExpression) }
-                            .forEach { ref -> processPyReferenceExpression(ref as PyReferenceExpression) }
+                            .forEach { ref -> processPyReferenceExpression(ref as PyReferenceExpression, testMethod) }
                         PsiTreeUtil
                             .collectElements(testMethod) { element -> (element is PyTargetExpression) }
-                            .forEach { target -> processPyTargetExpression(target as PyTargetExpression) }
+                            .forEach { target -> processPyTargetExpression(target as PyTargetExpression, testMethod) }
                     }
                     if (testMethodSetUpFieldsUsage.values.any { obj: Set<String?> -> obj.isEmpty() }
                         && setUpFields.isNotEmpty()) {
                         registerMaverick(node.nameIdentifier!!)
                     }
                 }
-                super.visitPyClass(node)
                 testMethodSetUpFieldsUsage.clear()
                 setUpFields.clear()
             }
@@ -91,12 +86,11 @@ class TestMaverickTestSmellInspection : PyInspection() {
                     }
                     PsiTreeUtil
                         .collectElements(function) { element -> (element is PyTargetExpression) }
-                        .forEach { target -> processPyTargetExpression(target as PyTargetExpression) }
+                        .forEach { target -> processPyTargetExpression(target as PyTargetExpression, function) }
                 }
             }
 
-            private fun processPyTargetExpression(targetExpression: PyTargetExpression) {
-                val method = PsiTreeUtil.getParentOfType(targetExpression, PyFunction::class.java)
+            private fun processPyTargetExpression(targetExpression: PyTargetExpression, method: PyFunction) {
                 if (!inSetUpMode) {
                     if (setUpFields.contains(targetExpression.text)) {
                         testMethodSetUpFieldsUsage[method]!!.add(targetExpression.text)
@@ -108,14 +102,14 @@ class TestMaverickTestSmellInspection : PyInspection() {
                 }
             }
 
-            private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression) {
-                val testMethod = PsiTreeUtil.getParentOfType(referenceExpression, PyFunction::class.java)
-                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod) || inSetUpMode
-                    || !setUpFields.contains(referenceExpression.text)
-                ) {
+            private fun processPyReferenceExpression(
+                referenceExpression: PyReferenceExpression,
+                testMethod: PyFunction
+            ) {
+                if (inSetUpMode || !setUpFields.contains(referenceExpression.text)) {
                     return
                 } else {
-                    testMethodSetUpFieldsUsage[testMethod]!!.add(referenceExpression.text)
+                    testMethodSetUpFieldsUsage[testMethod]!!.add(referenceExpression.text) // todo: !!
                 }
             }
         }

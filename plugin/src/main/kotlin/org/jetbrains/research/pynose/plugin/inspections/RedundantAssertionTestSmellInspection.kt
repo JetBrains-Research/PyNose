@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -19,7 +18,7 @@ class RedundantAssertionTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerRedundant(valueParam: PsiElement) {
@@ -34,7 +33,7 @@ class RedundantAssertionTestSmellInspection : PyInspection() {
             // todo: assertTrue(4 < 4) is not detected
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
-                val child = callExpression.firstChild
+                val child = callExpression.callee
                 if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
                     || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)
                 ) {

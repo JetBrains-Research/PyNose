@@ -8,15 +8,13 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
-import kotlin.reflect.KFunction1
 
 class SuboptimalAssertTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellInspection::class.java)
 
-    private val CHECKERS: MutableList<KFunction1<PyCallExpression, Boolean>> = mutableListOf(
+    private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
         this::checkAssertTrueFalseRelatedSmell,
         this::checkAssertEqualNotEqualIsIsNotRelatedSmell
     )
@@ -50,7 +48,7 @@ class SuboptimalAssertTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerSuboptimal(valueParam: PsiElement) {

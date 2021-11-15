@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -21,7 +20,7 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerDuplicate(valueParam: PsiElement) {
@@ -40,37 +39,37 @@ class DuplicateAssertionTestSmellInspection : PyInspection() {
                         .forEach { testMethod ->
                             assertCalls.clear()
                             assertStatements.clear()
+                            PsiTreeUtil
+                                .collectElements(testMethod) { element -> (element is PyCallExpression) }
+                                .forEach { target -> processPyCallExpression(target as PyCallExpression, testMethod) }
+                            PsiTreeUtil
+                                .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
                             visitPyElement(testMethod)
                         }
                 }
             }
 
-            override fun visitPyCallExpression(callExpression: PyCallExpression) {
-                super.visitPyCallExpression(callExpression)
-                val child = callExpression.firstChild
-                val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
-                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
-                    || !UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
-                ) {
+            private fun processPyCallExpression(callExpression: PyCallExpression, testMethod: PyFunction) {
+                val child = callExpression.callee
+                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)) {
                     return
                 }
                 val assertionCall = callExpression.text
-                if (assertCalls.contains(Pair(assertionCall, testMethod!!))) {
+                if (assertCalls.contains(Pair(assertionCall, testMethod))) {
                     registerDuplicate(callExpression)
                 } else {
                     assertCalls.add(Pair(assertionCall, testMethod))
                 }
             }
 
-            override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
-                super.visitPyAssertStatement(assertStatement)
+            private fun processPyAssertStatement(assertStatement: PyAssertStatement, testMethod: PyFunction) {
                 val assertArgs = assertStatement.arguments
-                val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (assertArgs.isEmpty() || !UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
+                if (assertArgs.isEmpty()) {
                     return
                 }
                 val assertStatementBody = assertArgs[0].text
-                if (assertStatements.contains(Pair(assertStatementBody, testMethod!!))) {
+                if (assertStatements.contains(Pair(assertStatementBody, testMethod))) {
                     registerDuplicate(assertStatement)
                 } else {
                     assertStatements.add(Pair(assertStatementBody, testMethod))

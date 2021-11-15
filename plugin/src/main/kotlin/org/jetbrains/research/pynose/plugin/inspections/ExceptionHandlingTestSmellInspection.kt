@@ -8,10 +8,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
-import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
+import com.jetbrains.python.psi.PyRaiseStatement
+import com.jetbrains.python.psi.PyTryExceptStatement
+import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ExceptionHandlingTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellInspection::class.java)
@@ -19,8 +19,8 @@ class ExceptionHandlingTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
-    ): PyElementVisitor {
+        session: LocalInspectionToolSession
+    ): PyInspectionVisitor {
 
         fun registerException(valueParam: PsiElement, offset: Int = 0, textLength: Int = valueParam.textLength) {
             holder.registerProblem(
@@ -30,18 +30,17 @@ class ExceptionHandlingTestSmellInspection : PyInspection() {
                 TextRange(offset, textLength)
             )
         }
-
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyTryExceptStatement(tryExceptStatement: PyTryExceptStatement) {
                 super.visitPyTryExceptStatement(tryExceptStatement)
-                if (UnittestInspectionsUtils.isValidUnittestParent(tryExceptStatement)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(tryExceptStatement)) {
                     registerException(tryExceptStatement, 0, "try".length)
                 }
             }
 
             override fun visitPyRaiseStatement(raiseStatement: PyRaiseStatement) {
                 super.visitPyRaiseStatement(raiseStatement)
-                if (UnittestInspectionsUtils.isValidUnittestParent(raiseStatement)) {
+                if (GeneralInspectionsUtils.redirectValidParentCheck(raiseStatement)) {
                     registerException(raiseStatement, 0, "raise".length)
                 }
             }

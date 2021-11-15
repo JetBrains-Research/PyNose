@@ -5,11 +5,10 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -19,7 +18,7 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerMagicNumber(valueParam: PsiElement) {
@@ -33,17 +32,19 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
-                val child = callExpression.firstChild
-                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
-                    || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
+                val child = callExpression.callee
+                if (child !is PyReferenceExpression ||
+                    !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
+                    || !GeneralInspectionsUtils.redirectValidParentCheck(callExpression)
+                ) {
                     return
                 }
                 if (callExpression.arguments.any { obj: PyExpression? ->
-                        PyNumericLiteralExpression::class.java.isInstance(obj)
-                                || (PyBinaryExpression::class.java.isInstance(obj)
-                                && obj!!.children.any { child ->
-                            PyNumericLiteralExpression::class.java.isInstance(child)
-                        })
+                        obj is PyNumericLiteralExpression ||
+                                (obj is PyBinaryExpression
+                                        && obj.children.any { child ->
+                                    child is PyNumericLiteralExpression
+                                })
                     }) {
                     registerMagicNumber(callExpression)
                 }
@@ -52,14 +53,14 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
                 val assertArgs = assertStatement.arguments
-                if (assertArgs.isEmpty() || !UnittestInspectionsUtils.isValidUnittestParent(assertStatement)) {
+                if (assertArgs.isEmpty() || !GeneralInspectionsUtils.redirectValidParentCheck(assertStatement)) {
                     return
                 }
                 if (assertArgs.any { obj: PyExpression? ->
-                        PyNumericLiteralExpression::class.java.isInstance(obj)
-                                || (PyBinaryExpression::class.java.isInstance(obj)
-                                && obj!!.children.any { child ->
-                            PyNumericLiteralExpression::class.java.isInstance(child)
+                        obj is PyNumericLiteralExpression
+                                || (obj is PyBinaryExpression
+                                && obj.children.any { child ->
+                            child is PyNumericLiteralExpression
                         })
                     }) {
                     registerMagicNumber(assertStatement)

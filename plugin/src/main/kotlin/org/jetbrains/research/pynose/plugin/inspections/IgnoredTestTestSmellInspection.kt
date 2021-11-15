@@ -5,22 +5,24 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
-import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
+import com.jetbrains.python.psi.PyClass
+import com.jetbrains.python.psi.PyDecorator
+import com.jetbrains.python.psi.PyElement
+import com.jetbrains.python.psi.PyElementVisitor
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 open class IgnoredTestTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(IgnoredTestTestSmellInspection::class.java)
-    private val testHasSkipDecorator: MutableMap<PyFunction, Boolean> = mutableMapOf()
     private val decoratorText = "@unittest.skip"
 
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerIgnored(valueParam: PsiElement) {
@@ -37,30 +39,25 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
                 if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                     UnittestInspectionsUtils.gatherUnittestTestMethods(node)
                         .forEach { testMethod ->
-                            visitPyElement(testMethod)
+                            PsiTreeUtil
+                                .collectElements(testMethod) { element -> (element is PyDecorator) }
+                                .forEach { target -> processPyDecorator(target as PyDecorator) }
                         }
                     node.decoratorList?.decorators?.forEach { decorator ->
                         if (decorator.text.startsWith(decoratorText)) {
                             registerIgnored(node.nameIdentifier!!)
                         }
                     }
-                    testHasSkipDecorator.filter { element -> element.value }
-                        .forEach { decorator ->
-                            registerIgnored(decorator.key.nameIdentifier!!)
-                        }
                 }
-                testHasSkipDecorator.clear()
             }
 
-            override fun visitPyDecorator(decorator: PyDecorator) {
-                super.visitPyDecorator(decorator)
-                if (!decorator.text.startsWith(decoratorText)
-                    || !UnittestInspectionsUtils.isValidUnittestParent(decorator)) {
+            private fun processPyDecorator(decorator: PyDecorator) {
+                if (!decorator.text.startsWith(decoratorText)) {
                     decorator.children.forEach { child -> visitPyElement(child!! as PyElement) }
                     return
                 }
                 if (decorator.target != null) {
-                    testHasSkipDecorator.putIfAbsent(decorator.target!!, true)
+                    registerIgnored(decorator.target!!.nameIdentifier!!)
                 }
             }
         }

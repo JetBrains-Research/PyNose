@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -20,7 +19,7 @@ class UnknownTestTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerUnknown(valueParam: PsiElement) {
@@ -41,6 +40,12 @@ class UnknownTestTestSmellInspection : PyInspection() {
                         if (assertCounts[testMethod] == null) {
                             assertCounts[testMethod] = 0
                         }
+                        PsiTreeUtil
+                            .collectElements(testMethod) { element -> (element is PyCallExpression) }
+                            .forEach { target -> processPyCallExpression(target as PyCallExpression, testMethod) }
+                        PsiTreeUtil
+                            .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                            .forEach { _ -> processPyAssertStatement(testMethod) }
                     }
                     assertCounts.keys.filter { x -> assertCounts[x] == 0 }
                         .forEach { x -> registerUnknown(x.nameIdentifier!!) }
@@ -48,28 +53,19 @@ class UnknownTestTestSmellInspection : PyInspection() {
                 }
             }
 
-            override fun visitPyCallExpression(callExpression: PyCallExpression) {
-                super.visitPyCallExpression(callExpression)
-                val child = callExpression.firstChild as? PyReferenceExpression ?: return
+            private fun processPyCallExpression(callExpression: PyCallExpression, testMethod: PyFunction) {
+                val child = callExpression.callee as? PyReferenceExpression ?: return
                 val name = child.name
-                val testMethod = PsiTreeUtil.getParentOfType(callExpression, PyFunction::class.java)
-                if (name != null && name.toLowerCase().contains("assert")
-                    && UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
-                ) {
-                    if (assertCounts[testMethod!!] == null) {
+                if (name != null && name.toLowerCase().contains("assert")) {
+                    if (assertCounts[testMethod] == null) { // todo: similar to get or put?
                         assertCounts[testMethod] = 0
                     }
                     assertCounts[testMethod] = assertCounts[testMethod]!! + 1
                 }
             }
 
-            override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
-                super.visitPyAssertStatement(assertStatement)
-                val testMethod = PsiTreeUtil.getParentOfType(assertStatement, PyFunction::class.java)
-                if (!UnittestInspectionsUtils.isValidUnittestMethod(testMethod)) {
-                    return
-                }
-                if (assertCounts[testMethod!!] == null) {
+            private fun processPyAssertStatement(testMethod: PyFunction) {
+                if (assertCounts[testMethod] == null) {
                     assertCounts[testMethod] = 0
                 }
                 assertCounts[testMethod] = assertCounts[testMethod]!! + 1

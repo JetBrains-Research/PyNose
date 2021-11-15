@@ -12,11 +12,10 @@ import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
-import org.jetbrains.annotations.NotNull
-import java.util.Locale
-import kotlin.math.sqrt
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
+import java.util.*
+import kotlin.math.sqrt
 
 class LackCohesionTestSmellInspection : PyInspection() {
     private val LOG = Logger.getInstance(LackCohesionTestSmellInspection::class.java)
@@ -47,7 +46,7 @@ class LackCohesionTestSmellInspection : PyInspection() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-        @NotNull session: LocalInspectionToolSession
+        session: LocalInspectionToolSession
     ): PyElementVisitor {
 
         fun registerLackCohesion(valueParam: PsiElement) {
@@ -89,12 +88,9 @@ class LackCohesionTestSmellInspection : PyInspection() {
                     if (splitIdentifier) "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|\\s+|_|\\d+" else "\\s+"
                 ).toTypedArray()
                 return tokens
-                    .map { obj: String ->
-                        obj.toLowerCase(Locale.getDefault())
-                    }
+                    .map { obj: String -> obj.toLowerCase(Locale.getDefault()) }
                     .filter { t: String? -> !removeStopWords || !STOP_WORDS.contains(t) }
                     .map { s: String? -> STEMMER.stem(s) }
-                    .toList()
             }
 
             override fun visitPyClass(node: PyClass) {
@@ -109,13 +105,16 @@ class LackCohesionTestSmellInspection : PyInspection() {
                     }
                     testClassCohesionScore = cosineSimilarityScores
                         .values
-                        .map { d: Double? -> d!! }
                         .average()
 
                     if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
                         registerLackCohesion(node.nameIdentifier!!)
                     }
                 }
+                testClassCohesionScore = 0.0
+                splitIdentifier = true
+                removeStopWords = false
+                cosineSimilarityScores.clear()
             }
 
         }
