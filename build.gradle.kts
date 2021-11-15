@@ -44,6 +44,7 @@ subprojects {
                 branch = "main"
             }
         }
+        testImplementation("io.mockk:mockk:1.10.2")
     }
 
     intellij {
