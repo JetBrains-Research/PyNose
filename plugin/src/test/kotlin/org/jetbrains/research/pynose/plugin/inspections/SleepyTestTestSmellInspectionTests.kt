@@ -1,9 +1,11 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
+import io.mockk.every
+import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
@@ -12,6 +14,9 @@ class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSd
     @BeforeAll
     override fun setUp() {
         super.setUp()
+        mockkObject(PyNoseMode)
+        every { PyNoseMode.getPyNoseUnittestMode() } returns true
+        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(SleepyTestTestSmellInspection())
     }
 
@@ -19,11 +24,10 @@ class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSd
         return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/sleepy"
     }
 
-    @Ignore
     @Test
     fun `test highlighted sleepy`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "import time\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
@@ -35,7 +39,7 @@ class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSd
     @Test
     fun `test sleepy without unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "import time\n" +
                     "class SomeClass():\n" +
                     "    def test_something(self):\n" +
@@ -45,8 +49,6 @@ class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSd
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
-    // todo: should pass
-    @Ignore
     @Test
     fun `test sleepy multiple`() {
         myFixture.configureByFile("test_sleepy_multiple.py")

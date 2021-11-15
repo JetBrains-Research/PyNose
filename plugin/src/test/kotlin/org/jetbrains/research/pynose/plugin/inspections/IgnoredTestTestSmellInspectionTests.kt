@@ -1,6 +1,9 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
+import io.mockk.every
+import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -11,6 +14,9 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @BeforeAll
     override fun setUp() {
         super.setUp()
+        mockkObject(PyNoseMode)
+        every { PyNoseMode.getPyNoseUnittestMode() } returns true
+        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(IgnoredTestTestSmellInspection())
     }
 
@@ -21,7 +27,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test skipped without unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass():\n" +
                     "    @unittest.skip(\"reason\")\n" +
                     "    def test_something(self):\n" +
@@ -34,7 +40,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test not skipped with unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeTestCase(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
@@ -46,7 +52,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test highlighted skip class`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "@unittest.skip(\"reason\")\n" +
                     "class <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
                     "SomeClass</warning>(unittest.TestCase):\n" +
@@ -59,7 +65,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test highlighted basic skip`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skip(\"reason\")\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
@@ -72,7 +78,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test highlighted skip if`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipIf(mylib.__version__ < (1, 3), \"reason\")\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
@@ -85,7 +91,7 @@ class IgnoredTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithS
     @Test
     fun `test highlighted skip unless`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipUnless(mylib.__version__ < (1, 3), \"reason\")\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +

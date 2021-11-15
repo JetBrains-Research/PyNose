@@ -1,12 +1,16 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
+import io.mockk.every
+import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
 class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+
     override fun getTestDataPath(): String {
         return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/conditional_logic"
     }
@@ -14,13 +18,16 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @BeforeAll
     override fun setUp() {
         super.setUp()
+        mockkObject(PyNoseMode)
+        every { PyNoseMode.getPyNoseUnittestMode() } returns true
+        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(ConditionalTestLogicTestSmellInspection())
     }
 
     @Test
     fun `test highlighted if statement`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
@@ -33,7 +40,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test if statement without unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "class SomeClass():\n" +
+            "test_file.py", "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        if (2 > 1):" +
                     "            pass"
@@ -45,7 +52,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted for statement`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
@@ -58,7 +65,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test for statement with non-unittest name`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def do_something(self):\n" +
                     "        for _ in range(10):" +
@@ -71,7 +78,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted while statement`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        x = 0\n" +
@@ -85,7 +92,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted list comprehension`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
@@ -97,7 +104,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted set comprehension`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        x = [10, '30', 30, 10, '56']\n" +
@@ -110,7 +117,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted dict comprehension`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
@@ -122,7 +129,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted generator`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        S = list(<warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +

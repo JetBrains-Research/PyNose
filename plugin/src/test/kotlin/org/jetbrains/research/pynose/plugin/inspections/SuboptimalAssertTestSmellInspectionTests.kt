@@ -1,6 +1,9 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
+import io.mockk.every
+import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -11,6 +14,9 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @BeforeAll
     override fun setUp() {
         super.setUp()
+        mockkObject(PyNoseMode)
+        every { PyNoseMode.getPyNoseUnittestMode() } returns true
+        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(SuboptimalAssertTestSmellInspection())
     }
 
@@ -21,7 +27,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test highlighted suboptimal equality`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -38,7 +44,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test correct suboptimal equality replacements`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -52,7 +58,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test highlighted suboptimal is`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -67,7 +73,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test correct suboptimal is replacements`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -81,7 +87,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test highlighted suboptimal comparison`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -99,7 +105,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test correct suboptimal comparison replacements`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -120,7 +126,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test suboptimal assertion without unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        X = 5\n" +
@@ -139,7 +145,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
     @Test
     fun `test suboptimal assertion with non-unittest function name`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass():\n" +
                     "    def do_something(self):\n" +
                     "        X = 5\n" +

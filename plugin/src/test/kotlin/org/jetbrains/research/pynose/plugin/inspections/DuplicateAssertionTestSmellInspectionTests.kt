@@ -1,6 +1,9 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
+import io.mockk.every
+import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -11,6 +14,9 @@ class DuplicateAssertionTestSmellInspectionTests: AbstractTestSmellInspectionTes
     @BeforeAll
     override fun setUp() {
         super.setUp()
+        mockkObject(PyNoseMode)
+        every { PyNoseMode.getPyNoseUnittestMode() } returns true
+        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(DuplicateAssertionTestSmellInspection())
     }
 
@@ -21,7 +27,7 @@ class DuplicateAssertionTestSmellInspectionTests: AbstractTestSmellInspectionTes
     @Test
     fun `test duplicate assertion without unittest dependency`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        assert True\n" +
@@ -34,7 +40,7 @@ class DuplicateAssertionTestSmellInspectionTests: AbstractTestSmellInspectionTes
     @Test
     fun `test highlighted duplicate assertion`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        assert True\n" +
@@ -46,7 +52,7 @@ class DuplicateAssertionTestSmellInspectionTests: AbstractTestSmellInspectionTes
     @Test
     fun `test duplicate assertion in different functions`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        assert True\n" +
@@ -60,7 +66,7 @@ class DuplicateAssertionTestSmellInspectionTests: AbstractTestSmellInspectionTes
     @Test
     fun `test highlighted duplicate unittest assertion`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
+            "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        self.assertTrue(1 == 2)\n" +
