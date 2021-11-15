@@ -162,6 +162,8 @@
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.TestMaverickTestSmellInspection"
                          displayName="Test maverick"
                          shortName="TestMaverickTestSmellInspection"/>
+        <postStartupActivity
+                implementation="org.jetbrains.research.pynose.plugin.startup.PyNoseStartupActivity"/>
 
     </extensions>
 
