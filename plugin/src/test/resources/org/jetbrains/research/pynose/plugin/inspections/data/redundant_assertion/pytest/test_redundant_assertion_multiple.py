@@ -1,7 +1,4 @@
-import unittest
-
-
-class SomeClass(unittest.TestCase):
+class TestClass:
 
     def test_something(self):
         <warning descr="This statement is unnecessary as it's result will never change">assert 1 == 1</warning>
@@ -13,10 +10,12 @@ class SomeClass(unittest.TestCase):
         <warning descr="This statement is unnecessary as it's result will never change">assert "a" < "a"</warning>
 
 
-class OtherClass(unittest.TestCase):
+def test_something_other(self):
+    self.assertTrue(4 >= 4)
 
-    def test_something_other(self):
-        self.assertTrue(4 >= 4)
+
+def test_something_else(self):
+    <warning descr="This statement is unnecessary as it's result will never change">assert "a" < "a"</warning>
 
 
 class AnotherClass:

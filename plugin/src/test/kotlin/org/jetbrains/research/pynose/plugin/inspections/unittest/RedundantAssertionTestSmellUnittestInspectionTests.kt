@@ -1,16 +1,15 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
 import io.mockk.mockkObject
-import org.jetbrains.research.pynose.plugin.inspections.unittest.RedundantAssertionTestSmellUnittestInspection
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class RedundantAssertionTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class RedundantAssertionTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
@@ -22,7 +21,7 @@ class RedundantAssertionTestSmellInspectionTests : AbstractTestSmellInspectionTe
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/redundant_assertion"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/redundant_assertion/unittest"
     }
 
     @Test
