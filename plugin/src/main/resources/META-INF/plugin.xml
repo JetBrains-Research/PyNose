@@ -23,7 +23,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.DefaultTestTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.DefaultTestTestSmellUnittestInspection"
                          displayName="Default test"
                          shortName="DefaultTestTestSmellInspection"/>
         <localInspection language="Python"

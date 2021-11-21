@@ -27,11 +27,11 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
     @Test
     fun `test constructor highlighting`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.constructor.initialization.description")}\">" +
-                    "__init__</warning>(self):\n" +
-                    "        pass"
+                "test_file.py", "import unittest\n" +
+                "class SomeClass(unittest.TestCase):\n" +
+                "    def <warning descr=\"${TestSmellBundle.message("inspections.constructor.initialization.description")}\">" +
+                "__init__</warning>(self):\n" +
+                "        pass"
         )
         myFixture.checkHighlighting()
     }
@@ -39,10 +39,10 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
     @Test
     fun `test constructor without unittest dependency`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
-                    "    def __init__(self):\n" +
-                    "        pass"
+                "test_file.py", "import unittest\n" +
+                "class SomeClass():\n" +
+                "    def __init__(self):\n" +
+                "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -51,10 +51,10 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
     @Test
     fun `test not constructor with unittest dependency`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeTestCase(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        pass"
+                "test_file.py", "import unittest\n" +
+                "class SomeTestCase(unittest.TestCase):\n" +
+                "    def test_something(self):\n" +
+                "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
