@@ -10,6 +10,7 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.quickfixes.unittest.SuboptimalAssertionTestSmellQuickFix
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -62,17 +63,20 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
             )
         }
 
-        return object : PyInspectionVisitor(holder, session) {
-            override fun visitPyCallExpression(callExpression: PyCallExpression) {
-                super.visitPyCallExpression(callExpression)
-                if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
-                    return
-                }
-                if (CHECKERS.any { checker -> checker(callExpression) }) {
-                    registerSuboptimal(callExpression)
+        if (PyNoseMode.getPyNoseUnittestMode()) {
+            return object : PyInspectionVisitor(holder, session) {
+                override fun visitPyCallExpression(callExpression: PyCallExpression) {
+                    super.visitPyCallExpression(callExpression)
+                    if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
+                        return
+                    }
+                    if (CHECKERS.any { checker -> checker(callExpression) }) {
+                        registerSuboptimal(callExpression)
+                    }
                 }
             }
+        } else {
+            return PsiElementVisitor.EMPTY_VISITOR
         }
     }
-
 }
