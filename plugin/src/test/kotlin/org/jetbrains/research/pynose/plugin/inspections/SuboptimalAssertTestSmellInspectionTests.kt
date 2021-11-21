@@ -3,6 +3,7 @@ package org.jetbrains.research.pynose.plugin.inspections
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
 import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.inspections.unittest.SuboptimalAssertTestSmellUnittestInspection
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -17,7 +18,7 @@ class SuboptimalAssertTestSmellInspectionTests : AbstractTestSmellInspectionTest
         mockkObject(PyNoseMode)
         every { PyNoseMode.getPyNoseUnittestMode() } returns true
         every { PyNoseMode.getPyNosePytestMode() } returns false
-        myFixture.enableInspections(SuboptimalAssertTestSmellInspection())
+        myFixture.enableInspections(SuboptimalAssertTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {

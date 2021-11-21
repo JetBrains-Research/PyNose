@@ -151,9 +151,9 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.SuboptimalAssertTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.SuboptimalAssertTestSmellUnittestInspection"
                          displayName="Suboptimal assert test"
-                         shortName="SuboptimalAssertTestSmellInspection"/>
+                         shortName="SuboptimalAssertTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"

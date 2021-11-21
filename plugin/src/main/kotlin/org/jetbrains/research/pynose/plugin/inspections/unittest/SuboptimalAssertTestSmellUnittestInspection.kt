@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
@@ -12,8 +12,8 @@ import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
-class SuboptimalAssertTestSmellInspection : PyInspection() {
-    private val LOG = Logger.getInstance(SuboptimalAssertTestSmellInspection::class.java)
+class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
+    private val LOG = Logger.getInstance(SuboptimalAssertTestSmellUnittestInspection::class.java)
 
     private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
         this::checkAssertTrueFalseRelatedSmell,
