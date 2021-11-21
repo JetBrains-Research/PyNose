@@ -31,9 +31,9 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.ConstructorInitializationTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.ConstructorInitializationTestSmellUnittestInspection"
                          displayName="Constructor initialization test"
-                         shortName="ConstructorInitializationTestSmellInspection"/>
+                         shortName="ConstructorInitializationTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
