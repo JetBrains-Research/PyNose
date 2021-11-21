@@ -16,9 +16,9 @@ object PytestInspectionsUtils {
     fun isValidPytestMethod(testMethod: PyFunction): Boolean {
         val className = PsiTreeUtil.getParentOfType(testMethod, PyClass::class.java)
         // todo do I really need to check file here?
-        return ((testMethod.containingFile.name.startsWith("test") || testMethod.containingFile.name.endsWith("test.py"))
+        return (testMethod.containingFile.name.startsWith("test") || testMethod.containingFile.name.endsWith("test.py"))
                 && (testMethod.name?.startsWith("test") == true)
-                && (className == null || className.name?.startsWith("Test") == true))
+                && (className == null || className.name?.startsWith("Test") == true)
     }
 
     fun isValidPytestFile(file: PyFile): Boolean {
