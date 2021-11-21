@@ -35,7 +35,6 @@ class DuplicateAssertionTestSmellUnittestInspection : PyInspection() {
                                     PsiTreeUtil
                                             .collectElements(testMethod) { element -> (element is PyAssertStatement) }
                                             .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
-                                    visitPyElement(testMethod)
                                 }
                     }
                 }
