@@ -24,16 +24,16 @@ class UnknownTestTestSmellUnittestInspection : PyInspection() {
             session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        fun registerUnknown(valueParam: PsiElement) {
-            holder.registerProblem(
-                    valueParam,
-                    TestSmellBundle.message("inspections.unknown.description"),
-                    ProblemHighlightType.WARNING
-            )
-        }
-
         if (PyNoseMode.getPyNoseUnittestMode()) {
             return object : PyInspectionVisitor(holder, session) {
+
+                fun registerUnknown(valueParam: PsiElement) {
+                    holder.registerProblem(
+                            valueParam,
+                            TestSmellBundle.message("inspections.unknown.description"),
+                            ProblemHighlightType.WARNING
+                    )
+                }
 
                 override fun visitPyClass(node: PyClass) {
                     super.visitPyClass(node)
@@ -59,18 +59,12 @@ class UnknownTestTestSmellUnittestInspection : PyInspection() {
                     val child = callExpression.callee as? PyReferenceExpression ?: return
                     val name = child.name
                     if (name != null && name.toLowerCase().contains("assert")) {
-                        if (assertCounts[testMethod] == null) { // todo: similar to get or put?
-                            assertCounts[testMethod] = 0
-                        }
-                        assertCounts[testMethod] = assertCounts[testMethod]!! + 1
+                        assertCounts[testMethod] = assertCounts.getOrPut(testMethod) { 0 } + 1
                     }
                 }
 
                 private fun processPyAssertStatement(testMethod: PyFunction) {
-                    if (assertCounts[testMethod] == null) {
-                        assertCounts[testMethod] = 0
-                    }
-                    assertCounts[testMethod] = assertCounts[testMethod]!! + 1
+                    assertCounts[testMethod] = assertCounts.getOrPut(testMethod) { 0 } + 1
                 }
             }
         } else {

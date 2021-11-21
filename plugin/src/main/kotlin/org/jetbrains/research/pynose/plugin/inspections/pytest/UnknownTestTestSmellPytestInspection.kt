@@ -26,15 +26,16 @@ class UnknownTestTestSmellPytestInspection : PyInspection() {
             session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        fun registerUnknown(valueParam: PsiElement) {
-            holder.registerProblem(
-                    valueParam,
-                    TestSmellBundle.message("inspections.unknown.description"),
-                    ProblemHighlightType.WARNING
-            )
-        }
-
         if (PyNoseMode.getPyNosePytestMode()) {
+
+            fun registerUnknown(valueParam: PsiElement) {
+                holder.registerProblem(
+                        valueParam,
+                        TestSmellBundle.message("inspections.unknown.description"),
+                        ProblemHighlightType.WARNING
+                )
+            }
+
             return object : PyInspectionVisitor(holder, session) {
 
                 override fun visitPyFile(node: PyFile) {
@@ -56,10 +57,7 @@ class UnknownTestTestSmellPytestInspection : PyInspection() {
                 }
 
                 private fun processPyAssertStatement(testMethod: PyFunction) {
-                    if (assertCounts[testMethod] == null) {
-                        assertCounts[testMethod] = 0
-                    }
-                    assertCounts[testMethod] = assertCounts[testMethod]!! + 1
+                    assertCounts[testMethod] = assertCounts.getOrPut(testMethod) { 0 } + 1
                 }
             }
         } else {
