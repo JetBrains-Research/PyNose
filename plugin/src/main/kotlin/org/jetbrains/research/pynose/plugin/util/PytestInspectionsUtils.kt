@@ -18,7 +18,7 @@ object PytestInspectionsUtils {
         // todo do I really need to check file here?
         return ((testMethod.containingFile.name.startsWith("test") || testMethod.containingFile.name.endsWith("test.py"))
                 && (testMethod.name?.startsWith("test") == true)
-                || (className == null || className.name?.startsWith("Test") == true))
+                && (className == null || className.name?.startsWith("Test") == true))
     }
 
     fun isValidPytestFile(file: PyFile): Boolean {
@@ -26,8 +26,22 @@ object PytestInspectionsUtils {
     }
 
     fun gatherValidPytestMethods(file: PyFile): List<PyFunction> {
-        return file.statements.filterIsInstance(PyFunction::class.java)
+        val returnList: MutableList<PyFunction> = mutableListOf()
+        file.statements
+                .filterIsInstance(PyClass::class.java)
+                .map { obj: PyStatement? -> PyClass::class.java.cast(obj) }
+                .forEach { pyClass ->
+                    pyClass.statementList.statements
+                            .filterIsInstance(PyFunction::class.java)
+                            .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
+                            .filter { pyFunction -> isValidPytestMethod(pyFunction) }
+                            .forEach { validFunction -> returnList.add(validFunction) }
+                }
+        file.statements
+                .filterIsInstance(PyFunction::class.java)
                 .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                 .filter { pyFunction -> isValidPytestMethod(pyFunction) }
+                .forEach { validFunction -> returnList.add(validFunction) }
+        return returnList
     }
 }
