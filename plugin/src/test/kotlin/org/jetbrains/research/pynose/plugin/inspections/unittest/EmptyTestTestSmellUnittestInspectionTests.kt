@@ -27,26 +27,26 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test highlighted empty tests`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something</warning>(self):\n" +
-                    "        pass\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something_else</warning>(self):\n" +
-                    "        pass"
+                "test_file.py", "import unittest\n" +
+                "class SomeClass(unittest.TestCase):\n" +
+                "    def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something</warning>(self):\n" +
+                "        pass\n" +
+                "    def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something_else</warning>(self):\n" +
+                "        pass"
         )
-        
+
         myFixture.checkHighlighting()
     }
 
     @Test
     fun `test empty without unittest dependency`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
-                    "    def test_something(self):\n" +
-                    "        pass"
+                "test_file.py", "import unittest\n" +
+                "class SomeClass():\n" +
+                "    def test_something(self):\n" +
+                "        pass"
         )
-        
+
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
@@ -54,7 +54,7 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test empty multiple`() {
         myFixture.configureByFile("test_empty_multiple.py")
-        
+
         myFixture.checkHighlighting()
     }
 

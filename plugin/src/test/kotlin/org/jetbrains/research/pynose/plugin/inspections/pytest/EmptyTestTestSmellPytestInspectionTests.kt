@@ -27,11 +27,11 @@ class EmptyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestW
     @Test
     fun `test highlighted empty tests`() {
         myFixture.configureByText(
-            "test_file.py",
-                    "def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something</warning>(self):\n" +
-                    "    pass\n" +
-                    "def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something_else</warning>(self):\n" +
-                    "    pass"
+                "test_file.py",
+                "def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something</warning>(self):\n" +
+                        "    pass\n" +
+                        "def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something_else</warning>(self):\n" +
+                        "    pass"
         )
         myFixture.checkHighlighting()
     }
@@ -39,10 +39,10 @@ class EmptyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestW
     @Test
     fun `test empty wrong filename`() {
         myFixture.configureByText(
-            "file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
-                    "    def test_something(self):\n" +
-                    "        pass"
+                "file.py", "import unittest\n" +
+                "class SomeClass():\n" +
+                "    def test_something(self):\n" +
+                "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
