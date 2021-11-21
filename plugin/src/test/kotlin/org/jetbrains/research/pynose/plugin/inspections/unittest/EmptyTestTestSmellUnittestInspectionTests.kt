@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
@@ -9,7 +9,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class EmptyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
@@ -17,11 +17,11 @@ class EmptyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk
         mockkObject(PyNoseMode)
         every { PyNoseMode.getPyNoseUnittestMode() } returns true
         every { PyNoseMode.getPyNosePytestMode() } returns false
-        myFixture.enableInspections(EmptyTestTestSmellInspection())
+        myFixture.enableInspections(EmptyTestTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/empty_test"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/empty_test/unittest"
     }
 
     @Test
