@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.research.pynose.plugin.quickfixes.unittest.SuboptimalAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -16,14 +17,14 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellUnittestInspection::class.java)
 
     private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
-        this::checkAssertTrueFalseRelatedSmell,
-        this::checkAssertEqualNotEqualIsIsNotRelatedSmell
+            this::checkAssertTrueFalseRelatedSmell,
+            this::checkAssertEqualNotEqualIsIsNotRelatedSmell
     )
 
     private fun checkAssertTrueFalseRelatedSmell(assertCall: PyCallExpression): Boolean {
         var callee: PyExpression
         if (assertCall.callee.also { callee = it!! } == null
-            || callee.name != "assertTrue" && callee.name != "assertFalse") {
+                || callee.name != "assertTrue" && callee.name != "assertFalse") {
             return false
         }
         val args = assertCall.arguments
@@ -33,30 +34,31 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
     private fun checkAssertEqualNotEqualIsIsNotRelatedSmell(assertCall: PyCallExpression): Boolean {
         var callee: PyExpression
         if (assertCall.callee.also { callee = it!! } == null ||
-            (callee.name != "assertEqual"
-                    && callee.name != "assertNotEqual"
-                    && callee.name != "assertIs"
-                    && callee.name != "assertIsNot")
+                (callee.name != "assertEqual"
+                        && callee.name != "assertNotEqual"
+                        && callee.name != "assertIs"
+                        && callee.name != "assertIsNot")
         ) {
             return false
         }
         val args = assertCall.arguments
         return args.size >= 2 && args
-            .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
+                .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
     }
 
 
     override fun buildVisitor(
-        holder: ProblemsHolder,
-        isOnTheFly: Boolean,
-        session: LocalInspectionToolSession
+            holder: ProblemsHolder,
+            isOnTheFly: Boolean,
+            session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         fun registerSuboptimal(valueParam: PsiElement) {
             holder.registerProblem(
-                valueParam,
-                TestSmellBundle.message("inspections.suboptimal.description"),
-                ProblemHighlightType.WARNING
+                    valueParam,
+                    TestSmellBundle.message("inspections.suboptimal.description"),
+                    ProblemHighlightType.WARNING,
+                    SuboptimalAssertionTestSmellQuickFix()
             )
         }
 
