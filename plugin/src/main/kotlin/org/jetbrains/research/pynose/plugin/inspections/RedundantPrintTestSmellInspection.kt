@@ -6,10 +6,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyCallExpression
-import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.pyi.PyiFile
@@ -23,7 +23,7 @@ class RedundantPrintTestSmellInspection : PyInspection() {
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
         session: LocalInspectionToolSession
-    ): PyElementVisitor {
+    ): PsiElementVisitor {
 
         fun registerRedundantPrint(valueParam: PsiElement) {
             holder.registerProblem(

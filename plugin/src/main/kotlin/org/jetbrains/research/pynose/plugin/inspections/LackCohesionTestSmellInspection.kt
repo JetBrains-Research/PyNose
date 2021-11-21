@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
@@ -47,7 +48,7 @@ class LackCohesionTestSmellInspection : PyInspection() {
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
         session: LocalInspectionToolSession
-    ): PyElementVisitor {
+    ): PsiElementVisitor {
 
         fun registerLackCohesion(valueParam: PsiElement) {
             holder.registerProblem(
