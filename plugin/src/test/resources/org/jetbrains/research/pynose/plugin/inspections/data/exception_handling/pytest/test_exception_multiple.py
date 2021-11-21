@@ -1,6 +1,3 @@
-import unittest
-
-
 class TestClass:
 
     def test_something(self):

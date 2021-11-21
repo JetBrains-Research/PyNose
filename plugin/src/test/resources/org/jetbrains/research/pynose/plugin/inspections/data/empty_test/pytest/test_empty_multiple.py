@@ -1,6 +1,3 @@
-import unittest
-
-
 class TestClass:
     def <warning descr="Test does not contain executable statements, consider removing it">test_something</warning>(self):
         pass
