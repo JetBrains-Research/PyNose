@@ -8,6 +8,10 @@ class SomeClass(unittest.TestCase):
     def do_something(self):
         pass
 
+    def do_something_else(self):
+        self.test_something()
+        pass
+
     def test_something_else(self):
         pass
 

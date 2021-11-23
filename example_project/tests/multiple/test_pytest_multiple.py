@@ -21,8 +21,8 @@ def test_fail(self):
 
 class SomeClass:
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super(TestingClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
         self.z = 5

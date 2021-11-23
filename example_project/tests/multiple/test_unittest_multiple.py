@@ -16,8 +16,8 @@ class NotTestCase:
 
 class SomeClass(unittest.TestCase):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super(TestingClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
         self.z = 5
