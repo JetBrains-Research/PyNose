@@ -25,7 +25,7 @@
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.DefaultTestTestSmellUnittestInspection"
                          displayName="Default test"
-                         shortName="DefaultTestTestSmellInspection"/>
+                         shortName="DefaultTestTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
@@ -96,7 +96,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.ExceptionHandlingTestSmellUnittestInspection"
-                         displayName="Exception handling test"
+                         displayName="Exception handling test unittest"
                          shortName="ExceptionHandlingTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
@@ -104,7 +104,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.ExceptionHandlingTestSmellPytestInspection"
-                         displayName="Exception handling test"
+                         displayName="Exception handling test pytest"
                          shortName="ExceptionHandlingTestSmellPytestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
@@ -128,7 +128,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.RedundantAssertionTestSmellUnittestInspection"
-                         displayName="Redundant assertion test"
+                         displayName="Redundant assertion test unittest"
                          shortName="RedundantAssertionTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
@@ -136,7 +136,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.RedundantAssertionTestSmellPytestInspection"
-                         displayName="Redundant assertion test"
+                         displayName="Redundant assertion test pytest"
                          shortName="RedundantAssertionTestSmellPytestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
@@ -160,7 +160,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.UnknownTestTestSmellUnittestInspection"
-                         displayName="Unknown test"
+                         displayName="Unknown test unittest"
                          shortName="UnknownTestTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
@@ -168,7 +168,7 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.UnknownTestTestSmellPytestInspection"
-                         displayName="Unknown test"
+                         displayName="Unknown test pytest"
                          shortName="UnknownTestTestSmellPytestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
