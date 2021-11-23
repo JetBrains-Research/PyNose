@@ -1,6 +1,7 @@
 package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
@@ -22,12 +23,13 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
             session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        fun registerDefault(valueParam: PsiElement) {
+        fun registerDefault(valueParam: PsiElement, quickFix: LocalQuickFix?) {
             holder.registerProblem(
                     valueParam,
                     TestSmellBundle.message("inspections.default.description"),
                     ProblemHighlightType.WARNING,
                     DefaultTestTestSmellQuickFix()
+//                    quickFix
             )
         }
 
@@ -35,7 +37,9 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
-                    registerDefault(node.nameIdentifier!!)
+                    val quickFix = null
+//                    quickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
+                    registerDefault(node.nameIdentifier!!, quickFix)
                 }
             }
         }

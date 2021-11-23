@@ -9,6 +9,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.ArrayUtil
 import com.intellij.util.CommonProcessors
 import com.jetbrains.python.findUsages.PyFindUsagesHandlerFactory
+import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -19,7 +20,7 @@ class EmptyTestTestSmellQuickFix : LocalQuickFix {
     }
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val currentMethod = descriptor.psiElement
+        val currentMethod = descriptor.psiElement.parent as PyFunction
         val usages = findUsages(currentMethod)
         if (usages.isEmpty()) {
             currentMethod.delete()
