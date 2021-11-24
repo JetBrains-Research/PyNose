@@ -16,17 +16,6 @@ import javax.swing.JPanel
 
 class EmptyTestTestSmellPytestInspection : PyInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellPytestInspection::class.java)
-    var ignoreOverriddenFunctions = true
-
-    override fun createOptionsPanel(): JComponent {
-        val rootPanel = JPanel(BorderLayout())
-        val uiService = PythonUiService.getInstance()
-        val checkBox = uiService.createInspectionCheckBox(TestSmellBundle.message("quickfixes.empty.message"), this, "ignoreOverriddenFunctions")
-        if (checkBox != null) {
-            rootPanel.add(checkBox, BorderLayout.NORTH)
-        }
-        return rootPanel
-    }
 
     override fun buildVisitor(
             holder: ProblemsHolder,

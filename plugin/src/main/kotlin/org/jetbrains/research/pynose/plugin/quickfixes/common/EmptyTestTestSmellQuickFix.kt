@@ -25,7 +25,7 @@ class EmptyTestTestSmellQuickFix : LocalQuickFix {
         if (usages.isEmpty()) {
             currentMethod.delete()
         } else {
-            // todo impl
+            // todo: show usages (HOW??)
         }
     }
 

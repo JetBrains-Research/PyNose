@@ -8,6 +8,7 @@ import com.jetbrains.python.inspections.PyInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.EmptyTestTestSmellInspectionVisitor
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 
+
 class EmptyTestTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellUnittestInspection::class.java)
 

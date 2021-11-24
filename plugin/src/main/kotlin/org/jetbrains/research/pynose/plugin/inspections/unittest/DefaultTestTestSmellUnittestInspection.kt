@@ -7,10 +7,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.jetbrains.python.PythonUiService
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
-import org.jetbrains.research.pynose.plugin.quickfixes.unittest.DefaultTestTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
@@ -28,8 +28,7 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
                     valueParam,
                     TestSmellBundle.message("inspections.default.description"),
                     ProblemHighlightType.WARNING,
-                    DefaultTestTestSmellQuickFix()
-//                    quickFix
+                    quickFix
             )
         }
 
@@ -37,8 +36,8 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
-                    val quickFix = null
-//                    quickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
+                    // todo: 'com.jetbrains.python.PythonUiService' is marked unstable with @ApiStatus.Experimental
+                    val quickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
                     registerDefault(node.nameIdentifier!!, quickFix)
                 }
             }
