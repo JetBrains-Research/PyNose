@@ -14,14 +14,14 @@ abstract class ExceptionHandlingTestSmellVisitor(holder: ProblemsHolder?, sessio
 
     override fun visitPyTryExceptStatement(tryExceptStatement: PyTryExceptStatement) {
         super.visitPyTryExceptStatement(tryExceptStatement)
-        if (GeneralInspectionsUtils.redirectValidParentCheck(tryExceptStatement)) {
+        if (GeneralInspectionsUtils.checkValidParent(tryExceptStatement)) {
             registerException(tryExceptStatement, 0, "try".length)
         }
     }
 
     override fun visitPyRaiseStatement(raiseStatement: PyRaiseStatement) {
         super.visitPyRaiseStatement(raiseStatement)
-        if (GeneralInspectionsUtils.redirectValidParentCheck(raiseStatement)) {
+        if (GeneralInspectionsUtils.checkValidParent(raiseStatement)) {
             registerException(raiseStatement, 0, "raise".length)
         }
     }

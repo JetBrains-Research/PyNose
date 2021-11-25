@@ -28,7 +28,7 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
     override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
         super.visitPyAssertStatement(assertStatement)
         val expressions = assertStatement.arguments
-        if (expressions.isEmpty() || !GeneralInspectionsUtils.redirectValidParentCheck(assertStatement)) {
+        if (expressions.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
             return
         }
         if (expressions[0] is PyLiteralExpression) {

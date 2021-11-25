@@ -26,7 +26,7 @@ class EmptyTestTestSmellInspectionVisitor(holder: ProblemsHolder?, session: Loca
         super.visitPyFunction(testMethod)
         val statements = testMethod.statementList.statements
         if (statements.size == 1 && statements[0] is PyPassStatement
-                && GeneralInspectionsUtils.redirectValidMethodCheck(testMethod)
+                && GeneralInspectionsUtils.checkValidMethod(testMethod)
         ) {
             registerEmpty(testMethod.nameIdentifier!!)
         }

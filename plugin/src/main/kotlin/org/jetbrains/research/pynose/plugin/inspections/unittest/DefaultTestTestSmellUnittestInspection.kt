@@ -23,12 +23,12 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
             session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        fun registerDefault(valueParam: PsiElement, quickFix: LocalQuickFix?) {
+        fun registerDefault(valueParam: PsiElement, defaultTestSmellQuickFix: LocalQuickFix?) {
             holder.registerProblem(
                     valueParam,
                     TestSmellBundle.message("inspections.default.description"),
                     ProblemHighlightType.WARNING,
-                    quickFix
+                    defaultTestSmellQuickFix
             )
         }
 
@@ -36,9 +36,9 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
-                    // todo: 'com.jetbrains.python.PythonUiService' is marked unstable with @ApiStatus.Experimental
-                    val quickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
-                    registerDefault(node.nameIdentifier!!, quickFix)
+                    // todo: can't move this fix to quick fix class
+                    val defaultTestSmellQuickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
+                    registerDefault(node.nameIdentifier!!, defaultTestSmellQuickFix)
                 }
             }
         }

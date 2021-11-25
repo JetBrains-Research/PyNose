@@ -38,7 +38,7 @@ class SleepyTestTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
-                if (!GeneralInspectionsUtils.redirectValidParentCheck(callExpression)) {
+                if (!GeneralInspectionsUtils.checkValidParent(callExpression)) {
                     return
                 }
                 if (callExpression.callee !is PyReferenceExpression) {

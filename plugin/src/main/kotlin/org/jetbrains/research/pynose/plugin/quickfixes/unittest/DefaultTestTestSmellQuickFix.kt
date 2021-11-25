@@ -10,7 +10,7 @@ class DefaultTestTestSmellQuickFix : LocalQuickFix {
         return TestSmellBundle.message("quickfixes.default.message")
     }
 
-    override fun applyFix(p0: Project, p1: ProblemDescriptor) {
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         TODO("Not yet implemented")
     }
 }

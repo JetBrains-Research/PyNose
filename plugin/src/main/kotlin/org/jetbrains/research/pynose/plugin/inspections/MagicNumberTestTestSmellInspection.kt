@@ -36,7 +36,7 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
                 val child = callExpression.callee
                 if (child !is PyReferenceExpression ||
                     !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
-                    || !GeneralInspectionsUtils.redirectValidParentCheck(callExpression)
+                    || !GeneralInspectionsUtils.checkValidParent(callExpression)
                 ) {
                     return
                 }
@@ -54,7 +54,7 @@ class MagicNumberTestTestSmellInspection : PyInspection() {
             override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
                 super.visitPyAssertStatement(assertStatement)
                 val assertArgs = assertStatement.arguments
-                if (assertArgs.isEmpty() || !GeneralInspectionsUtils.redirectValidParentCheck(assertStatement)) {
+                if (assertArgs.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
                     return
                 }
                 if (assertArgs.any { obj: PyExpression? ->

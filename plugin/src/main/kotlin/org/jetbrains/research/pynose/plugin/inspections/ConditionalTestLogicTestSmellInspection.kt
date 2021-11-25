@@ -33,49 +33,49 @@ class ConditionalTestLogicTestSmellInspection : PyInspection() {
         return object : PyInspectionVisitor(holder, session) {
             override fun visitPyIfStatement(ifStatement: PyIfStatement) {
                 super.visitPyIfStatement(ifStatement)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(ifStatement)) {
+                if (GeneralInspectionsUtils.checkValidParent(ifStatement)) {
                     registerConditional(ifStatement, 0, "if".length)
                 }
             }
 
             override fun visitPyForStatement(forStatement: PyForStatement) {
                 super.visitPyForStatement(forStatement)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(forStatement)) {
+                if (GeneralInspectionsUtils.checkValidParent(forStatement)) {
                     registerConditional(forStatement, 0, "for".length)
                 }
             }
 
             override fun visitPyWhileStatement(whileStatement: PyWhileStatement) {
                 super.visitPyWhileStatement(whileStatement)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(whileStatement)) {
+                if (GeneralInspectionsUtils.checkValidParent(whileStatement)) {
                     registerConditional(whileStatement, 0, "while".length)
                 }
             }
 
             override fun visitPyListCompExpression(listCompExpression: PyListCompExpression) {
                 super.visitPyListCompExpression(listCompExpression)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(listCompExpression)) {
+                if (GeneralInspectionsUtils.checkValidParent(listCompExpression)) {
                     registerConditional(listCompExpression)
                 }
             }
 
             override fun visitPySetCompExpression(setCompExpression: PySetCompExpression) {
                 super.visitPySetCompExpression(setCompExpression)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(setCompExpression)) {
+                if (GeneralInspectionsUtils.checkValidParent(setCompExpression)) {
                     registerConditional(setCompExpression)
                 }
             }
 
             override fun visitPyDictCompExpression(dictCompExpression: PyDictCompExpression) {
                 super.visitPyDictCompExpression(dictCompExpression)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(dictCompExpression)) {
+                if (GeneralInspectionsUtils.checkValidParent(dictCompExpression)) {
                     registerConditional(dictCompExpression)
                 }
             }
 
             override fun visitPyGeneratorExpression(generatorExpression: PyGeneratorExpression) {
                 super.visitPyGeneratorExpression(generatorExpression)
-                if (GeneralInspectionsUtils.redirectValidParentCheck(generatorExpression)) {
+                if (GeneralInspectionsUtils.checkValidParent(generatorExpression)) {
                     registerConditional(generatorExpression)
                 }
             }

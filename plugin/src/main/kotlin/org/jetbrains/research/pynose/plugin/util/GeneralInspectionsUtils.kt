@@ -16,7 +16,7 @@ import java.util.*
 object GeneralInspectionsUtils {
     private val LOG = Logger.getInstance(GeneralInspectionsUtils::class.java)
 
-    fun redirectValidParentCheck(element: PsiElement): Boolean {
+    fun checkValidParent(element: PsiElement): Boolean {
         if (PyNoseMode.getPyNosePytestMode()) {
             return PytestInspectionsUtils.isValidPytestParent(element)
         }
@@ -26,7 +26,7 @@ object GeneralInspectionsUtils {
         return false
     }
 
-    fun redirectValidMethodCheck(testMethod: PyFunction): Boolean {
+    fun checkValidMethod(testMethod: PyFunction): Boolean {
         if (PyNoseMode.getPyNosePytestMode()) {
             return PytestInspectionsUtils.isValidPytestMethod(testMethod)
         }

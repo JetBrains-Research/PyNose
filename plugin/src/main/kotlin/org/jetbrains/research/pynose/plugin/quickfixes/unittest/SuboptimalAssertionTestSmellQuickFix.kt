@@ -29,6 +29,8 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         "NOT IN" to "not in"
     )
 
+    // todo: only one suboptimal assert can be fixed
+
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val assertCall = descriptor.psiElement as PyCallExpression
         val callee = assertCall.callee ?: return

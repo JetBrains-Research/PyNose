@@ -47,7 +47,6 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
                 .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
     }
 
-
     override fun buildVisitor(
             holder: ProblemsHolder,
             isOnTheFly: Boolean,

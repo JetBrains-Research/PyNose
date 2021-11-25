@@ -10,7 +10,6 @@ import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFunction
-import org.jetbrains.research.pynose.plugin.quickfixes.unittest.ConstructorInitializationTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
@@ -28,8 +27,7 @@ class ConstructorInitializationTestSmellUnittestInspection : PyInspection() {
             holder.registerProblem(
                     valueParam,
                     TestSmellBundle.message("inspections.constructor.initialization.description"),
-                    ProblemHighlightType.WARNING,
-                    ConstructorInitializationTestSmellQuickFix()
+                    ProblemHighlightType.WARNING
             )
         }
 

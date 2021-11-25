@@ -37,7 +37,7 @@ class RedundantPrintTestSmellInspection : PyInspection() {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 val child = callExpression.callee as? PyReferenceExpression ?: return
-                if (child.text != "print" || !GeneralInspectionsUtils.redirectValidParentCheck(callExpression)) {
+                if (child.text != "print" || !GeneralInspectionsUtils.checkValidParent(callExpression)) {
                     return
                 }
                 val element = child.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return
