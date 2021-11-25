@@ -19,9 +19,9 @@ class UnknownTestTestSmellUnittestInspection : PyInspection() {
     private val assertCounts: MutableMap<PyFunction, Int> = mutableMapOf()
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         if (PyNoseMode.getPyNoseUnittestMode()) {
@@ -29,9 +29,9 @@ class UnknownTestTestSmellUnittestInspection : PyInspection() {
 
                 fun registerUnknown(valueParam: PsiElement) {
                     holder.registerProblem(
-                            valueParam,
-                            TestSmellBundle.message("inspections.unknown.description"),
-                            ProblemHighlightType.WARNING
+                        valueParam,
+                        TestSmellBundle.message("inspections.unknown.description"),
+                        ProblemHighlightType.WARNING
                     )
                 }
 
@@ -39,18 +39,16 @@ class UnknownTestTestSmellUnittestInspection : PyInspection() {
                     super.visitPyClass(node)
                     if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                         UnittestInspectionsUtils.gatherUnittestTestMethods(node).forEach { testMethod ->
-                            if (assertCounts[testMethod] == null) {
-                                assertCounts[testMethod] = 0
-                            }
+                            assertCounts.putIfAbsent(testMethod, 0)
                             PsiTreeUtil
-                                    .collectElements(testMethod) { element -> (element is PyCallExpression) }
-                                    .forEach { target -> processPyCallExpression(target as PyCallExpression, testMethod) }
+                                .collectElements(testMethod) { element -> (element is PyCallExpression) }
+                                .forEach { target -> processPyCallExpression(target as PyCallExpression, testMethod) }
                             PsiTreeUtil
-                                    .collectElements(testMethod) { element -> (element is PyAssertStatement) }
-                                    .forEach { _ -> processPyAssertStatement(testMethod) }
+                                .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                .forEach { _ -> processPyAssertStatement(testMethod) }
                         }
                         assertCounts.keys.filter { x -> assertCounts[x] == 0 }
-                                .forEach { x -> registerUnknown(x.nameIdentifier!!) }
+                            .forEach { x -> registerUnknown(x.nameIdentifier!!) }
                         assertCounts.clear()
                     }
                 }

@@ -11,14 +11,15 @@ import org.jetbrains.research.pynose.plugin.quickfixes.common.EmptyTestTestSmell
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-class EmptyTestTestSmellInspectionVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :PyInspectionVisitor(holder, session) {
+class EmptyTestTestSmellInspectionVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, session) {
 
     private fun registerEmpty(valueParam: PsiElement) {
         holder!!.registerProblem(
-                valueParam,
-                TestSmellBundle.message("inspections.empty.description"),
-                ProblemHighlightType.WARNING,
-                EmptyTestTestSmellQuickFix()
+            valueParam,
+            TestSmellBundle.message("inspections.empty.description"),
+            ProblemHighlightType.WARNING,
+            EmptyTestTestSmellQuickFix()
         )
     }
 
@@ -26,7 +27,7 @@ class EmptyTestTestSmellInspectionVisitor(holder: ProblemsHolder?, session: Loca
         super.visitPyFunction(testMethod)
         val statements = testMethod.statementList.statements
         if (statements.size == 1 && statements[0] is PyPassStatement
-                && GeneralInspectionsUtils.checkValidMethod(testMethod)
+            && GeneralInspectionsUtils.checkValidMethod(testMethod)
         ) {
             registerEmpty(testMethod.nameIdentifier!!)
         }

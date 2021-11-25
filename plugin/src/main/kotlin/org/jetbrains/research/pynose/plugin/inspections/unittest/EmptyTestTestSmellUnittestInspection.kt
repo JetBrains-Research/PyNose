@@ -13,9 +13,9 @@ class EmptyTestTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellUnittestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         return if (PyNoseMode.getPyNoseUnittestMode()) {

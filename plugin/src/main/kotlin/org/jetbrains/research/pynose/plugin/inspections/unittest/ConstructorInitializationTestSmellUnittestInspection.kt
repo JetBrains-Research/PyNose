@@ -18,16 +18,16 @@ class ConstructorInitializationTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(ConstructorInitializationTestSmellUnittestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         fun registerConstructorInitialization(valueParam: PsiElement) {
             holder.registerProblem(
-                    valueParam,
-                    TestSmellBundle.message("inspections.constructor.initialization.description"),
-                    ProblemHighlightType.WARNING
+                valueParam,
+                TestSmellBundle.message("inspections.constructor.initialization.description"),
+                ProblemHighlightType.WARNING
             )
         }
 
@@ -37,11 +37,11 @@ class ConstructorInitializationTestSmellUnittestInspection : PyInspection() {
                     super.visitPyClass(node)
                     if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                         node.statementList.statements
-                                .filterIsInstance<PyFunction>()
-                                .filter { it.name == "__init__" }
-                                .forEach {
-                                    registerConstructorInitialization(it.nameIdentifier!!)
-                                }
+                            .filterIsInstance<PyFunction>()
+                            .filter { it.name == "__init__" }
+                            .forEach {
+                                registerConstructorInitialization(it.nameIdentifier!!)
+                            }
                     }
                 }
             }

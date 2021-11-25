@@ -10,16 +10,18 @@ import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pynose.plugin.quickfixes.common.DuplicateAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) : PyInspectionVisitor(holder, session) {
+open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, session) {
+
     protected val assertCalls: MutableSet<Pair<String, PyFunction>> = mutableSetOf()
     protected val assertStatements: MutableSet<Pair<String, PyFunction>> = mutableSetOf()
 
     protected fun registerDuplicate(valueParam: PsiElement) {
         holder!!.registerProblem(
-                valueParam,
-                TestSmellBundle.message("inspections.duplicate.description"),
-                ProblemHighlightType.WARNING,
-                DuplicateAssertionTestSmellQuickFix()
+            valueParam,
+            TestSmellBundle.message("inspections.duplicate.description"),
+            ProblemHighlightType.WARNING,
+            DuplicateAssertionTestSmellQuickFix()
         )
     }
 
@@ -35,5 +37,4 @@ open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
             assertStatements.add(Pair(assertStatementBody, testMethod))
         }
     }
-
 }

@@ -8,7 +8,8 @@ import com.jetbrains.python.psi.PyRaiseStatement
 import com.jetbrains.python.psi.PyTryExceptStatement
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 
-abstract class ExceptionHandlingTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) : PyInspectionVisitor(holder, session) {
+abstract class ExceptionHandlingTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, session) {
 
     abstract fun registerException(valueParam: PsiElement, offset: Int = 0, textLength: Int)
 

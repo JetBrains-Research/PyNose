@@ -61,7 +61,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
             private fun processSetUpFunction(node: PyClass) {
                 val setUpFunction = node.statementList.statements
-                    .filterIsInstance(PyFunction::class.java)
+                    .filterIsInstance<PyFunction>()
                     .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                     .firstOrNull { function: PyFunction ->
                         function.name == "setUp" &&
@@ -74,7 +74,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
 
             private fun processSetUpClassFunction(node: PyClass) {
                 val setUpClassFunction = node.statementList.statements
-                    .filterIsInstance(PyFunction::class.java)
+                    .filterIsInstance<PyFunction>()
                     .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                     .firstOrNull { function: PyFunction ->
                         function.name == "setUpClass" &&

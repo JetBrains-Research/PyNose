@@ -16,9 +16,9 @@ class DuplicateAssertionTestSmellPytestInspection : PyInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellPytestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         if (PyNoseMode.getPyNosePytestMode()) {
@@ -27,13 +27,15 @@ class DuplicateAssertionTestSmellPytestInspection : PyInspection() {
                     super.visitPyFile(node)
                     if (PytestInspectionsUtils.isValidPytestFile(node)) {
                         PytestInspectionsUtils.gatherValidPytestMethods(node)
-                                .forEach { testMethod ->
-                                    assertCalls.clear()
-                                    assertStatements.clear()
-                                    PsiTreeUtil
-                                            .collectElements(testMethod) { element -> (element is PyAssertStatement) }
-                                            .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
-                                }
+                            .forEach { testMethod ->
+                                assertCalls.clear()
+                                assertStatements.clear()
+                                PsiTreeUtil
+                                    .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                    .forEach { target ->
+                                        processPyAssertStatement(target as PyAssertStatement, testMethod)
+                                    }
+                            }
                     }
                 }
             }

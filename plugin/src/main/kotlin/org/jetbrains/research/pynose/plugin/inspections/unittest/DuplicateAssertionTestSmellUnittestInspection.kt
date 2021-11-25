@@ -15,9 +15,9 @@ class DuplicateAssertionTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellUnittestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         if (PyNoseMode.getPyNoseUnittestMode()) {
@@ -26,16 +26,20 @@ class DuplicateAssertionTestSmellUnittestInspection : PyInspection() {
                     super.visitPyClass(node)
                     if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
                         UnittestInspectionsUtils.gatherUnittestTestMethods(node)
-                                .forEach { testMethod ->
-                                    assertCalls.clear()
-                                    assertStatements.clear()
-                                    PsiTreeUtil
-                                            .collectElements(testMethod) { element -> (element is PyCallExpression) }
-                                            .forEach { target -> processPyCallExpression(target as PyCallExpression, testMethod) }
-                                    PsiTreeUtil
-                                            .collectElements(testMethod) { element -> (element is PyAssertStatement) }
-                                            .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
-                                }
+                            .forEach { testMethod ->
+                                assertCalls.clear()
+                                assertStatements.clear()
+                                PsiTreeUtil
+                                    .collectElements(testMethod) { element -> (element is PyCallExpression) }
+                                    .forEach { target ->
+                                        processPyCallExpression(target as PyCallExpression, testMethod)
+                                    }
+                                PsiTreeUtil
+                                    .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                    .forEach { target ->
+                                        processPyAssertStatement(target as PyAssertStatement, testMethod)
+                                    }
+                            }
                     }
                 }
 

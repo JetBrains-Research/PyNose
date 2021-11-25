@@ -18,17 +18,17 @@ open class DefaultTestTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(DefaultTestTestSmellUnittestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         fun registerDefault(valueParam: PsiElement, defaultTestSmellQuickFix: LocalQuickFix?) {
             holder.registerProblem(
-                    valueParam,
-                    TestSmellBundle.message("inspections.default.description"),
-                    ProblemHighlightType.WARNING,
-                    defaultTestSmellQuickFix
+                valueParam,
+                TestSmellBundle.message("inspections.default.description"),
+                ProblemHighlightType.WARNING,
+                defaultTestSmellQuickFix
             )
         }
 

@@ -15,9 +15,9 @@ class RedundantAssertionTestSmellUnittestInspection : PyInspection() {
     private val LOG = Logger.getInstance(RedundantAssertionTestSmellUnittestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         if (PyNoseMode.getPyNoseUnittestMode()) {
@@ -27,7 +27,7 @@ class RedundantAssertionTestSmellUnittestInspection : PyInspection() {
                     super.visitPyCallExpression(callExpression)
                     val child = callExpression.callee
                     if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
-                            || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)
+                        || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)
                     ) {
                         return
                     }

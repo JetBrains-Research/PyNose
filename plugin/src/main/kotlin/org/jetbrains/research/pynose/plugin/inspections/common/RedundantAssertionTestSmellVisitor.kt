@@ -12,16 +12,17 @@ import org.jetbrains.research.pynose.plugin.quickfixes.common.RedundantAssertion
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) : PyInspectionVisitor(holder, session) {
+open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, session) {
 
     private val OPERATOR_TEXT = mutableSetOf("==", "!=", ">", ">=", "<=", "<", "is")
 
     protected fun registerRedundant(valueParam: PsiElement) {
         holder!!.registerProblem(
-                valueParam,
-                TestSmellBundle.message("inspections.redundant.assertion.description"),
-                ProblemHighlightType.WARNING,
-                RedundantAssertionTestSmellQuickFix()
+            valueParam,
+            TestSmellBundle.message("inspections.redundant.assertion.description"),
+            ProblemHighlightType.WARNING,
+            RedundantAssertionTestSmellQuickFix()
         )
     }
 
@@ -44,7 +45,7 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
             return
         }
         if (OPERATOR_TEXT.contains(psiOperator.text) &&
-                binaryExpression.children[0].text == binaryExpression.children[1].text
+            binaryExpression.children[0].text == binaryExpression.children[1].text
         ) {
             registerRedundant(assertStatement)
         }

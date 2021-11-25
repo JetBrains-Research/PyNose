@@ -21,18 +21,18 @@ class UnknownTestTestSmellPytestInspection : PyInspection() {
     private val assertCounts: MutableMap<PyFunction, Int> = mutableMapOf()
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         if (PyNoseMode.getPyNosePytestMode()) {
 
             fun registerUnknown(valueParam: PsiElement) {
                 holder.registerProblem(
-                        valueParam,
-                        TestSmellBundle.message("inspections.unknown.description"),
-                        ProblemHighlightType.WARNING
+                    valueParam,
+                    TestSmellBundle.message("inspections.unknown.description"),
+                    ProblemHighlightType.WARNING
                 )
             }
 
@@ -42,16 +42,15 @@ class UnknownTestTestSmellPytestInspection : PyInspection() {
                     super.visitPyFile(node)
                     if (PytestInspectionsUtils.isValidPytestFile(node)) {
                         PytestInspectionsUtils.gatherValidPytestMethods(node)
-                                .forEach { testMethod ->
-                                    if (assertCounts[testMethod] == null) {
-                                        assertCounts[testMethod] = 0
-                                    }
-                                    PsiTreeUtil
-                                            .collectElements(testMethod) { element -> (element is PyAssertStatement) }
-                                            .forEach { _ -> processPyAssertStatement(testMethod) }
-                                }
-                        assertCounts.keys.filter { x -> assertCounts[x] == 0 }
-                                .forEach { x -> registerUnknown(x.nameIdentifier!!) }
+                            .forEach { testMethod ->
+                                assertCounts.putIfAbsent(testMethod, 0)
+                                PsiTreeUtil
+                                    .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                    .forEach { _ -> processPyAssertStatement(testMethod) }
+                            }
+                        assertCounts.keys
+                            .filter { x -> assertCounts[x] == 0 }
+                            .forEach { x -> registerUnknown(x.nameIdentifier!!) }
                         assertCounts.clear()
                     }
                 }

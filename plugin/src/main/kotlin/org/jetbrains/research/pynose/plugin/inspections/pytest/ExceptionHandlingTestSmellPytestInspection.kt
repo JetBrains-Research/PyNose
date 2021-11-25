@@ -17,20 +17,20 @@ class ExceptionHandlingTestSmellPytestInspection : PyInspection() {
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellPytestInspection::class.java)
 
     override fun buildVisitor(
-            holder: ProblemsHolder,
-            isOnTheFly: Boolean,
-            session: LocalInspectionToolSession
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
         return if (PyNoseMode.getPyNosePytestMode()) {
             object : ExceptionHandlingTestSmellVisitor(holder, session) {
                 override fun registerException(valueParam: PsiElement, offset: Int, textLength: Int) {
                     holder.registerProblem(
-                            valueParam,
-                            TestSmellBundle.message("inspections.exception.description"),
-                            ProblemHighlightType.WARNING,
-                            TextRange(offset, textLength),
-                            ExceptionHandlingTestSmellPytestQuickFix()
+                        valueParam,
+                        TestSmellBundle.message("inspections.exception.description"),
+                        ProblemHighlightType.WARNING,
+                        TextRange(offset, textLength),
+                        ExceptionHandlingTestSmellPytestQuickFix()
                     )
                 }
             }
