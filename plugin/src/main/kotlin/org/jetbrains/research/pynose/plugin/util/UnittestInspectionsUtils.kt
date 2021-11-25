@@ -84,7 +84,7 @@ object UnittestInspectionsUtils {
 
     fun gatherUnittestTestMethods(testCase: PyClass): List<PyFunction> {
         return testCase.statementList.statements
-            .filterIsInstance(PyFunction::class.java)
+            .filterIsInstance<PyFunction>()
             .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
             .filter { pyFunction: PyFunction? -> isValidUnittestMethod(pyFunction) }
     }

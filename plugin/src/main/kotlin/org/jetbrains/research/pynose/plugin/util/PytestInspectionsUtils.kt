@@ -21,7 +21,7 @@ object PytestInspectionsUtils {
                 && (className == null || className.name?.startsWith("Test") == true)
     }
 
-    fun isValidPytestMethodInsideFile(testMethod: PyFunction): Boolean {
+    private fun isValidPytestMethodInsideFile(testMethod: PyFunction): Boolean {
         val className = PsiTreeUtil.getParentOfType(testMethod, PyClass::class.java)
         return (testMethod.name?.startsWith("test") == true)
                 && (className == null || className.name?.startsWith("Test") == true)
@@ -34,18 +34,18 @@ object PytestInspectionsUtils {
     fun gatherValidPytestMethods(file: PyFile): List<PyFunction> {
         val returnList: MutableList<PyFunction> = mutableListOf()
         file.statements
-            .filterIsInstance(PyClass::class.java)
+            .filterIsInstance<PyClass>()
             .map { obj: PyStatement? -> PyClass::class.java.cast(obj) }
             .filter { pyClass -> isValidPytestFile(pyClass.containingFile) }
             .forEach { pyClass ->
                 pyClass.statementList.statements
-                    .filterIsInstance(PyFunction::class.java)
+                    .filterIsInstance<PyFunction>()
                     .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                     .filter { pyFunction -> isValidPytestMethodInsideFile(pyFunction) }
                     .forEach { validFunction -> returnList.add(validFunction) }
             }
         file.statements
-            .filterIsInstance(PyFunction::class.java)
+            .filterIsInstance<PyFunction>()
             .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
             .filter { pyFunction -> isValidPytestMethodInsideFile(pyFunction) }
             .forEach { validFunction -> returnList.add(validFunction) }
