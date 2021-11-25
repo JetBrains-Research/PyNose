@@ -8,6 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyImportElement
 import com.jetbrains.python.psi.PyImportStatement
 
+// left it here in case I still need it in the future, will be deleted
+
 class PyNoseStartupActivity : StartupActivity {
     companion object {
         private var unittestMode = false
@@ -25,7 +27,7 @@ class PyNoseStartupActivity : StartupActivity {
     override fun runActivity(project: Project) {
         val psiFilesLists = FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project))
             .filter { vFile ->
-                vFile.name.startsWith("test_") || vFile.name.endsWith("_test.py") // todo correct check
+                vFile.name.startsWith("test_") || vFile.name.endsWith("_test.py")
             }
             .map { vFile ->
                 FilenameIndex.getFilesByName(project, vFile.name, GlobalSearchScope.projectScope(project))
@@ -46,12 +48,5 @@ class PyNoseStartupActivity : StartupActivity {
                     }
             }
         }
-
-        // todo impl pytest check
-
-//        fun enableSingleInspection(inspectionName: String) =
-//            project.enableSingleInspection(inspectionName)
-//
-//        enableSingleInspection("ConditionalTestLogicTestSmellInspection") // bundle?
     }
 }

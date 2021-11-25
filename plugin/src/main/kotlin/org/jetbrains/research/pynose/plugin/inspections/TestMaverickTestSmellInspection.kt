@@ -43,7 +43,7 @@ class TestMaverickTestSmellInspection : PyInspection() {
                         testMethodSetUpFieldsUsage[testMethod] = mutableSetOf()
                     }
                     val setUpFunction = node.statementList.statements
-                        .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
+                        .filterIsInstance(PyFunction::class.java)
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                         .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUp" }
                     if (setUpFunction != null) {
@@ -52,7 +52,7 @@ class TestMaverickTestSmellInspection : PyInspection() {
                     }
 
                     val setUpClassFunction = node.statementList.statements
-                        .filter { obj: PyStatement? -> PyFunction::class.java.isInstance(obj) }
+                        .filterIsInstance(PyFunction::class.java)
                         .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                         .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUpClass" }
                     if (setUpClassFunction != null) {

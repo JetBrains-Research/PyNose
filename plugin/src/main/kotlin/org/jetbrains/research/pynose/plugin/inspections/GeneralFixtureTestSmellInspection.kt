@@ -43,7 +43,12 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                         testCaseFieldsUsage[testMethod] = HashSet(assignmentStatementTexts)
                         PsiTreeUtil
                             .collectElements(testMethod) { element -> (element is PyReferenceExpression) }
-                            .forEach { target -> processPyReferenceExpression(target as PyReferenceExpression, testMethod) }
+                            .forEach { target ->
+                                processPyReferenceExpression(
+                                    target as PyReferenceExpression,
+                                    testMethod
+                                )
+                            }
                     }
 
                     if (testCaseFieldsUsage.values.any { strings: Set<String?> -> strings.isNotEmpty() }) {
@@ -63,11 +68,8 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                                 function.parent is PyStatementList &&
                                 function.parent.parent is PyClass &&
                                 UnittestInspectionsUtils.isValidUnittestCase(function.parent.parent as PyClass)
-                    }
-
-                if (setUpFunction != null) { // todo: null check
-                    processPyFunction(setUpFunction)
-                }
+                    } ?: return
+                processPyFunction(setUpFunction)
             }
 
             private fun processSetUpClassFunction(node: PyClass) {
@@ -119,7 +121,10 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
                 }
             }
 
-            private fun processPyReferenceExpression(referenceExpression: PyReferenceExpression, testMethod: PyFunction) {
+            private fun processPyReferenceExpression(
+                referenceExpression: PyReferenceExpression,
+                testMethod: PyFunction
+            ) {
                 if (!assignmentStatementTexts.contains(referenceExpression.text)) {
                     return
                 }
