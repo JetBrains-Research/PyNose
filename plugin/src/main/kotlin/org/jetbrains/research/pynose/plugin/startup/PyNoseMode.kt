@@ -1,13 +1,11 @@
 package org.jetbrains.research.pynose.plugin.startup
 
-import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
-
 object PyNoseMode {
     fun getPyNoseUnittestMode(): Boolean {
-        return GeneralInspectionsUtils.getPluginUnittestMode()
+        return PyNoseStartupActivity.getPluginUnittestMode()
     }
 
     fun getPyNosePytestMode(): Boolean {
-        return GeneralInspectionsUtils.getPluginPytestMode()
+        return PyNoseStartupActivity.getPluginPytestMode()
     }
 }

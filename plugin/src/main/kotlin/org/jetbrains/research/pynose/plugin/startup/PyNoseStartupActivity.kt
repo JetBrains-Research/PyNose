@@ -36,7 +36,11 @@ class PyNoseStartupActivity : StartupActivity {
         psiFilesLists.forEach { psiFileList ->
             psiFileList.forEach { psiFile ->
                 val children =
-                    PsiTreeUtil.getChildrenOfType(psiFile.originalElement, PyImportStatement::class.java) ?: return
+                    PsiTreeUtil.getChildrenOfType(psiFile.originalElement, PyImportStatement::class.java)
+                if (children == null) {
+                    pytestMode = true
+                    return
+                }
                 children
                     .forEach { child ->
                         PsiTreeUtil.getChildrenOfType(child, PyImportElement::class.java)
@@ -47,6 +51,9 @@ class PyNoseStartupActivity : StartupActivity {
                             }
                     }
             }
+        }
+        if (!unittestMode) {
+            pytestMode = true
         }
     }
 }
