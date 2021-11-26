@@ -12,6 +12,8 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 
 class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
+
+    // todo: specify?
     override fun getFamilyName(): String {
         return TestSmellBundle.message("quickfixes.suboptimal.message")
     }
