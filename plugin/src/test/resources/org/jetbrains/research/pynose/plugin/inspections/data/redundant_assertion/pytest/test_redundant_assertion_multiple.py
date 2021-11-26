@@ -11,7 +11,7 @@ class TestClass:
 
 
 def test_something_other(self):
-    assert 4 >= 4
+    <warning descr="This statement is unnecessary as it's result will never change">assert 4 >= 4</warning>
 
 
 def test_something_else(self):
