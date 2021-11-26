@@ -17,10 +17,10 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     }
 
     private val relationTypes = mapOf(
-        "LEQ" to "<=",
         "LE" to "<",
-        "GEQ" to ">=",
+        "LEQ" to "<=",
         "GE" to ">",
+        "GEQ" to ">=",
         "EQ" to "==",
         "NE" to "!=",
         "IS" to "is",
@@ -29,24 +29,41 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         "NOT IN" to "not in"
     )
 
-    // todo: only one suboptimal assert can be fixed
+    // todo: rn only assertTrue can be fixed, I'll add the other ones after review
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val assertCall = descriptor.psiElement as PyCallExpression
         val callee = assertCall.callee ?: return
         val elementGenerator = PyElementGenerator.getInstance(project)
-        if (callee.name == "assertTrue") {
-            val binaryExpression = assertCall.arguments[0]
-            val children = binaryExpression.children
-            binaryExpression.descendants().forEach { ss ->
-                if (ss.text.equals(relationTypes["NE"])) {
-                    val newExpressionText = "self.assertNotEqual(" + children[0].text + "," + children[1].text + ")"
-                    assertCall.replace(
-                        elementGenerator.createFromText(
-                            LanguageLevel.forElement(assertCall),
-                            PyExpressionStatementImpl::class.java, newExpressionText
+        when (callee.name) {
+            "assertTrue" -> {
+                val binaryExpression = assertCall.arguments[0]
+                val children = binaryExpression.children
+                binaryExpression.descendants().forEach { des ->
+                    // todo: currently fails for is not / not in (2 words in expression)
+                    val assertionType = when (des.text) {
+                        relationTypes["EQ"] -> "assertEqual"
+                        relationTypes["NE"] -> "assertNotEqual"
+                        relationTypes["IS"] -> "assertIs"
+                        relationTypes["IS NOT"] -> "assertIsNot"
+                        relationTypes["IN"] -> "assertIn"
+                        relationTypes["NOT IN"] -> "assertNotIn"
+                        relationTypes["LE"] -> "assertLess"
+                        relationTypes["LEQ"] -> "assertLessEqual"
+                        relationTypes["GE"] -> "assertGreater"
+                        relationTypes["GEQ"] -> "assertGreaterEqual"
+                        else -> null
+                    }
+                    if (assertionType != null) {
+                        val newExpressionText =
+                            "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
+                        assertCall.replace(
+                            elementGenerator.createFromText(
+                                LanguageLevel.forElement(assertCall),
+                                PyExpressionStatementImpl::class.java, newExpressionText
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
