@@ -11,7 +11,7 @@ class TestClass:
 
 
 def test_something_other(self):
-    self.assertTrue(4 >= 4)
+    assert 4 >= 4
 
 
 def test_something_else(self):
