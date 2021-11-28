@@ -3,13 +3,14 @@ package org.jetbrains.research.pynose.plugin.inspections
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
 import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.inspections.unittest.AssertionRouletteTestSmellUnittestInspection
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class AssertionRouletteTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class AssertionRouletteTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
@@ -17,11 +18,11 @@ class AssertionRouletteTestSmellInspectionTests : AbstractTestSmellInspectionTes
         mockkObject(PyNoseMode)
         every { PyNoseMode.getPyNoseUnittestMode() } returns true
         every { PyNoseMode.getPyNosePytestMode() } returns false
-        myFixture.enableInspections(AssertionRouletteTestSmellInspection())
+        myFixture.enableInspections(AssertionRouletteTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/assertion_roulette"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/assertion_roulette/unittest"
     }
 
     @Test
