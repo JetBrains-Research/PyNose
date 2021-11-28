@@ -1,23 +1,18 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
-import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
-import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.inspections.common.AssertionRouletteTestSmellVisitor
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
-class AssertionRouletteTestSmellInspection : PyInspection() {
-    private val LOG = Logger.getInstance(AssertionRouletteTestSmellInspection::class.java)
+class AssertionRouletteTestSmellUnittestInspection : PyInspection() {
+    private val LOG = Logger.getInstance(AssertionRouletteTestSmellUnittestInspection::class.java)
     private val assertionCallsInTests: MutableMap<PyFunction, MutableSet<PyCallExpression>> = mutableMapOf()
-    private val assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>> = mutableMapOf()
-    private val testHasAssertionRoulette: MutableMap<PyFunction, Boolean> = mutableMapOf()
 
     override fun buildVisitor(
         holder: ProblemsHolder,
@@ -25,20 +20,12 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        fun registerRoulette(valueParam: PsiElement) {
-            holder.registerProblem(
-                valueParam,
-                TestSmellBundle.message("inspections.roulette.description"),
-                ProblemHighlightType.WARNING
-            )
-        }
-
-        return object : PyInspectionVisitor(holder, session) {
+        return object : AssertionRouletteTestSmellVisitor(holder, session) {
             // todo: issues with highlighting in runIde mode
-            override fun visitPyClass(node: PyClass) {
-                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+            override fun visitPyClass(pyClass: PyClass) {
+                if (UnittestInspectionsUtils.isValidUnittestCase(pyClass)) {
                     testHasAssertionRoulette.clear()
-                    UnittestInspectionsUtils.gatherUnittestTestMethods(node).forEach { testMethod ->
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(pyClass).forEach { testMethod ->
                         testHasAssertionRoulette[testMethod] = false
                         PsiTreeUtil
                             .collectElements(testMethod) { element -> (element is PyCallExpression) }
@@ -47,15 +34,17 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
                             .collectElements(testMethod) { element -> (element is PyAssertStatement) }
                             .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
                     }
-                    detectRoulette()
+                    detectAssertCallsRoulette()
+                    detectAssertStatementsRoulette()
+                    getRoulette()
+                    testHasAssertionRoulette.keys
+                        .filter { key -> testHasAssertionRoulette[key]!! }
+                        .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
+                    testHasAssertionRoulette.clear()
                 }
-                testHasAssertionRoulette.keys
-                    .filter { key -> testHasAssertionRoulette[key]!! }
-                    .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
-                testHasAssertionRoulette.clear()
             }
 
-            private fun detectRoulette() {
+            private fun detectAssertCallsRoulette() {
                 for (testMethod in assertionCallsInTests.keys) {
                     val calls: MutableSet<PyCallExpression>? = assertionCallsInTests[testMethod]
                     if (calls!!.size < 2) {
@@ -83,23 +72,11 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
                         }
                     }
                 }
+            }
 
+            private fun getRoulette() {
                 for (testMethod in assertStatementsInTests.keys) {
-                    val asserts: MutableSet<PyAssertStatement>? = assertStatementsInTests[testMethod]
-                    if (asserts!!.size < 2) {
-                        continue
-                    }
-                    for (assertStatement in asserts) {
-                        val expressions = assertStatement.arguments
-                        if (expressions.size < 2) {
-                            testHasAssertionRoulette.replace(testMethod, true)
-                        }
-                    }
-                }
-
-                for (testMethod in assertStatementsInTests.keys) {
-                    if (assertStatementsInTests[testMethod]!!.size == 1 && assertionCallsInTests[testMethod] != null
-                        && assertionCallsInTests[testMethod]!!.size == 1
+                    if (assertStatementsInTests[testMethod]?.size == 1 && assertionCallsInTests[testMethod]?.size == 1
                     ) {
                         testHasAssertionRoulette.replace(testMethod, true)
                     }
@@ -111,10 +88,6 @@ class AssertionRouletteTestSmellInspection : PyInspection() {
                     return
                 }
                 assertionCallsInTests.getOrPut(testMethod) { mutableSetOf() }.add(callExpression)
-            }
-
-            private fun processPyAssertStatement(assertStatement: PyAssertStatement, testMethod: PyFunction) {
-                assertStatementsInTests.getOrPut(testMethod) { mutableSetOf() }.add(assertStatement)
             }
         }
     }

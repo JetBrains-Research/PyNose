@@ -1,15 +1,10 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
-<<<<<<<< HEAD:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/disabled/AssertionRouletteTestSmellInspectionTests.kt
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
-========
-import org.jetbrains.research.pynose.plugin.inspections.unittest.AssertionRouletteTestSmellUnittestInspection
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
->>>>>>>> 86058c7 (Refactor assertion roulette & add tests):plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/AssertionRouletteTestSmellUnittestInspectionTests.kt
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -20,16 +15,9 @@ class AssertionRouletteTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     @BeforeAll
     override fun setUp() {
         super.setUp()
-<<<<<<<< HEAD:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/disabled/AssertionRouletteTestSmellInspectionTests.kt
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(AssertionRouletteTestSmellInspection())
-========
-        mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
         myFixture.enableInspections(AssertionRouletteTestSmellUnittestInspection())
->>>>>>>> 86058c7 (Refactor assertion roulette & add tests):plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/AssertionRouletteTestSmellUnittestInspectionTests.kt
     }
 
     override fun getTestDataPath(): String {
