@@ -11,11 +11,11 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pynose.plugin.inspections.common.AssertionRouletteTestSmellVisitor
+import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 
 class AssertionRouletteTestSmellPytestInspection : PyInspection() {
     private val LOG = Logger.getInstance(AssertionRouletteTestSmellPytestInspection::class.java)
-    private val assertionCallsInTests: MutableMap<PyFunction, MutableSet<PyCallExpression>> = mutableMapOf()
 
     override fun buildVisitor(
         holder: ProblemsHolder,
@@ -23,25 +23,31 @@ class AssertionRouletteTestSmellPytestInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        return object : AssertionRouletteTestSmellVisitor(holder, session) {
+        if (PyNoseMode.getPyNoseUnittestMode()) {
+            return object : AssertionRouletteTestSmellVisitor(holder, session) {
 
-            override fun visitPyFile(node: PyFile) {
-                super.visitPyFile(node)
-                if (PytestInspectionsUtils.isValidPytestFile(node)) {
-                    PytestInspectionsUtils.gatherValidPytestMethods(node)
-                        .forEach { testMethod ->
-                            testHasAssertionRoulette[testMethod] = false
-                            PsiTreeUtil
-                                .collectElements(testMethod) { element -> (element is PyAssertStatement) }
-                                .forEach { target -> processPyAssertStatement(target as PyAssertStatement, testMethod) }
-                        }
-                    detectAssertStatementsRoulette()
-                    testHasAssertionRoulette.keys
-                        .filter { key -> testHasAssertionRoulette[key]!! }
-                        .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
-                    testHasAssertionRoulette.clear()
+                override fun visitPyFile(node: PyFile) {
+                    super.visitPyFile(node)
+                    if (PytestInspectionsUtils.isValidPytestFile(node)) {
+                        PytestInspectionsUtils.gatherValidPytestMethods(node)
+                            .forEach { testMethod ->
+                                testHasAssertionRoulette[testMethod] = false
+                                PsiTreeUtil
+                                    .collectElements(testMethod) { element -> (element is PyAssertStatement) }
+                                    .forEach { target ->
+                                        processPyAssertStatement(target as PyAssertStatement, testMethod)
+                                    }
+                            }
+                        detectAssertStatementsRoulette()
+                        testHasAssertionRoulette.keys
+                            .filter { key -> testHasAssertionRoulette[key]!! }
+                            .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
+                        testHasAssertionRoulette.clear()
+                    }
                 }
             }
+        } else {
+            return PsiElementVisitor.EMPTY_VISITOR
         }
     }
 }
