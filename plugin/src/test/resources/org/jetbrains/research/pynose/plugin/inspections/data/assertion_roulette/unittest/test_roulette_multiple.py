@@ -14,6 +14,11 @@ class SomeClass(unittest.TestCase):
         self.assertEqual(4 + 5, 9)
         assert "H" == "J"
 
+    def test_roulette_with_comments(self):
+        assert 2 == 2, "comment"
+        assert 4 + 5 == 9
+        assert "H" == "J", "comment"
+
     def do_something(self):
         assert True
         assert 1 == 1
@@ -29,6 +34,12 @@ class SomeOtherClass(unittest.TestCase):
         assert 3 == 3
         assert 2 == 2
         assert "H" == "J"
+
+
+    def test_roulette_with_comments(self):
+        self.assertTrue(2 == 2, "comment")
+        self.assertEqual(4 + 5, 9, "comment")
+        assert "H" == "J", "comment"
 
 
 class OtherClass:

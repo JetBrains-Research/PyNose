@@ -30,6 +30,11 @@ class TestOtherClass:
         assert 2 == 2
         assert "H" == "J"
 
+    def test_roulette_with_comments(self):
+        assert 2 == 2, "comment"
+        assert 4 + 5 == 9
+        assert "H" == "J", "comment"
+
 
 class OtherClass:
 
