@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.pytest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
@@ -9,26 +9,26 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/conditional_logic"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/conditional_logic/pytest"
     }
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
-        myFixture.enableInspections(ConditionalTestLogicTestSmellInspection())
+        every { PyNoseMode.getPyNoseUnittestMode() } returns false
+        every { PyNoseMode.getPyNosePytestMode() } returns true
+
+        myFixture.enableInspections(ConditionalTestLogicTestSmellPytestInspection())
     }
 
     @Test
     fun `test highlighted if statement`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "if</warning> (2 > 1):" +
@@ -38,12 +38,11 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     }
 
     @Test
-    fun `test if statement without unittest dependency`() {
+    fun `test if statement wrong method name`() {
         myFixture.configureByText(
-            "test_file.py", "class SomeClass():\n" +
-                    "    def test_something(self):\n" +
-                    "        if (2 > 1):" +
-                    "            pass"
+            "test_file.py", "def do_something(self):\n" +
+                    "    if (2 > 1):" +
+                    "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -52,8 +51,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted for statement`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "for</warning> _ in range(10):" +
@@ -63,10 +61,9 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     }
 
     @Test
-    fun `test for statement with non-unittest name`() {
+    fun `test for statement wrong class name`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class SomeClass:\n" +
                     "    def do_something(self):\n" +
                     "        for _ in range(10):" +
                     "            pass"
@@ -78,13 +75,11 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted while statement`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        x = 0\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+            "test_file.py", "def test_something(self):\n" +
+                    "    x = 0\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "while</warning> x < 10:" +
-                    "            x += 1"
+                    "        x += 1"
         )
         myFixture.checkHighlighting()
     }
@@ -92,8 +87,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted list comprehension`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
                     "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "[x**2 for x in range(10)]</warning>"
@@ -104,11 +98,9 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted set comprehension`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        x = [10, '30', 30, 10, '56']\n" +
-                    "        ux = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+            "test_file.py", "def test_something(self):\n" +
+                    "    x = [10, '30', 30, 10, '56']\n" +
+                    "    ux = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "{int(xx) for xx in x}</warning>"
         )
         myFixture.checkHighlighting()
@@ -117,8 +109,7 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted dict comprehension`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
                     "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "{num: num**2 for num in range(1, 11)}</warning>"
@@ -129,10 +120,8 @@ class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspection
     @Test
     fun `test highlighted generator`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        S = list(<warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+            "test_file.py", "def test_something(self):\n" +
+                    "    S = list(<warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "2 * n for n in range(50)</warning>)"
         )
         myFixture.checkHighlighting()
