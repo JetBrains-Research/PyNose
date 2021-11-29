@@ -27,6 +27,17 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test highlighted basic assertion roulette`() {
         myFixture.configureByText(
+            "test_file.py", "def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
+                    "    assert 1 == 1\n" +
+                    "    assert 2 == 2\n" +
+                    "    assert 2 == 2"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test highlighted basic assertion roulette in class`() {
+        myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
                     "        assert 1 == 1\n" +
@@ -44,18 +55,6 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
                     "        assert 1 == 1, \"What's the point?\"\n" +
                     "        assert not 1 == 2\n" +
                     "        assert False, \"Oh no! This assertion failed!\""
-        )
-        myFixture.checkHighlighting()
-    }
-
-    @Test
-    fun `test highlighted unittest assertions roulette`() {
-        myFixture.configureByText(
-            "test_file.py", "class TestClass:\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
-                    "        assert 1 == 1\n" +
-                    "        assert 1 != 2\n" +
-                    "        assert 1 + 2 == 3"
         )
         myFixture.checkHighlighting()
     }
