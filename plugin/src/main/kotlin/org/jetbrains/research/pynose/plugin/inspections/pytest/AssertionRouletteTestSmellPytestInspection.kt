@@ -23,7 +23,7 @@ class AssertionRouletteTestSmellPytestInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
 
-        if (PyNoseMode.getPyNoseUnittestMode()) {
+        if (PyNoseMode.getPyNosePytestMode()) {
             return object : AssertionRouletteTestSmellVisitor(holder, session) {
 
                 override fun visitPyFile(node: PyFile) {
