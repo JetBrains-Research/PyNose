@@ -22,12 +22,12 @@ open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
         )
     }
 
-    protected fun processPyAssertStatement(assertStatements: Array<PyAssertStatement>) {
+    protected fun processPyAssertStatements(assertStatements: List<PyAssertStatement>) {
         val visitedStatements = HashSet<String>()
         for (assertStatement in assertStatements) {
             val assertArgs = assertStatement.arguments
             if (assertArgs.isEmpty()) {
-                return
+                continue
             }
             val assertStatementBody = assertArgs[0].text
             if (assertStatementBody in visitedStatements) {

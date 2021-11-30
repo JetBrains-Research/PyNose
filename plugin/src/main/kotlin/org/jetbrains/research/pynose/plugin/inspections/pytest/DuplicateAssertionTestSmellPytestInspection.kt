@@ -22,8 +22,9 @@ class DuplicateAssertionTestSmellPytestInspection : AbstractTestSmellInspection(
                 if (PytestInspectionsUtils.isValidPytestFile(node)) {
                     PytestInspectionsUtils.gatherValidPytestMethods(node)
                         .forEach { testMethod ->
-                            processPyAssertStatement(
-                                PsiTreeUtil.collectElements(testMethod) { it is PyAssertStatement } as Array<PyAssertStatement>
+                            processPyAssertStatements(
+                                PsiTreeUtil.collectElements(testMethod) { it is PyAssertStatement }
+                                    .map { it as PyAssertStatement }
                             )
                         }
                 }

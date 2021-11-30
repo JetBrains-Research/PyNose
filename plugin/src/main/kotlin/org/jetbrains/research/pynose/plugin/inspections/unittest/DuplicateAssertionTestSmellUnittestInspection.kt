@@ -13,7 +13,7 @@ import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspect
 import org.jetbrains.research.pynose.plugin.inspections.common.DuplicateAssertionTestSmellVisitor
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
-@Suppress("UNCHECKED_CAST")
+
 class DuplicateAssertionTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellUnittestInspection::class.java)
 
@@ -25,16 +25,18 @@ class DuplicateAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
                     UnittestInspectionsUtils.gatherUnittestTestMethods(node)
                         .forEach { testMethod ->
                             processPyCallExpressions(
-                                PsiTreeUtil.collectElements(testMethod) { it is PyCallExpression } as Array<PyCallExpression>
+                                PsiTreeUtil.collectElements(testMethod) { it is PyCallExpression }
+                                    .map { it as PyCallExpression }
                             )
-                            processPyAssertStatement(
-                                PsiTreeUtil.collectElements(testMethod) { it is PyAssertStatement } as Array<PyAssertStatement>
+                            processPyAssertStatements(
+                                PsiTreeUtil.collectElements(testMethod) { it is PyAssertStatement }
+                                    .map { it as PyAssertStatement }
                             )
                         }
                 }
             }
 
-            private fun processPyCallExpressions(callExpressions: Array<PyCallExpression>) {
+            private fun processPyCallExpressions(callExpressions: List<PyCallExpression>) {
                 val visitedCalls = HashSet<String>()
                 for (callExpression in callExpressions) {
                     val child = callExpression.callee
