@@ -15,7 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 class DuplicateAssertionTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellPytestInspection::class.java)
 
-    override fun buildPyTestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : DuplicateAssertionTestSmellVisitor(holder, session) {
             override fun visitPyFile(node: PyFile) {
                 super.visitPyFile(node)

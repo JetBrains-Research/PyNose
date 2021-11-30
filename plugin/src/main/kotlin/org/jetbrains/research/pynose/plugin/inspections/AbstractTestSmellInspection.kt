@@ -8,11 +8,11 @@ import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 
 abstract class AbstractTestSmellInspection : PyInspection() {
 
-    open protected fun buildUnitTestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    open protected fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return PsiElementVisitor.EMPTY_VISITOR
     }
 
-    open protected fun buildPyTestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    open protected fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return PsiElementVisitor.EMPTY_VISITOR
     }
 
@@ -22,8 +22,8 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
         return when {
-            PyNoseMode.getPyNosePytestMode() -> buildPyTestVisitor(holder, session)
-            PyNoseMode.getPyNoseUnittestMode() -> buildUnitTestVisitor(holder, session)
+            PyNoseMode.getPyNosePytestMode() -> buildPytestVisitor(holder, session)
+            PyNoseMode.getPyNoseUnittestMode() -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR
         }
     }
