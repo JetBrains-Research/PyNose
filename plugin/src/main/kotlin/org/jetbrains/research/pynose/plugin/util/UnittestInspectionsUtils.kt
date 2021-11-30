@@ -85,8 +85,7 @@ object UnittestInspectionsUtils {
     fun gatherUnittestTestMethods(testCase: PyClass): List<PyFunction> {
         return testCase.statementList.statements
             .filterIsInstance<PyFunction>()
-            .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
-            .filter { pyFunction: PyFunction? -> isValidUnittestMethod(pyFunction) }
+            .filter { pyFunction -> isValidUnittestMethod(pyFunction) }
     }
 
     fun isValidUnittestParent(element: PsiElement): Boolean {
