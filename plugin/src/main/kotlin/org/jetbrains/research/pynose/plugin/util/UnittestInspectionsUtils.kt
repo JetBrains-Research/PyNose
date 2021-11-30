@@ -2,7 +2,10 @@ package org.jetbrains.research.pynose.plugin.util
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.psi.PyClass
+import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyReferenceExpression
+import com.jetbrains.python.psi.PyStatementList
 import com.jetbrains.python.pyi.PyiFile
 
 object UnittestInspectionsUtils {
@@ -57,9 +60,7 @@ object UnittestInspectionsUtils {
     }
 
     fun isValidUnittestMethod(pyFunction: PyFunction?): Boolean {
-        if (pyFunction == null) {
-            return false
-        }
+        pyFunction ?: return false
         val name = pyFunction.name
         return name != null &&
                 name.startsWith("test") &&

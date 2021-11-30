@@ -6,15 +6,14 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
+import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.quickfixes.unittest.SuboptimalAssertionTestSmellQuickFix
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
-class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
+class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellUnittestInspection::class.java)
 
     private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
@@ -47,12 +46,7 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
             .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
     }
 
-    override fun buildVisitor(
-        holder: ProblemsHolder,
-        isOnTheFly: Boolean,
-        session: LocalInspectionToolSession
-    ): PsiElementVisitor {
-
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         fun registerSuboptimal(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,
@@ -62,20 +56,16 @@ class SuboptimalAssertTestSmellUnittestInspection : PyInspection() {
             )
         }
 
-        if (PyNoseMode.getPyNoseUnittestMode()) {
-            return object : PyInspectionVisitor(holder, session) {
-                override fun visitPyCallExpression(callExpression: PyCallExpression) {
-                    super.visitPyCallExpression(callExpression)
-                    if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
-                        return
-                    }
-                    if (CHECKERS.any { checker -> checker(callExpression) }) {
-                        registerSuboptimal(callExpression)
-                    }
+        return object : PyInspectionVisitor(holder, session) {
+            override fun visitPyCallExpression(callExpression: PyCallExpression) {
+                super.visitPyCallExpression(callExpression)
+                if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {
+                    return
+                }
+                if (CHECKERS.any { checker -> checker(callExpression) }) {
+                    registerSuboptimal(callExpression)
                 }
             }
-        } else {
-            return PsiElementVisitor.EMPTY_VISITOR
         }
     }
 }
