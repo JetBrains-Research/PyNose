@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.pytest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,55 +10,50 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class MagicNumberTestTestSmellInspectionTests: AbstractTestSmellInspectionTestWithSdk() {
+class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(MagicNumberTestTestSmellInspection())
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Pytest"
+        myFixture.enableInspections(MagicNumberTestTestSmellPytestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/magic_number"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/magic_number/pytest"
     }
 
     @Test
     fun `test highlighted magic number`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 1 == 1</warning>\n" +
                     "        assert \"H\" != \"F\"\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertTrue(2 == 1 + 2)</warning>\n"
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 2 == 1 + 2</warning>\n"
         )
-        
         myFixture.checkHighlighting()
     }
 
     @Test
     fun `test highlighted combination of numbers and letters`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertEqual(\"G\", 2)</warning>"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert \"G\" != 2</warning>"
         )
-        
         myFixture.checkHighlighting()
     }
 
     @Test
-    fun `test magic number without unittest dependency`() {
+    fun `test magic number wrong class name`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
+            "test_file.py", "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        assert 1 == 1"
         )
-        
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
@@ -66,7 +61,6 @@ class MagicNumberTestTestSmellInspectionTests: AbstractTestSmellInspectionTestWi
     @Test
     fun `test magic number multiple`() {
         myFixture.configureByFile("test_magic_number_multiple.py")
-        
         myFixture.checkHighlighting()
     }
 }
