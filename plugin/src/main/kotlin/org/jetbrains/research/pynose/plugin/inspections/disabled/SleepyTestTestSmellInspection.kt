@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
