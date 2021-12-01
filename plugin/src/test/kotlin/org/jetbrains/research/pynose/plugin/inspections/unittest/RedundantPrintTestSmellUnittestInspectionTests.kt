@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,18 +10,18 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class RedundantPrintTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class RedundantPrintTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(RedundantPrintTestSmellInspection())
+        myFixture.enableInspections(RedundantPrintTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/redundant_print"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/redundant_print/unittest"
     }
 
     @Test
@@ -54,7 +54,6 @@ class RedundantPrintTestSmellInspectionTests : AbstractTestSmellInspectionTestWi
     @Test
     fun `test redundant print multiple`() {
         myFixture.configureByFile("test_redundant_print_multiple.py")
-        
         myFixture.checkHighlighting()
     }
 }
