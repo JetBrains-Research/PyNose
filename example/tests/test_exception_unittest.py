@@ -5,9 +5,9 @@ class SomeClass(unittest.TestCase):
 
     def test_something(self):
         try:
-            x = 3
+            x = 5
         except ValueError:
-            print("Try again...")
+            print("Fail!")
 
     def do_something(self):
         raise NameError('HiThere')

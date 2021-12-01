@@ -12,6 +12,7 @@ import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyDecorator
 import com.jetbrains.python.psi.PyStringLiteralExpression
+import org.jetbrains.research.pynose.plugin.quickfixes.unittest.IgnoredTestTestSmellUnittestQuickFix
 import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
@@ -34,7 +35,8 @@ open class IgnoredTestTestSmellUnittestInspection : PyInspection() {
                     holder.registerProblem(
                         valueParam,
                         TestSmellBundle.message("inspections.ignored.description"),
-                        ProblemHighlightType.WARNING
+                        ProblemHighlightType.WARNING,
+                        IgnoredTestTestSmellUnittestQuickFix(true)
                     )
                 }
 
@@ -63,7 +65,7 @@ open class IgnoredTestTestSmellUnittestInspection : PyInspection() {
 
                 private fun processPyDecorator(decorator: PyDecorator) {
                     if (decorator.target != null && checkArgs(decorator) && decorator.text.startsWith(decoratorText)) {
-                        registerIgnored(decorator.target!!.nameIdentifier!!)
+                        registerIgnored(decorator)
                     }
                 }
             }

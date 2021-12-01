@@ -30,7 +30,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
     fun `test skipped without unittest dependency`() {
         myFixture.configureByText(
             "test_file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
+                    "class SomeClass:\n" +
                     "    @unittest.skip(\"reason\")\n" +
                     "    def test_something(self):\n" +
                     "        pass"
