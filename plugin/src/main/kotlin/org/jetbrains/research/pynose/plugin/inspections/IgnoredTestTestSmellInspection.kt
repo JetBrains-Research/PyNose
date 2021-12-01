@@ -1,21 +1,29 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspection
-import com.jetbrains.python.psi.*
-import org.jetbrains.research.pynose.core.PyNoseUtils
-import org.jetbrains.research.pynose.core.detectors.impl.ConstructorInitializationTestSmellDetector
+import com.jetbrains.python.inspections.PyInspectionVisitor
+import com.jetbrains.python.psi.PyClass
+import com.jetbrains.python.psi.PyDecorator
+import com.jetbrains.python.psi.PyElement
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
+import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 open class IgnoredTestTestSmellInspection : PyInspection() {
-    private val LOG = Logger.getInstance(ConstructorInitializationTestSmellDetector::class.java)
-    private val testHasSkipDecorator: MutableMap<PyFunction, Boolean> = mutableMapOf()
+    private val LOG = Logger.getInstance(IgnoredTestTestSmellInspection::class.java)
     private val decoratorText = "@unittest.skip"
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PyElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        session: LocalInspectionToolSession
+    ): PsiElementVisitor {
 
         fun registerIgnored(valueParam: PsiElement) {
             holder.registerProblem(
@@ -25,35 +33,31 @@ open class IgnoredTestTestSmellInspection : PyInspection() {
             )
         }
 
-        return object : PyElementVisitor() {
+        return object : PyInspectionVisitor(holder, session) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
-                if (PyNoseUtils.isValidUnittestCase(node)) {
-                    PyNoseUtils.gatherTestMethods(node).forEach { testMethod ->
-                        visitPyElement(testMethod)
-                    }
+                if (UnittestInspectionsUtils.isValidUnittestCase(node)) {
+                    UnittestInspectionsUtils.gatherUnittestTestMethods(node)
+                        .forEach { testMethod ->
+                            PsiTreeUtil
+                                .collectElements(testMethod) { element -> (element is PyDecorator) }
+                                .forEach { target -> processPyDecorator(target as PyDecorator) }
+                        }
                     node.decoratorList?.decorators?.forEach { decorator ->
                         if (decorator.text.startsWith(decoratorText)) {
                             registerIgnored(node.nameIdentifier!!)
                         }
                     }
-                    testHasSkipDecorator.filter { element -> element.value }.forEach { decorator ->
-                        registerIgnored(decorator.key.nameIdentifier!!)
-                    }
                 }
-                testHasSkipDecorator.clear()
             }
 
-            override fun visitPyDecorator(decorator: PyDecorator) {
-                super.visitPyDecorator(decorator)
+            private fun processPyDecorator(decorator: PyDecorator) {
                 if (!decorator.text.startsWith(decoratorText)) {
-                    for (element in decorator.children) {
-                        visitPyElement(element!! as PyElement)
-                    }
+                    decorator.children.forEach { child -> visitPyElement(child!! as PyElement) }
                     return
                 }
                 if (decorator.target != null) {
-                    testHasSkipDecorator.putIfAbsent(decorator.target!!, true)
+                    registerIgnored(decorator.target!!.nameIdentifier!!)
                 }
             }
         }

@@ -44,6 +44,7 @@ subprojects {
                 branch = "main"
             }
         }
+        testImplementation("io.mockk:mockk:1.10.2")
     }
 
     intellij {
@@ -55,9 +56,5 @@ subprojects {
 
     tasks.withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
         .forEach { it.enabled = false }
-
-//    tasks.getByName<Test>("test") {
-//        System.setProperty("idea.home.path", "/home/oleg/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/212.5284.40")
-//    }
 }
 

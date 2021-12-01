@@ -93,6 +93,9 @@ public class PyNoseUtils {
     }
 
     public static boolean isValidUnittestMethod(PyFunction pyFunction) {
+        if (pyFunction == null) {
+            return false;
+        }
         var name = pyFunction.getName();
         return name != null &&
                 name.startsWith("test") &&
