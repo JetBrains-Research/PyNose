@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.obscure
 
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every

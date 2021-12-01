@@ -13,9 +13,6 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
     PyInspectionVisitor(holder, session) {
 
-    protected val assertCalls: MutableSet<Pair<String, PyFunction>> = mutableSetOf()
-    protected val assertStatements: MutableSet<Pair<String, PyFunction>> = mutableSetOf()
-
     protected fun registerDuplicate(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
@@ -25,16 +22,19 @@ open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
         )
     }
 
-    protected fun processPyAssertStatement(assertStatement: PyAssertStatement, testMethod: PyFunction) {
-        val assertArgs = assertStatement.arguments
-        if (assertArgs.isEmpty()) {
-            return
-        }
-        val assertStatementBody = assertArgs[0].text
-        if (assertStatements.contains(Pair(assertStatementBody, testMethod))) {
-            registerDuplicate(assertStatement)
-        } else {
-            assertStatements.add(Pair(assertStatementBody, testMethod))
+    protected fun processPyAssertStatements(assertStatements: List<PyAssertStatement>) {
+        val visitedStatements = HashSet<String>()
+        for (assertStatement in assertStatements) {
+            val assertArgs = assertStatement.arguments
+            if (assertArgs.isEmpty()) {
+                continue
+            }
+            val assertStatementBody = assertArgs[0].text
+            if (assertStatementBody in visitedStatements) {
+                registerDuplicate(assertStatement)
+            } else {
+                visitedStatements += assertStatementBody
+            }
         }
     }
 }

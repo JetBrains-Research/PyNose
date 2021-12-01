@@ -31,22 +31,20 @@ object PytestInspectionsUtils {
         return file.name.startsWith("test") || file.name.endsWith("test")
     }
 
+    // TODO: implement caching?
     fun gatherValidPytestMethods(file: PyFile): List<PyFunction> {
         val returnList: MutableList<PyFunction> = mutableListOf()
         file.statements
             .filterIsInstance<PyClass>()
-            .map { obj: PyStatement? -> PyClass::class.java.cast(obj) }
             .filter { pyClass -> isValidPytestFile(pyClass.containingFile) }
             .forEach { pyClass ->
                 pyClass.statementList.statements
                     .filterIsInstance<PyFunction>()
-                    .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
                     .filter { pyFunction -> isValidPytestMethodInsideFile(pyFunction) }
                     .forEach { validFunction -> returnList.add(validFunction) }
             }
         file.statements
             .filterIsInstance<PyFunction>()
-            .map { obj: PyStatement? -> PyFunction::class.java.cast(obj) }
             .filter { pyFunction -> isValidPytestMethodInsideFile(pyFunction) }
             .forEach { validFunction -> returnList.add(validFunction) }
         return returnList

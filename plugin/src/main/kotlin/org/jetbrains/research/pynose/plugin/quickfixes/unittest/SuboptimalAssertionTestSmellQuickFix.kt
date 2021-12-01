@@ -56,16 +56,16 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
                         relationTypes["GEQ"] -> "assertGreaterEqual"
                         else -> null
                     }
-                    if (assertionType != null) {
-                        val newExpressionText =
-                            "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
-                        assertCall.replace(
-                            elementGenerator.createFromText(
-                                LanguageLevel.forElement(assertCall),
-                                PyExpressionStatementImpl::class.java, newExpressionText
-                            )
+                    assertionType ?: return
+
+                    val newExpressionText = "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
+                    assertCall.replace(
+                        elementGenerator.createFromText(
+                            LanguageLevel.forElement(assertCall),
+                            PyExpressionStatementImpl::class.java,
+                            newExpressionText
                         )
-                    }
+                    )
                 }
             }
         }

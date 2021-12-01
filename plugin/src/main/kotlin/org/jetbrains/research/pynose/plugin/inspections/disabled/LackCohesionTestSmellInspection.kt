@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections
+package org.jetbrains.research.pynose.plugin.inspections.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyClass
-import com.jetbrains.python.psi.PyElementVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle

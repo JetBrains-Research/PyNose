@@ -39,7 +39,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.IgnoredTestTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.IgnoredTestTestSmellInspection"
                          displayName="Ignored test"
                          shortName="IgnoredTestTestSmellInspection"/>
         <localInspection language="Python"
@@ -47,7 +47,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.ConditionalTestLogicTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.ConditionalTestLogicTestSmellInspection"
                          displayName="Conditional logic test"
                          shortName="ConditionalTestLogicTestSmellInspection"/>
         <localInspection language="Python"
@@ -55,7 +55,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.AssertionRouletteTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.AssertionRouletteTestSmellInspection"
                          displayName="Assertion Roulette logic test"
                          shortName="AssertionRouletteTestSmellInspection"/>
         <localInspection language="Python"
@@ -111,7 +111,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.MagicNumberTestTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.MagicNumberTestTestSmellInspection"
                          displayName="Magic number test"
                          shortName="MagicNumberTestTestSmellInspection"/>
         <localInspection language="Python"
@@ -119,7 +119,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.ObscureInLineSetupTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.ObscureInLineSetupTestSmellInspection"
                          displayName="Obscure in line setup test"
                          shortName="ObscureInLineSetupTestSmellInspection"/>
         <localInspection language="Python"
@@ -143,7 +143,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.SleepyTestTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.SleepyTestTestSmellInspection"
                          displayName="Sleepy test"
                          shortName="SleepyTestTestSmellInspection"/>
         <localInspection language="Python"
@@ -175,7 +175,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.RedundantPrintTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.RedundantPrintTestSmellInspection"
                          displayName="Redundant print test"
                          shortName="RedundantPrintTestSmellInspection"/>
         <localInspection language="Python"
@@ -183,7 +183,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.LackCohesionTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.LackCohesionTestSmellInspection"
                          displayName="Lack cohesion test"
                          shortName="LackCohesionTestSmellInspection"/>
         <localInspection language="Python"
@@ -191,7 +191,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.GeneralFixtureTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.obscure.GeneralFixtureTestSmellInspection"
                          displayName="General fixture test"
                          shortName="GeneralFixtureTestSmellInspection"/>
         <localInspection language="Python"
@@ -199,7 +199,7 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.TestMaverickTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.TestMaverickTestSmellInspection"
                          displayName="Test maverick"
                          shortName="TestMaverickTestSmellInspection"/>
         <postStartupActivity
