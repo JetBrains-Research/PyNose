@@ -28,11 +28,16 @@ class OtherClass(unittest.TestCase):
     Y = 20
 
     def test_something(self):
+        self.assertTrue(self.X not in self.Z)
+        self.assertTrue(self.X in self.Z)
+        # todo: issues with highlighting
         self.assertIs(self.X, True)
         self.assertIsNot(self.X, False)
+        self.assertIsNot(self.X, True)
         self.assertIsNot(self.X, None)
 
     def test_something_other(self):
+        self.assertEqual(self.X, None)
         self.assertNotEqual(self.X, False)
         self.assertFalse(self.X in self.Y)
         z = {10, 20}

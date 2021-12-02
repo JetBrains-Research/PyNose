@@ -14,7 +14,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 
 class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
-    
+
     private lateinit var elementGenerator: PyElementGenerator
 
     // todo: specify?
@@ -111,7 +111,8 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     private fun replaceTwoArgumentsWithOptimal(
         assertCall: PyCallExpression,
         assertionType: String?,
-        children: Array<PsiElement>, ) {
+        children: Array<PsiElement>,
+    ) {
         val newExpressionText = "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
         assertCall.replace(
             elementGenerator.createFromText(
@@ -125,7 +126,8 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     private fun replaceOneArgumentWithOptimal(
         assertCall: PyCallExpression,
         assertionType: String?,
-        argument: PsiElement, ) {
+        argument: PsiElement,
+    ) {
         val newExpressionText = "self.$assertionType(" + argument.text + ")"
         assertCall.replace(
             elementGenerator.createFromText(

@@ -63,6 +63,8 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
                     return
                 }
                 if (CHECKERS.any { checker -> checker(callExpression) }) {
+                    // todo: does not stop highlighting assertTrue(self.X) and other assertions with one parameter
+                    //  but does not highlight them if I just type them down (not using quick fix) and I have no idea why
                     registerSuboptimal(callExpression)
                 }
             }
