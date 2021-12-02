@@ -17,7 +17,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
 
     private lateinit var elementGenerator: PyElementGenerator
 
-    // todo: specify?
+    // todo: specify replacement name for each assertion?
     override fun getFamilyName(): String {
         return TestSmellBundle.message("quickfixes.suboptimal.message")
     }
@@ -84,9 +84,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         replaceTwoArgumentsWithOptimal(assertCall, assertionType, children)
     }
 
-    // todo: names
-
-    private fun processAssertIsOrEqual(assertCall: PyCallExpression) {
+    private fun processPositiveTwoParamAssert(assertCall: PyCallExpression) {
         val (arg1, arg2) = assertCall.arguments
         val assertionType = when (arg2.text) {
             "False" -> "assertFalse"
@@ -97,7 +95,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         replaceOneArgumentWithOptimal(assertCall, assertionType, arg1)
     }
 
-    private fun processAssertNotIsOrEqual(assertCall: PyCallExpression) {
+    private fun processNegativeTwoParamAssert(assertCall: PyCallExpression) {
         val (arg1, arg2) = assertCall.arguments
         val assertionType = when (arg2.text) {
             "False" -> "assertTrue"
@@ -150,16 +148,16 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
                 processAssertFalse(assertCall)
             }
             "assertEqual" -> {
-                processAssertIsOrEqual(assertCall)
+                processPositiveTwoParamAssert(assertCall)
             }
             "assertNotEqual" -> {
-                processAssertNotIsOrEqual(assertCall)
+                processNegativeTwoParamAssert(assertCall)
             }
             "assertIs" -> {
-                processAssertIsOrEqual(assertCall)
+                processPositiveTwoParamAssert(assertCall)
             }
             "assertIsNot" -> {
-                processAssertNotIsOrEqual(assertCall)
+                processNegativeTwoParamAssert(assertCall)
             }
         }
     }
