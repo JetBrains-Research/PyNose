@@ -10,6 +10,7 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.pyi.PyiFile
+import org.jetbrains.research.pynose.plugin.quickfixes.common.RedundantPrintTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -22,7 +23,8 @@ class RedundantPrintTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.redundant.print.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WARNING,
+            RedundantPrintTestSmellQuickFix()
         )
     }
 
