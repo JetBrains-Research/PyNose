@@ -26,10 +26,11 @@ class SomeClass(unittest.TestCase):
 class OtherClass(unittest.TestCase):
     X = 10
     Y = 20
+    Z = {11, 15}
 
     def test_something(self):
         self.assertTrue(self.X not in self.Z)
-        self.assertTrue(self.X in self.Z)
+        self.assertFalse(self.X in self.Z)
         # todo: issues with highlighting
         self.assertIs(self.X, True)
         self.assertIsNot(self.X, False)

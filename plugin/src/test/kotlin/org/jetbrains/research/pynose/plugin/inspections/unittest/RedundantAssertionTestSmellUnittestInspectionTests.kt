@@ -3,7 +3,7 @@ package org.jetbrains.research.pynose.plugin.inspections.unittest
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
 import io.mockk.mockkObject
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -14,9 +14,9 @@ class RedundantAssertionTestSmellUnittestInspectionTests : AbstractTestSmellInsp
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
+        mockkObject(TestRunnerGetter)
+        every { TestRunnerGetter.getTestRunner() } returns "Unittests"
+        every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         myFixture.enableInspections(RedundantAssertionTestSmellUnittestInspection())
     }
 

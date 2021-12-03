@@ -3,7 +3,7 @@ package org.jetbrains.research.pynose.plugin.inspections.unittest
 import com.intellij.lang.annotation.HighlightSeverity
 import io.mockk.every
 import io.mockk.mockkObject
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -14,9 +14,9 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
+        mockkObject(TestRunnerGetter)
+        every { TestRunnerGetter.getTestRunner() } returns "Unittests"
+        every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         myFixture.enableInspections(EmptyTestTestSmellUnittestInspection())
     }
 
@@ -34,7 +34,6 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
                 "    def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something_else</warning>(self):\n" +
                 "        pass"
         )
-
         myFixture.checkHighlighting()
     }
 
@@ -46,7 +45,6 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
                 "    def test_something(self):\n" +
                 "        pass"
         )
-
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
@@ -54,7 +52,6 @@ class EmptyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test empty multiple`() {
         myFixture.configureByFile("test_empty_multiple.py")
-
         myFixture.checkHighlighting()
     }
 
