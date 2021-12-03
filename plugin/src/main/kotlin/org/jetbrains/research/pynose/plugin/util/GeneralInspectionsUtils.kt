@@ -2,8 +2,6 @@ package org.jetbrains.research.pynose.plugin.util
 
 import com.google.gson.JsonArray
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -12,56 +10,25 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.jetbrains.python.psi.PyFunction
-import com.jetbrains.python.testing.TestRunnerService
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter
 import java.util.*
 
 object GeneralInspectionsUtils {
     private val LOG = Logger.getInstance(GeneralInspectionsUtils::class.java)
 
-    private var unittestMode = false
-    private var pytestMode = false
-
-    fun getPluginUnittestMode(): Boolean {
-        return unittestMode
-    }
-
-    fun getPluginPytestMode(): Boolean {
-        return pytestMode
-    }
-
-    // can be checked for either a psi element or a file
-    fun configureMode(element: PsiElement) {
-        val module: Module? = ModuleUtilCore.findModuleForPsiElement(element)
-        val testRunner = TestRunnerService.getInstance(module)
-        when (testRunner.projectConfiguration) {
-            "Unittests" -> {
-                unittestMode = true
-                pytestMode = false
-            }
-            "pytest" -> {
-                unittestMode = false
-                pytestMode = true
-            }
-            else -> {
-                TODO("Not yet implemented (autodetect)")
-            }
-        }
-    }
-
     fun checkValidParent(element: PsiElement): Boolean {
-        if (PyNoseMode.getPyNosePytestMode()) {
+        if (TestRunnerGetter.getConfiguredTestRunner() == "pytest") {
             return PytestInspectionsUtils.isValidPytestParent(element)
-        } else if (PyNoseMode.getPyNoseUnittestMode()) {
+        } else if (TestRunnerGetter.getConfiguredTestRunner() == "Unittests") {
             return UnittestInspectionsUtils.isValidUnittestParent(element)
         }
         return false
     }
 
     fun checkValidMethod(testMethod: PyFunction): Boolean {
-        if (PyNoseMode.getPyNosePytestMode()) {
+        if (TestRunnerGetter.getConfiguredTestRunner() == "pytest") {
             return PytestInspectionsUtils.isValidPytestMethod(testMethod)
-        } else if (PyNoseMode.getPyNoseUnittestMode()) {
+        } else if (TestRunnerGetter.getConfiguredTestRunner() == "Unittests") {
             return UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
         }
         return false
