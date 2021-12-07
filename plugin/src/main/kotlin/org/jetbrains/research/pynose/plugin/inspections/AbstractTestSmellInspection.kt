@@ -28,7 +28,7 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         isOnTheFly: Boolean,
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
-        return when (holder.project.service<TestRunnerServiceFacade>().configureTestRunner(holder.file)) {
+        return when (holder.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(holder.file)) {
             "pytest" -> buildPytestVisitor(holder, session)
             "Unittests" -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR

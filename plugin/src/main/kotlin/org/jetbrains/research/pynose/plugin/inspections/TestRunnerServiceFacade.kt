@@ -1,6 +1,7 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiFile
 import com.jetbrains.python.testing.TestRunnerService
@@ -8,15 +9,15 @@ import com.jetbrains.python.testing.TestRunnerService
 @Service
 object TestRunnerServiceFacade {
 
-    private lateinit var testRunner : String
+    private val moduleTestRunnerMap: MutableMap<Module, String> = mutableMapOf()
 
-    fun getConfiguredTestRunner(): String {
-        return testRunner
-    }
-
-    fun configureTestRunner(file: PsiFile): String {
-        val module = ModuleUtilCore.findModuleForPsiElement(file)
-        testRunner = TestRunnerService.getInstance(module).projectConfiguration
-        return testRunner
+    fun getConfiguredTestRunner(file: PsiFile): String? {
+        val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return ""
+        return if (moduleTestRunnerMap.containsKey(module)) {
+            moduleTestRunnerMap[module]
+        } else {
+            moduleTestRunnerMap[module] = TestRunnerService.getInstance(module).projectConfiguration
+            moduleTestRunnerMap[module]
+        }
     }
 }
