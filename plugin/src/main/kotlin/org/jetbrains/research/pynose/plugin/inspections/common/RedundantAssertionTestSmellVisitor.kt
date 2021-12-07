@@ -28,18 +28,18 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
 
     override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
         super.visitPyAssertStatement(assertStatement)
-        val expressions = assertStatement.arguments
-        if (expressions.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
+        val args = assertStatement.arguments
+        if (args.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
             return
         }
-        if (expressions[0] is PyLiteralExpression) {
+        if (args[0] is PyLiteralExpression) {
             registerRedundant(assertStatement)
             return
         }
-        if (expressions[0] !is PyBinaryExpression) {
+        if (args[0] !is PyBinaryExpression) {
             return
         }
-        val binaryExpression = expressions[0] as PyBinaryExpression
+        val binaryExpression = args[0] as PyBinaryExpression
         val psiOperator = binaryExpression.psiOperator ?: return
         if (binaryExpression.children.size < 2) {
             return
