@@ -19,7 +19,7 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
     override fun setUp() {
         super.setUp()
         mockkObject(TestRunnerGetter)
-        every { TestRunnerGetter.getTestRunner() } returns "Unittests"
+        every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         myFixture.enableInspections(ConstructorInitializationTestSmellUnittestInspection())
     }

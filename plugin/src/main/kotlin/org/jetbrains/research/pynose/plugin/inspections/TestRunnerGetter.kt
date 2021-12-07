@@ -8,6 +8,7 @@ import com.jetbrains.python.testing.TestRunnerService
 object TestRunnerGetter {
 
     private var module : Module? = null
+
     private lateinit var testRunner : String
 
     fun getConfiguredTestRunner(): String {
@@ -18,8 +19,7 @@ object TestRunnerGetter {
         module = ModuleUtilCore.findModuleForPsiElement(file)
     }
 
-    fun getTestRunner(): String {
+    fun configureTestRunner() {
         testRunner = TestRunnerService.getInstance(module).projectConfiguration
-        return testRunner
     }
 }

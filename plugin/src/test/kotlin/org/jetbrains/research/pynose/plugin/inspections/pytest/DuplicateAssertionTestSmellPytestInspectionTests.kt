@@ -15,7 +15,7 @@ class DuplicateAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     override fun setUp() {
         super.setUp()
         mockkObject(TestRunnerGetter)
-        every { TestRunnerGetter.getTestRunner() } returns "pytest"
+        every { TestRunnerGetter.getConfiguredTestRunner() } returns "pytest"
         every { TestRunnerGetter.getConfiguredTestRunner() } returns "pytest"
         myFixture.enableInspections(DuplicateAssertionTestSmellPytestInspection())
     }

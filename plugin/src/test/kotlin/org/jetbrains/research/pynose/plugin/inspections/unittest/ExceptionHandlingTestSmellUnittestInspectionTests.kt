@@ -15,7 +15,7 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     override fun setUp() {
         super.setUp()
         mockkObject(TestRunnerGetter)
-        every { TestRunnerGetter.getTestRunner() } returns "Unittests"
+        every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         every { TestRunnerGetter.getConfiguredTestRunner() } returns "Unittests"
         myFixture.enableInspections(ExceptionHandlingTestSmellUnittestInspection())
     }

@@ -4,7 +4,8 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
-import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter.getTestRunner
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter.configureTestRunner
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter.getConfiguredTestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter.setModule
 
 
@@ -30,7 +31,8 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
         setModule(holder.file)
-        return when (getTestRunner()) {
+        configureTestRunner()
+        return when (getConfiguredTestRunner()) {
             "pytest" -> buildPytestVisitor(holder, session)
             "Unittests" -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR
