@@ -16,8 +16,7 @@ class MagicNumberTestTestSmellInspectionTests: AbstractTestSmellInspectionTestWi
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().configureTestRunner(any()) } returns "Unittests"
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() } returns "Unittests"
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
         myFixture.enableInspections(MagicNumberTestTestSmellInspection())
     }
 

@@ -15,8 +15,7 @@ class UnknownTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().configureTestRunner(any()) } returns "pytest"
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() } returns "pytest"
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
         myFixture.enableInspections(UnknownTestTestSmellPytestInspection())
     }
 
