@@ -85,7 +85,8 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     }
 
     private fun processPositiveTwoParamAssert(assertCall: PyCallExpression) {
-        val (arg1, arg2) = assertCall.arguments
+        val arg1 = assertCall.arguments[0] ?: return
+        val arg2 = assertCall.arguments[1] ?: return
         val assertionType = when (arg2.text) {
             "False" -> "assertFalse"
             "True" -> "assertTrue"
@@ -96,7 +97,8 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     }
 
     private fun processNegativeTwoParamAssert(assertCall: PyCallExpression) {
-        val (arg1, arg2) = assertCall.arguments
+        val arg1 = assertCall.arguments[0] ?: return
+        val arg2 = assertCall.arguments[1] ?: return
         val assertionType = when (arg2.text) {
             "False" -> "assertTrue"
             "True" -> "assertFalse"
@@ -112,7 +114,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         children: Array<PsiElement>,
     ) {
         val newExpressionText = "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
-        assertCall.replace(
+        assertCall.parent.replace(
             elementGenerator.createFromText(
                 LanguageLevel.forElement(assertCall),
                 PyExpressionStatementImpl::class.java,
@@ -127,7 +129,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         argument: PsiElement,
     ) {
         val newExpressionText = "self.$assertionType(" + argument.text + ")"
-        assertCall.replace(
+        assertCall.parent.replace(
             elementGenerator.createFromText(
                 LanguageLevel.forElement(assertCall),
                 PyExpressionStatementImpl::class.java,

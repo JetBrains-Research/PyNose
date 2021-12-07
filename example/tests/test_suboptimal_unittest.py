@@ -31,7 +31,6 @@ class OtherClass(unittest.TestCase):
     def test_something(self):
         self.assertTrue(self.X not in self.Z)
         self.assertFalse(self.X in self.Z)
-        # todo: issues with highlighting
         self.assertIs(self.X, True)
         self.assertIsNot(self.X, False)
         self.assertIsNot(self.X, True)
