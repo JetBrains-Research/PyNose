@@ -1,13 +1,12 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiFile
 import com.jetbrains.python.testing.TestRunnerService
 
-object TestRunnerGetter {
-
-    private var module : Module? = null
+@Service
+object TestRunnerServiceFacade {
 
     private lateinit var testRunner : String
 
@@ -15,11 +14,9 @@ object TestRunnerGetter {
         return testRunner
     }
 
-    fun setModule(file: PsiFile) {
-        module = ModuleUtilCore.findModuleForPsiElement(file)
-    }
-
-    fun configureTestRunner() {
+    fun configureTestRunner(file: PsiFile): String {
+        val module = ModuleUtilCore.findModuleForPsiElement(file)
         testRunner = TestRunnerService.getInstance(module).projectConfiguration
+        return testRunner
     }
 }

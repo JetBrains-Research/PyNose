@@ -23,6 +23,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     }
 
     private fun processAssertTrue(assertCall: PyCallExpression) {
+        if (assertCall.arguments.isEmpty()) return
         val binaryExpression = assertCall.arguments[0] as PyBinaryExpression
         val children = binaryExpression.children
         val op = binaryExpression.psiOperator
@@ -54,6 +55,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
     }
 
     private fun processAssertFalse(assertCall: PyCallExpression) {
+        if (assertCall.arguments.isEmpty()) return
         val binaryExpression = assertCall.arguments[0] as PyBinaryExpression
         val children = binaryExpression.children
         val op = binaryExpression.psiOperator
@@ -113,6 +115,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         assertionType: String?,
         children: Array<PsiElement>,
     ) {
+        if (children.size < 2) return
         val newExpressionText = "self.$assertionType(" + children[0].text + "," + children[1].text + ")"
         assertCall.parent.replace(
             elementGenerator.createFromText(

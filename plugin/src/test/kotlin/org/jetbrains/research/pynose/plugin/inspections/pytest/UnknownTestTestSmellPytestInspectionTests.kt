@@ -2,7 +2,7 @@ package org.jetbrains.research.pynose.plugin.inspections.pytest
 
 import io.mockk.every
 import io.mockk.mockkObject
-import org.jetbrains.research.pynose.plugin.inspections.TestRunnerGetter
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -13,9 +13,9 @@ class UnknownTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(TestRunnerGetter)
-        every { TestRunnerGetter.getConfiguredTestRunner() } returns "pytest"
-        every { TestRunnerGetter.getConfiguredTestRunner() } returns "pytest"
+        mockkObject(TestRunnerServiceFacade)
+        every { TestRunnerServiceFacade.configureTestRunner(any()) } returns "pytest"
+        every { TestRunnerServiceFacade.getConfiguredTestRunner() } returns "pytest"
         myFixture.enableInspections(UnknownTestTestSmellPytestInspection())
     }
 
