@@ -1,6 +1,7 @@
 package org.jetbrains.research.pynose.plugin.util
 
 import com.google.gson.JsonArray
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -17,18 +18,18 @@ object GeneralInspectionsUtils {
     private val LOG = Logger.getInstance(GeneralInspectionsUtils::class.java)
 
     fun checkValidParent(element: PsiElement): Boolean {
-        if (TestRunnerServiceFacade.getConfiguredTestRunner() == "pytest") {
+        if (element.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() == "pytest") {
             return PytestInspectionsUtils.isValidPytestParent(element)
-        } else if (TestRunnerServiceFacade.getConfiguredTestRunner() == "Unittests") {
+        } else if (element.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() == "Unittests") {
             return UnittestInspectionsUtils.isValidUnittestParent(element)
         }
         return false
     }
 
     fun checkValidMethod(testMethod: PyFunction): Boolean {
-        if (TestRunnerServiceFacade.getConfiguredTestRunner() == "pytest") {
+        if (testMethod.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() == "pytest") {
             return PytestInspectionsUtils.isValidPytestMethod(testMethod)
-        } else if (TestRunnerServiceFacade.getConfiguredTestRunner() == "Unittests") {
+        } else if (testMethod.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() == "Unittests") {
             return UnittestInspectionsUtils.isValidUnittestMethod(testMethod)
         }
         return false

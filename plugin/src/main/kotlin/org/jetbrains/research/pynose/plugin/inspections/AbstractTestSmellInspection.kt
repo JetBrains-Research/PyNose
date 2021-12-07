@@ -2,9 +2,9 @@ package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
-import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade.configureTestRunner
 
 
 abstract class AbstractTestSmellInspection : PyInspection() {
@@ -28,7 +28,7 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         isOnTheFly: Boolean,
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
-        return when (configureTestRunner(holder.file)) {
+        return when (holder.project.service<TestRunnerServiceFacade>().configureTestRunner(holder.file)) {
             "pytest" -> buildPytestVisitor(holder, session)
             "Unittests" -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR
