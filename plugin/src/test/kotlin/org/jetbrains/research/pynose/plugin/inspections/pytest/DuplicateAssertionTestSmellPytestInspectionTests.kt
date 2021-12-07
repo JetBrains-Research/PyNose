@@ -1,6 +1,7 @@
 package org.jetbrains.research.pynose.plugin.inspections.pytest
 
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
@@ -14,9 +15,9 @@ class DuplicateAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(TestRunnerServiceFacade)
-        every { TestRunnerServiceFacade.configureTestRunner(any()) } returns "pytest"
-        every { TestRunnerServiceFacade.getConfiguredTestRunner() } returns "pytest"
+        mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
+        every { myFixture.project.service<TestRunnerServiceFacade>().configureTestRunner(any()) } returns "pytest"
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner() } returns "pytest"
         myFixture.enableInspections(DuplicateAssertionTestSmellPytestInspection())
     }
 
