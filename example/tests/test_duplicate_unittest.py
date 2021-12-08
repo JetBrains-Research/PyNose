@@ -6,6 +6,9 @@ class SomeClass(unittest.TestCase):
     def test_something(self):
         assert 1 == 1
         self.assertFalse(1 == 2)
+        self.assertFalse(1 == 2)
+        self.assertFalse(1 == 2)
+        assert 1 == 1
         assert 1 == 1
 
     def test_something_else(self):

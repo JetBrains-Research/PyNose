@@ -15,22 +15,22 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : RedundantAssertionTestSmellVisitor(holder, session) {
-            // todo: assertTrue(4 < 4) is not detected
+            // todo: assertTrue(x < x) is not detected
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
-                val child = callExpression.callee
-                if (child !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(child)
+                val callee = callExpression.callee ?: return
+                if (callee !is PyReferenceExpression || !UnittestInspectionsUtils.isUnittestCallAssertMethod(callee)
                     || !UnittestInspectionsUtils.isValidUnittestParent(callExpression)
                 ) {
                     return
                 }
                 val argList = callExpression.getArguments(null)
-                if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(child.name)) {
-                    if (argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[child.name]) {
+                if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(callee.name)) {
+                    if (argList.isNotEmpty() && argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[callee.name]) {
                         registerRedundant(callExpression)
                     }
-                } else if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS.contains(child.name)) {
-                    if (argList[0].text == argList[1].text) {
+                } else if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS.contains(callee.name)) {
+                    if (argList.size >= 2 && argList[0].text == argList[1].text) {
                         registerRedundant(callExpression)
                     }
                 }
