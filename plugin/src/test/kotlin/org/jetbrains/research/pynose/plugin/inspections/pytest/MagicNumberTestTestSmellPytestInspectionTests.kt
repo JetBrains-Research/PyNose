@@ -18,7 +18,7 @@ class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspection
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
-        } returns "Pytest"
+        } returns "pytest"
         myFixture.enableInspections(MagicNumberTestTestSmellPytestInspection())
     }
 
