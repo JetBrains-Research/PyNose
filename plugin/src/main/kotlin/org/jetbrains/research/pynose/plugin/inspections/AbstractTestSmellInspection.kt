@@ -2,21 +2,21 @@ package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspection
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 
 
 abstract class AbstractTestSmellInspection : PyInspection() {
 
-    open protected fun buildUnittestVisitor(
+    protected open fun buildUnittestVisitor(
         holder: ProblemsHolder,
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
         return PsiElementVisitor.EMPTY_VISITOR
     }
 
-    open protected fun buildPytestVisitor(
+    protected open fun buildPytestVisitor(
         holder: ProblemsHolder,
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
@@ -28,9 +28,9 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         isOnTheFly: Boolean,
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
-        return when {
-            PyNoseMode.getPyNosePytestMode() -> buildPytestVisitor(holder, session)
-            PyNoseMode.getPyNoseUnittestMode() -> buildUnittestVisitor(holder, session)
+        return when (holder.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(holder.file)) {
+            "pytest" -> buildPytestVisitor(holder, session)
+            "Unittests" -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR
         }
     }

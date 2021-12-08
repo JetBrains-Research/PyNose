@@ -1,9 +1,10 @@
 package org.jetbrains.research.pynose.plugin.inspections.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -14,9 +15,8 @@ class RedundantPrintTestSmellInspectionTests : AbstractTestSmellInspectionTestWi
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
+        mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
         myFixture.enableInspections(RedundantPrintTestSmellInspection())
     }
 

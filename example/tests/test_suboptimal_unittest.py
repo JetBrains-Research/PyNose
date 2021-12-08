@@ -18,14 +18,31 @@ class SomeClass(unittest.TestCase):
         self.assertTrue(self.X not in self.Z)
         self.assertTrue(self.X in self.Z)
         self.assertTrue(self.X < self.Y)
+        self.assertTrue(self.X is not self.Z)
+        self.assertTrue(self.X is self.Z)
+        self.assertTrue(self.X)
 
 
 class OtherClass(unittest.TestCase):
     X = 10
     Y = 20
+    Z = {11, 15}
+
+    def test_something(self):
+        self.assertTrue(self.X not in self.Z)
+        self.assertFalse(self.X in self.Z)
+        self.assertIs(self.X, True)
+        self.assertIsNot(self.X, False)
+        self.assertIsNot(self.X, True)
+        self.assertIsNot(self.X, None)
 
     def test_something_other(self):
+        self.assertEqual(self.X, None)
+        self.assertNotEqual(self.X, False)
         self.assertFalse(self.X in self.Y)
+        z = {10, 20}
+        self.assertTrue(self.X not in z)
+        self.assertFalse(self.X in z)
 
 
 class AnotherClass:
