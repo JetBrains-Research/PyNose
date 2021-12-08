@@ -9,6 +9,16 @@ class SomeClass(unittest.TestCase):
         self.assertNotEqual(4 + 5, 4)
         self.assertNotEqual(4 + 5, 5)
 
+    def test_something(self):
+        y = 10
+        if y > 1:
+            for x in range(1, 20):
+                y += 2
+        assert y > 10
+
+    def test_roulette(self):
+        assert 1 == 1
+
     def test_roulette_1(self):
         assert 2 == 2, "comment"
         self.assertEqual(4 + 5, 9, msg="f")

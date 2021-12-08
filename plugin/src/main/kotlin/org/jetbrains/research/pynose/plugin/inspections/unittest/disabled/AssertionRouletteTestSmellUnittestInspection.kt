@@ -74,9 +74,9 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
                 for (testMethod in assertStatementsInTests.keys) {
                     if (assertStatementsInTests[testMethod]?.size == 1 && assertionCallsInTests[testMethod]?.size == 1) {
                         val callComments = assertionCallsInTests[testMethod]!!
-                            .any {call -> call.argumentList?.getKeywordArgument("msg") != null}
+                            .any { call -> call.argumentList?.getKeywordArgument("msg") != null }
                         val statComments = assertStatementsInTests[testMethod]!!
-                            .any {stat -> stat.arguments != null && stat.arguments.size > 1}
+                            .any { stat -> stat.arguments != null && stat.arguments.size > 1 }
                         if (!statComments && !callComments) {
                             testHasAssertionRoulette.replace(testMethod, true)
                         }
@@ -85,7 +85,9 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
             }
 
             private fun processPyCallExpression(callExpression: PyCallExpression, testMethod: PyFunction) {
-                if (callExpression.callee is PyReferenceExpression) {
+                if (callExpression.callee is PyReferenceExpression &&
+                    UnittestInspectionsUtils.isUnittestCallAssertMethod(callExpression.callee as PyReferenceExpression)
+                ) {
                     assertionCallsInTests.getOrPut(testMethod) { mutableSetOf() }.add(callExpression)
                 }
             }
