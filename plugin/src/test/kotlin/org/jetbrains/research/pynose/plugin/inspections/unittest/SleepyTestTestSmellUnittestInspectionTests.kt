@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,18 +10,18 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class SleepyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(SleepyTestTestSmellInspection())
+        myFixture.enableInspections(SleepyTestTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/sleepy"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/sleepy/unittest"
     }
 
     @Test
