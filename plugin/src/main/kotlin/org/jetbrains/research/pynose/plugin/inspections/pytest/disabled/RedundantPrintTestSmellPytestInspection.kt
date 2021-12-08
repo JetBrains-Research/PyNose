@@ -1,11 +1,11 @@
-package org.jetbrains.research.pynose.plugin.inspections.pytest
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
-import org.jetbrains.research.pynose.plugin.inspections.common.RedundantPrintTestSmellVisitor
+import org.jetbrains.research.pynose.plugin.inspections.common.disabled.RedundantPrintTestSmellVisitor
 
 class RedundantPrintTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(RedundantPrintTestSmellPytestInspection::class.java)
