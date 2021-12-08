@@ -10,9 +10,9 @@ class SomeClass(unittest.TestCase):
         self.assertNotEqual(4 + 5, 5)
 
     def test_roulette_1(self):
-        assert 2 == 2
-        self.assertEqual(4 + 5, 9)
-        assert "H" == "J"
+        assert 2 == 2, "comment"
+        self.assertEqual(4 + 5, 9, msg="f")
+        # assert "H" == "J", "comment"
 
     def do_something(self):
         assert True

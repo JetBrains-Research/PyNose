@@ -19,6 +19,8 @@ class AssertionRouletteTestSmellPytestInspection : AbstractTestSmellInspection()
             override fun visitPyFile(node: PyFile) {
                 super.visitPyFile(node)
                 if (PytestInspectionsUtils.isValidPytestFile(node)) {
+                    testHasAssertionRoulette.clear()
+                    assertStatementsInTests.clear()
                     PytestInspectionsUtils.gatherValidPytestMethods(node)
                         .forEach { testMethod ->
                             testHasAssertionRoulette[testMethod] = false
@@ -32,8 +34,6 @@ class AssertionRouletteTestSmellPytestInspection : AbstractTestSmellInspection()
                     testHasAssertionRoulette.keys
                         .filter { key -> testHasAssertionRoulette[key]!! }
                         .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
-                    testHasAssertionRoulette.clear()
-                    assertStatementsInTests.clear()
                 }
             }
         }

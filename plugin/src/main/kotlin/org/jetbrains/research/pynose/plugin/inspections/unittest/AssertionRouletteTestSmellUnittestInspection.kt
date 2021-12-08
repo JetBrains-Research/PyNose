@@ -19,6 +19,8 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
             override fun visitPyClass(pyClass: PyClass) {
                 if (UnittestInspectionsUtils.isValidUnittestCase(pyClass)) {
                     testHasAssertionRoulette.clear()
+                    assertStatementsInTests.clear()
+                    assertionCallsInTests.clear()
                     UnittestInspectionsUtils.gatherUnittestTestMethods(pyClass).forEach { testMethod ->
                         testHasAssertionRoulette[testMethod] = false
                         PsiTreeUtil
@@ -34,7 +36,6 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
                     testHasAssertionRoulette.keys
                         .filter { key -> testHasAssertionRoulette[key]!! }
                         .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }
-                    testHasAssertionRoulette.clear()
                 }
             }
 
@@ -72,7 +73,13 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
             private fun getRoulette() {
                 for (testMethod in assertStatementsInTests.keys) {
                     if (assertStatementsInTests[testMethod]?.size == 1 && assertionCallsInTests[testMethod]?.size == 1) {
-                        testHasAssertionRoulette.replace(testMethod, true)
+                        val callComments = assertionCallsInTests[testMethod]!!
+                            .any {call -> call.argumentList?.getKeywordArgument("msg") != null}
+                        val statComments = assertStatementsInTests[testMethod]!!
+                            .any {stat -> stat.arguments != null && stat.arguments.size > 1}
+                        if (!statComments && !callComments) {
+                            testHasAssertionRoulette.replace(testMethod, true)
+                        }
                     }
                 }
             }

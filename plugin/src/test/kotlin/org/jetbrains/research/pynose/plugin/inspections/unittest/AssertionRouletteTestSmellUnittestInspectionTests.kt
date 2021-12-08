@@ -63,6 +63,18 @@ class AssertionRouletteTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     }
 
     @Test
+    fun `test assertions of different types with comments`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        assert 2 == 2, \"comment\"\n" +
+                    "        self.assertEqual(4 + 5, 9, msg=\"comment\")"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
     fun `test highlighted unittest assertions roulette`() {
         myFixture.configureByText(
             "test_file.py", "import unittest\n" +
