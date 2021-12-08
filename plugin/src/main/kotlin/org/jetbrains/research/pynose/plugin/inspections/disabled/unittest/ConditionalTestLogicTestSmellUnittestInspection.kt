@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.unittest
+package org.jetbrains.research.pynose.plugin.inspections.disabled.unittest
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
