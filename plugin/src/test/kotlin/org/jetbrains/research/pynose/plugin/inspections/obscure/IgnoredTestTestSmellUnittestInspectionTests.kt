@@ -1,39 +1,37 @@
-package org.jetbrains.research.pynose.plugin.inspections.pytest
+package org.jetbrains.research.pynose.plugin.inspections.obscure
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(PyNoseMode)
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
-        } returns "pytest"
-        myFixture.enableInspections(IgnoredTestTestSmellPytestInspection())
+        } returns "Unittests"
+        myFixture.enableInspections(IgnoredTestTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/ignored/pytest"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/ignored/unittest"
     }
 
     @Test
-    fun `test skipped wrong class name`() {
+    fun `test skipped without unittest dependency`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.skip(reason=\"reason\")\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass:\n" +
+                    "    @unittest.skip(\"reason\")\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
@@ -42,9 +40,10 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     }
 
     @Test
-    fun `test not skipped`() {
+    fun `test not skipped with unittest dependency`() {
         myFixture.configureByText(
-            "test_file.py", "class SomeTestCase:\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeTestCase(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
@@ -55,22 +54,23 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test skip class with comment`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "@pytest.mark.skip(reason=\"reason\")\n" +
-                    "class TestClass(unittest.TestCase):\n" +
+            "test_file.py", "import unittest\n" +
+                    "@unittest.skip(\"reason\")\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
     @Test
-    fun `test highlighted skipped class`() {
+    fun `test highlighted skip class`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "@pytest.mark.skip()\n" +
+            "test_file.py", "import unittest\n" +
+                    "@unittest.skip()\n" +
                     "class <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "TestClass</warning>():\n" +
+                    "SomeClass</warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
@@ -80,21 +80,22 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test basic skip with comment`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.skip(reason=\"reason\")\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    @unittest.skip(\"reason\")\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
     @Test
     fun `test highlighted basic skip`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.skip()\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    @unittest.skip()\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
@@ -105,21 +106,22 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     @Test
     fun `test skip if with comment`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.skipIf(mylib.__version__ < (1, 3), reason=\"reason\")\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    @unittest.skipIf(mylib.__version__ < (1, 3), \"reason\")\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
     @Test
     fun `test highlighted skip if`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.skipIf(mylib.__version__ < (1, 3))\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    @unittest.skipIf(mylib.__version__ < (1, 3))\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
@@ -128,30 +130,16 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     }
 
     @Test
-    fun `test highlighted xfail`() {
+    fun `test highlighted skip unless`() {
         myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.xfail(mylib.__version__ < (1, 3))\n" +
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    @unittest.skipUnless(mylib.__version__ < (1, 3))\n" +
                     "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
                     "test_something</warning>(self):\n" +
                     "        pass"
         )
         myFixture.checkHighlighting()
-    }
-
-    @Test
-    fun `test xfail with comment`() {
-        myFixture.configureByText(
-            "test_file.py", "import pytest\n" +
-                    "class TestClass:\n" +
-                    "    @pytest.mark.xfail(mylib.__version__ < (1, 3), reason=\"reason\")\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "test_something</warning>(self):\n" +
-                    "        pass"
-        )
-        val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
     @Test

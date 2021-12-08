@@ -36,7 +36,6 @@ object PytestInspectionsUtils {
         val returnList: MutableList<PyFunction> = mutableListOf()
         file.statements
             .filterIsInstance<PyClass>()
-            .map { it as PyFunction }
             .filter { pyClass -> isValidPytestFile(pyClass.containingFile)
                     && pyClass.name?.startsWith("Test") == true }
             .forEach { pyClass ->
