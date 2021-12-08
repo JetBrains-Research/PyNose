@@ -11,6 +11,6 @@ class RedundantPrintTestSmellQuickFix : LocalQuickFix {
     }
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        descriptor.psiElement.delete()
+        descriptor.psiElement.parent.delete()
     }
 }

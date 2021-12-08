@@ -6,6 +6,8 @@ class SomeClass(unittest.TestCase):
     def test_something(self):
         x = 5
         print("print")
+        print("print")
+        print("print")
 
     def do_something(self):
         print("print")
