@@ -9,15 +9,12 @@ import com.jetbrains.python.testing.TestRunnerService
 @Service
 object TestRunnerServiceFacade {
 
-    private val moduleTestRunnerMap: MutableMap<Module, String> = mutableMapOf()
+    private val moduleTestRunnerMap: MutableMap<PsiFile, Module> = mutableMapOf()
 
-    fun getConfiguredTestRunner(file: PsiFile): String? {
-        val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return ""
-        return if (moduleTestRunnerMap.containsKey(module)) {
-            moduleTestRunnerMap[module]
-        } else {
-            moduleTestRunnerMap[module] = TestRunnerService.getInstance(module).projectConfiguration
-            moduleTestRunnerMap[module]
+    fun getConfiguredTestRunner(file: PsiFile): String {
+        if (!moduleTestRunnerMap.containsKey(file)) {
+            moduleTestRunnerMap[file] = ModuleUtilCore.findModuleForPsiElement(file) ?: return ""
         }
+        return TestRunnerService.getInstance(moduleTestRunnerMap[file]).projectConfiguration
     }
 }
