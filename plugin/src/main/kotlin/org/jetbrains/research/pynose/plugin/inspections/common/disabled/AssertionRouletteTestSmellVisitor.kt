@@ -17,7 +17,7 @@ open class AssertionRouletteTestSmellVisitor(
     val assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>> = mutableMapOf()
     val testHasAssertionRoulette: MutableMap<PyFunction, Boolean> = mutableMapOf()
 
-    fun registerRoulette(valueParam: PsiElement) {
+    protected fun registerRoulette(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.roulette.description"),
