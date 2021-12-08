@@ -9,7 +9,7 @@ import org.jetbrains.research.pynose.plugin.inspections.common.ExceptionHandling
 
 class ExceptionHandlingTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellUnittestInspection::class.java)
-    
+
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return ExceptionHandlingTestSmellVisitor(holder, session)
     }

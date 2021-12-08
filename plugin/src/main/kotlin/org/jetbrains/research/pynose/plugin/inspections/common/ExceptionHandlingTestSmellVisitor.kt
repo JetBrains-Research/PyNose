@@ -3,11 +3,13 @@ package org.jetbrains.research.pynose.plugin.inspections.common
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyRaiseStatement
 import com.jetbrains.python.psi.PyTryExceptStatement
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.quickfixes.common.ExceptionHandlingTestSmellStatementQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -16,12 +18,14 @@ class ExceptionHandlingTestSmellVisitor(holder: ProblemsHolder?, session: LocalI
     PyInspectionVisitor(holder, session) {
 
     private fun registerTryExcept(valueParam: PsiElement) {
+        val isUnittestMoe = valueParam.project.service<TestRunnerServiceFacade>()
+            .getConfiguredTestRunner(valueParam.containingFile) == "Unittests"
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.exception.description"),
             ProblemHighlightType.WARNING,
             TextRange(0, "try".length),
-            ExceptionHandlingTestSmellStatementQuickFix(valueParam.containingFile, false)
+            ExceptionHandlingTestSmellStatementQuickFix(valueParam.containingFile, isUnittestMoe)
         )
     }
 
