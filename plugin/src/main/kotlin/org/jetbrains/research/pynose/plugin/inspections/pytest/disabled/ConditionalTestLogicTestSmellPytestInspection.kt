@@ -1,11 +1,11 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled.pytest
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
-import org.jetbrains.research.pynose.plugin.inspections.common.ConditionalTestLogicTestSmellVisitor
+import org.jetbrains.research.pynose.plugin.inspections.common.disabled.ConditionalTestLogicTestSmellVisitor
 
 class ConditionalTestLogicTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(ConditionalTestLogicTestSmellPytestInspection::class.java)

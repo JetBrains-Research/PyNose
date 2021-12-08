@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.ConditionalTestLogicTestSmellUnittestInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
