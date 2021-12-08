@@ -18,14 +18,14 @@ class ExceptionHandlingTestSmellVisitor(holder: ProblemsHolder?, session: LocalI
     PyInspectionVisitor(holder, session) {
 
     private fun registerTryExcept(valueParam: PsiElement) {
-        val isUnittestMoe = valueParam.project.service<TestRunnerServiceFacade>()
+        val isUnittestMode = valueParam.project.service<TestRunnerServiceFacade>()
             .getConfiguredTestRunner(valueParam.containingFile) == "Unittests"
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.exception.description"),
             ProblemHighlightType.WARNING,
             TextRange(0, "try".length),
-            ExceptionHandlingTestSmellStatementQuickFix(valueParam.containingFile, isUnittestMoe)
+            ExceptionHandlingTestSmellStatementQuickFix(valueParam.containingFile, isUnittestMode)
         )
     }
 
