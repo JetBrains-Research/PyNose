@@ -12,9 +12,10 @@ import com.jetbrains.python.psi.PyTryExceptStatement
 import com.jetbrains.python.psi.impl.PyWithStatementImpl
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-// todo: val currentFile -> Potential memory leak: don't hold PsiElement, use SmartPsiElementPointer instead
-
-class ExceptionHandlingTestSmellStatementQuickFix(private val currentFile: PsiFile, private val isUnittestMode: Boolean) :
+class ExceptionHandlingTestSmellStatementQuickFix(
+    private val currentFile: PsiFile,
+    private val isUnittestMode: Boolean
+) :
     LocalQuickFix {
     override fun getFamilyName(): String {
         return TestSmellBundle.message("quickfixes.exception.try_except.message")
