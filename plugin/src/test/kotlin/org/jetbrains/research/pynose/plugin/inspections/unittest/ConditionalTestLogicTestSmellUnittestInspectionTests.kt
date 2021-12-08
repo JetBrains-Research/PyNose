@@ -20,7 +20,9 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Unittests"
         myFixture.enableInspections(ConditionalTestLogicTestSmellUnittestInspection())
     }
 
