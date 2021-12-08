@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.common
+package org.jetbrains.research.pynose.plugin.inspections.common.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
@@ -12,6 +12,7 @@ import com.jetbrains.python.psi.PyFunction
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.pyi.PyiFile
+import org.jetbrains.research.pynose.plugin.quickfixes.common.SleepyTestTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -24,7 +25,8 @@ class SleepyTestTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.sleepy.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WARNING,
+            SleepyTestTestSmellQuickFix()
         )
     }
 
