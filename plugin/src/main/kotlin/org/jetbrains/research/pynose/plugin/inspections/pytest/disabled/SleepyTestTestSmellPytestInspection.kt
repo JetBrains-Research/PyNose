@@ -10,8 +10,7 @@ import org.jetbrains.research.pynose.plugin.inspections.common.disabled.SleepyTe
 class SleepyTestTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(SleepyTestTestSmellPytestInspection::class.java)
 
-    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession
-    ): PsiElementVisitor {
+    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return SleepyTestTestSmellVisitor(holder, session)
     }
 }
