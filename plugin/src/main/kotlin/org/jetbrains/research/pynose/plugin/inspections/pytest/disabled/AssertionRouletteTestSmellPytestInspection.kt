@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.pytest
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyFile
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
-import org.jetbrains.research.pynose.plugin.inspections.common.AssertionRouletteTestSmellVisitor
+import org.jetbrains.research.pynose.plugin.inspections.common.disabled.AssertionRouletteTestSmellVisitor
 import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 
 class AssertionRouletteTestSmellPytestInspection : AbstractTestSmellInspection() {

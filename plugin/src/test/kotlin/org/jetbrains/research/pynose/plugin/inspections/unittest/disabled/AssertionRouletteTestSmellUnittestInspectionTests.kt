@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.unittest
+package org.jetbrains.research.pynose.plugin.inspections.unittest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -16,7 +16,9 @@ class AssertionRouletteTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Unittests"
         myFixture.enableInspections(AssertionRouletteTestSmellUnittestInspection())
     }
 

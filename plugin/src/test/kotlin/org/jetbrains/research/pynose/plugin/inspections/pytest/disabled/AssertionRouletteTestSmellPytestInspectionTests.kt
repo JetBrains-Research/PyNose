@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.pytest
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -27,7 +27,8 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test highlighted basic assertion roulette`() {
         myFixture.configureByText(
-            "test_file.py", "def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
+            "test_file.py",
+            "def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
                     "    assert 1 == 1\n" +
                     "    assert 2 == 2\n" +
                     "    assert 2 == 2"
