@@ -66,6 +66,7 @@ class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection
                         }
                     }
                 }
+
             }
 
             private fun getRoulette() {
