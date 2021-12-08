@@ -47,9 +47,23 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
+<<<<<<< HEAD
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.unittest.ConditionalTestLogicTestSmellUnittestInspection"
                          displayName="Conditional logic test (unittest)"
                          shortName="ConditionalTestLogicTestSmellUnittestInspection"/>
+=======
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.ConditionalTestLogicTestSmellUnittestInspection"
+                         displayName="Conditional logic test (unittest)"
+                         shortName="ConditionalTestLogicTestSmellUnittestInspection"/>
+        <localInspection language="Python"
+                         groupPath="Python"
+                         groupName="PyNose"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.ConditionalTestLogicTestSmellPytestInspection"
+                         displayName="Conditional logic test (pytest)"
+                         shortName="ConditionalTestLogicTestSmellPytestInspection"/>
+>>>>>>> 3c09a97001ccd8b74030d65673e0abc25421a64c
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"

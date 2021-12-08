@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/disabled/unittest/ConditionalTestLogicTestSmellUnittestInspectionTests.kt
-package org.jetbrains.research.pynose.plugin.inspections.disabled.unittest
-========
 package org.jetbrains.research.pynose.plugin.inspections.unittest
->>>>>>>> 3c09a97001ccd8b74030d65673e0abc25421a64c:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/unittest/ConditionalTestLogicTestSmellUnittestInspectionTests.kt
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -23,17 +19,10 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
     @BeforeAll
     override fun setUp() {
         super.setUp()
-<<<<<<<< HEAD:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/disabled/unittest/ConditionalTestLogicTestSmellUnittestInspectionTests.kt
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
         } returns "Unittests"
-========
-        mockkObject(PyNoseMode)
-        every { PyNoseMode.getPyNoseUnittestMode() } returns true
-        every { PyNoseMode.getPyNosePytestMode() } returns false
-
->>>>>>>> 3c09a97001ccd8b74030d65673e0abc25421a64c:plugin/src/test/kotlin/org/jetbrains/research/pynose/plugin/inspections/unittest/ConditionalTestLogicTestSmellUnittestInspectionTests.kt
         myFixture.enableInspections(ConditionalTestLogicTestSmellUnittestInspection())
     }
 
