@@ -53,7 +53,7 @@
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
-                         enabledByDefault="true"
+                         enabledByDefault="false"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.AssertionRouletteTestSmellUnittestInspection"
                          displayName="Assertion Roulette logic test (unittest)"
