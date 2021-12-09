@@ -1,7 +1,4 @@
-import unittest
-
-
-class SomeClass(unittest.TestCase):
+class TestClass:
 
     def __init__(self):
         super().__init__()

@@ -6,7 +6,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFunction
-import com.jetbrains.python.psi.PyStatement
 
 object PytestInspectionsUtils {
     fun isValidPytestParent(element: PsiElement): Boolean {
@@ -21,7 +20,7 @@ object PytestInspectionsUtils {
                 && (className == null || className.name?.startsWith("Test") == true)
     }
 
-    private fun isValidPytestMethodInsideFile(testMethod: PyFunction): Boolean {
+    fun isValidPytestMethodInsideFile(testMethod: PyFunction): Boolean {
         val className = PsiTreeUtil.getParentOfType(testMethod, PyClass::class.java)
         return (testMethod.name?.startsWith("test") == true)
                 && (className == null || className.name?.startsWith("Test") == true)
@@ -49,4 +48,14 @@ object PytestInspectionsUtils {
             .forEach { validFunction -> returnList.add(validFunction) }
         return returnList
     }
+
+    fun gatherPytestClasses(file: PyFile): List<PyClass> {
+        val returnList: MutableList<PyClass> = mutableListOf()
+        file.statements
+            .filterIsInstance<PyClass>()
+            .filter { pyClass -> isValidPytestFile(pyClass.containingFile) }
+            .forEach { pyClass -> returnList.add(pyClass) }
+        return returnList
+    }
+
 }

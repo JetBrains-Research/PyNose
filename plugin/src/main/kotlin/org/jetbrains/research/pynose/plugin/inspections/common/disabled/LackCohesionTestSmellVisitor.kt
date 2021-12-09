@@ -34,8 +34,8 @@ open class LackCohesionTestSmellVisitor(
         "with", "yield"
     )
     protected val cosineSimilarityScores: MutableMap<Pair<PyFunction, PyFunction>, Double> = mutableMapOf()
-    var splitIdentifier = true
-    var removeStopWords = false
+    protected var splitIdentifier = true
+    protected var removeStopWords = false
     protected var threshold = 0.6 // from the paper
 
     protected var testClassCohesionScore = 0.0
@@ -48,7 +48,7 @@ open class LackCohesionTestSmellVisitor(
         )
     }
 
-    fun calculateCosineSimilarityBetweenMethods(m1: PyFunction, m2: PyFunction): Double {
+    private fun calculateCosineSimilarityBetweenMethods(m1: PyFunction, m2: PyFunction): Double {
         val tokens1: List<String> = extractMethodBody(m1)
         val tokens2: List<String> = extractMethodBody(m2)
         val vec1 = Counter.fromCollection(tokens1)
@@ -80,6 +80,18 @@ open class LackCohesionTestSmellVisitor(
             .map { obj: String -> obj.toLowerCase(Locale.getDefault()) }
             .filter { t: String? -> !removeStopWords || !STOP_WORDS.contains(t) }
             .map { s: String? -> STEMMER.stem(s) }
+    }
+
+    protected fun processMethodList(methodList: List<PyFunction>) {
+        for (i in methodList.indices) {
+            for (j in i + 1 until methodList.size) {
+                val score: Double = calculateCosineSimilarityBetweenMethods(methodList[i], methodList[j])
+                cosineSimilarityScores[Pair(methodList[i], methodList[j])] = score
+            }
+        }
+        testClassCohesionScore = cosineSimilarityScores
+            .values
+            .average()
     }
 
     internal class Counter<T> {
