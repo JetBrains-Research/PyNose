@@ -49,7 +49,7 @@
             return returnList
         }
 
-        fun gatherPytestClasses(file: PyFile): MutableList<PyClass> {
+        fun gatherPytestClasses(file: PyFile): List<PyClass> {
             val returnList: MutableList<PyClass> = mutableListOf()
             file.statements
                 .filterIsInstance<PyClass>()
