@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,38 +10,37 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class ObscureInLineSetupTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class ObscureInLineSetupTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(ObscureInLineSetupTestSmellInspection())
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
+        myFixture.enableInspections(ObscureInLineSetupTestSmellPytestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/obscure"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/obscure/pytest"
     }
 
     @Test
     fun `test highlighted obscure in-line setup`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.obscure.setup.description")}\">test_something</warning>(self):\n" +
-                    "        x1 = 1\n" +
-                    "        x2 = 2\n" +
-                    "        x3 = 3\n" +
-                    "        x4 = 4\n" +
-                    "        x5 = 5\n" +
-                    "        x6 = 6\n" +
-                    "        x7 = 7\n" +
-                    "        x8 = 8\n" +
-                    "        x9 = 9\n" +
-                    "        x10 = 10\n" +
-                    "        x11 = 11\n" +
-                    "        assert x1 != x2"
+            "test_file.py",
+            "def <warning descr=\"${TestSmellBundle.message("inspections.obscure.setup.description")}\">test_something</warning>(self):\n" +
+                    "    x1 = 1\n" +
+                    "    x2 = 2\n" +
+                    "    x3 = 3\n" +
+                    "    x4 = 4\n" +
+                    "    x5 = 5\n" +
+                    "    x6 = 6\n" +
+                    "    x7 = 7\n" +
+                    "    x8 = 8\n" +
+                    "    x9 = 9\n" +
+                    "    x10 = 10\n" +
+                    "    x11 = 11\n" +
+                    "    assert x1 != x2"
         )
         myFixture.checkHighlighting()
     }
@@ -49,8 +48,7 @@ class ObscureInLineSetupTestSmellInspectionTests : AbstractTestSmellInspectionTe
     @Test
     fun `test not more then 10 local variables in several functions`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
+            "test_file.py", "class TestClass():\n" +
                     "    def test_something(self):\n" +
                     "        x1 = 1\n" +
                     "        x2 = 2\n" +
@@ -71,10 +69,9 @@ class ObscureInLineSetupTestSmellInspectionTests : AbstractTestSmellInspectionTe
     }
 
     @Test
-    fun `test obscure in-line setup without unittest dependency`() {
+    fun `test obscure in-line setup wrong class name`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "class SomeClass():\n" +
+            "test_file.py", "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        x1 = 1\n" +
                     "        x2 = 2\n" +
