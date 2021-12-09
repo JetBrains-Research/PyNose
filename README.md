@@ -33,6 +33,6 @@ Some inspections are initially disabled, however you can enable them from the se
 |Suboptimal Assert              |+       |-      |+ (replace with optimal)                |Warning      | A test case contains at least one of the suboptimal asserts**|
 |Test Maverick                  |+       |+      |-                                       |Disabled     | A test suite contains at least one test case that does not use a single field from the setup method|
 
-*if enabled - weak warning
+*Disabled by default. If enabled - weak warning
 
-**list of suboptimal assertions if available here TODO
+**List of suboptimal assertions if available here TODO link
