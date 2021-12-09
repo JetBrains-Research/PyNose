@@ -4,7 +4,8 @@ import unittest
 class SomeClass(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(SomeClass, self).__init__(*args, **kwargs)
+        x = 5
 
     def test_something(self):
         pass
@@ -13,7 +14,7 @@ class SomeClass(unittest.TestCase):
 class OtherClass(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(OtherClass, self).__init__(*args, **kwargs)
 
     def test_something_other(self):
         pass
