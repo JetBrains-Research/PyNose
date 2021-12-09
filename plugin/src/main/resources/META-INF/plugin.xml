@@ -183,9 +183,9 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.LackCohesionTestSmellInspection"
-                         displayName="Lack cohesion test"
-                         shortName="LackCohesionTestSmellInspection"/>
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.LackCohesionTestSmellUnittestInspection"
+                         displayName="Lack cohesion test (unittest)"
+                         shortName="LackCohesionTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
