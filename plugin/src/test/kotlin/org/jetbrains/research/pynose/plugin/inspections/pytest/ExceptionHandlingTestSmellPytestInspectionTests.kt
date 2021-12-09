@@ -27,11 +27,11 @@ class ExceptionHandlingTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test highlighted try except statement`() {
         myFixture.configureByText(
-                "test_file.py", "def test_something(self):\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">try</warning>:\n" +
-                "        x = 3\n" +
-                "    except ValueError:\n" +
-                "        print(\"Try again...\")"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">try</warning>:\n" +
+                    "        x = 3\n" +
+                    "    except ValueError:\n" +
+                    "        print(\"Try again...\")"
         )
         myFixture.checkHighlighting()
     }
@@ -39,12 +39,12 @@ class ExceptionHandlingTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test try statement wrong class name`() {
         myFixture.configureByText(
-                "test_file.py", "class SomeClass():\n" +
-                "    def test_something(self):\n" +
-                "        try:\n" +
-                "            x = 3\n" +
-                "        except ValueError:\n" +
-                "            print(\"Try again...\")"
+            "test_file.py", "class SomeClass():\n" +
+                    "    def test_something(self):\n" +
+                    "        try:\n" +
+                    "            x = 3\n" +
+                    "        except ValueError:\n" +
+                    "            print(\"Try again...\")"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -53,8 +53,8 @@ class ExceptionHandlingTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test highlighted raise statement`() {
         myFixture.configureByText(
-                "test_file.py", "def test_something(self):\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">raise</warning> NameError('Hello')"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">raise</warning> NameError('Hello')"
         )
         myFixture.checkHighlighting()
     }
@@ -62,9 +62,9 @@ class ExceptionHandlingTestSmellPytestInspectionTests : AbstractTestSmellInspect
     @Test
     fun `test raise statement wrong method name`() {
         myFixture.configureByText(
-                "test_file.py",
-                "def do_something(self):\n" +
-                        "    raise NameError('HiThere')"
+            "test_file.py",
+            "def do_something(self):\n" +
+                    "    raise NameError('HiThere')"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
