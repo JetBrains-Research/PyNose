@@ -36,3 +36,5 @@ Some inspections are initially disabled, however you can enable them from the se
 *Disabled by default. If enabled - weak warning
 
 **List of suboptimal assertions is available [here](https://zenodo.org/record/5156098)
+
+## Usage example
