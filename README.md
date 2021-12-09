@@ -37,4 +37,14 @@ Some inspections are initially disabled, however you can enable them from the se
 
 **List of suboptimal assertions is available [here](https://zenodo.org/record/5156098)
 
-## Usage example
+## Usage examples
+
+- Suboptimal assertion detection and quick fix
+  <br></br>
+  ![Suboptimal assertion example](assets/gifs/suboptimal_example.gif)
+  <br></br>
+
+- Exception handling detection and quick fix
+  <br></br>
+  ![Exception handling example](assets/gifs/exception_handling_example.gif)
+  <br></br>
