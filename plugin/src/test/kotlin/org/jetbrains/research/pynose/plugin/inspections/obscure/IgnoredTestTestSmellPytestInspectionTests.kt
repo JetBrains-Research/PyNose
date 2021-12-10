@@ -5,7 +5,6 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
-import org.jetbrains.research.pynose.plugin.startup.PyNoseMode
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -16,7 +15,6 @@ class IgnoredTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTes
     @BeforeAll
     override fun setUp() {
         super.setUp()
-        mockkObject(PyNoseMode)
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())

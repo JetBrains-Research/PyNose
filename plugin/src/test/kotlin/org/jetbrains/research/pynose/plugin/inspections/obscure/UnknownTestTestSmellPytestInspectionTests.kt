@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.pytest
+package org.jetbrains.research.pynose.plugin.inspections.obscure
 
 import com.intellij.openapi.components.service
 import io.mockk.every
