@@ -39,14 +39,6 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.IgnoredTestTestSmellInspection"
-                         displayName="Ignored test"
-                         shortName="IgnoredTestTestSmellInspection"/>
-        <localInspection language="Python"
-                         groupPath="Python"
-                         groupName="PyNose"
-                         enabledByDefault="true"
-                         level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.ConditionalTestLogicTestSmellInspection"
                          displayName="Conditional logic test"
                          shortName="ConditionalTestLogicTestSmellInspection"/>

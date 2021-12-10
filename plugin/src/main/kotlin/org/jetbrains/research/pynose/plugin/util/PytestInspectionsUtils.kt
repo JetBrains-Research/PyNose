@@ -36,7 +36,8 @@ object PytestInspectionsUtils {
         val returnList: MutableList<PyFunction> = mutableListOf()
         file.statements
             .filterIsInstance<PyClass>()
-            .filter { pyClass -> isValidPytestFile(pyClass.containingFile) }
+            .filter { pyClass -> isValidPytestFile(pyClass.containingFile)
+                    && pyClass.name?.startsWith("Test") == true }
             .forEach { pyClass ->
                 pyClass.statementList.statements
                     .filterIsInstance<PyFunction>()
@@ -47,6 +48,20 @@ object PytestInspectionsUtils {
             .filterIsInstance<PyFunction>()
             .filter { pyFunction -> isValidPytestMethodInsideFile(pyFunction) }
             .forEach { validFunction -> returnList.add(validFunction) }
+        return returnList
+    }
+
+    fun gatherValidPytestClasses(file: PyFile): List<PyClass> {
+        val returnList: MutableList<PyClass> = mutableListOf()
+        if (!isValidPytestFile(file)) {
+            return returnList
+        }
+        file.statements
+            .filterIsInstance<PyClass>()
+            .filter {pyClass -> pyClass.name?.startsWith("Test") == true }
+            .map { obj: PyStatement? -> PyClass::class.java.cast(obj) }
+            .filter { pyClass -> isValidPytestFile(pyClass.containingFile) }
+            .forEach { pyClass -> returnList.add(pyClass) }
         return returnList
     }
 }
