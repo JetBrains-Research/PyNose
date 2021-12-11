@@ -18,6 +18,8 @@ class OtherClass(unittest.TestCase):
 
     def test_something_other(self):
         time.sleep(5)
+        time.sleep(4)
+        time.sleep(3)
 
 
 class AnotherClass:

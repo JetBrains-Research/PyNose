@@ -4,10 +4,14 @@ import unittest
 class SomeClass(unittest.TestCase):
 
     def test_something(self):
-        try:
+        with self.assertRaises(ValueError):
             x = 3
+        with self.assertRaises(ValueError):
+            x = 3
+        try:
+            x = 5
         except ValueError:
-            print("Try again...")
+            print("Fail!")
 
     def do_something(self):
         raise NameError('HiThere')

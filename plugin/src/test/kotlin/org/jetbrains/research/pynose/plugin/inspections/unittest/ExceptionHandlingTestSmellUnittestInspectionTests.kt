@@ -16,7 +16,9 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Unittests"
         myFixture.enableInspections(ExceptionHandlingTestSmellUnittestInspection())
     }
 
@@ -27,13 +29,13 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     @Test
     fun `test highlighted try except statement`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">try</warning>:\n" +
-                "            x = 3\n" +
-                "        except ValueError:\n" +
-                "            print(\"Try again...\")"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">try</warning>:\n" +
+                    "            x = 3\n" +
+                    "        except ValueError:\n" +
+                    "            print(\"Try again...\")"
         )
 
         myFixture.checkHighlighting()
@@ -42,13 +44,13 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     @Test
     fun `test try statement without unittest dependency`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass():\n" +
-                "    def test_something(self):\n" +
-                "        try:\n" +
-                "            x = 3\n" +
-                "        except ValueError:\n" +
-                "            print(\"Try again...\")"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass():\n" +
+                    "    def test_something(self):\n" +
+                    "        try:\n" +
+                    "            x = 3\n" +
+                    "        except ValueError:\n" +
+                    "            print(\"Try again...\")"
         )
 
         val highlightInfos = myFixture.doHighlighting()
@@ -58,10 +60,10 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     @Test
     fun `test highlighted raise statement`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">raise</warning> NameError('Hello')"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.exception.description")}\">raise</warning> NameError('Hello')"
         )
 
         myFixture.checkHighlighting()
@@ -70,10 +72,10 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
     @Test
     fun `test raise statement with non-unittest method name`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass():\n" +
-                "    def test_something(self):\n" +
-                "        raise NameError('HiThere')"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass():\n" +
+                    "    def test_something(self):\n" +
+                    "        raise NameError('HiThere')"
         )
 
         val highlightInfos = myFixture.doHighlighting()

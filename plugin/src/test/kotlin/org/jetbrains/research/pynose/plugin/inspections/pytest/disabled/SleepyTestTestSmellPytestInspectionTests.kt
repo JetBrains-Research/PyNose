@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,37 +10,34 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class SleepyTestTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class SleepyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(SleepyTestTestSmellInspection())
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
+        myFixture.enableInspections(SleepyTestTestSmellPytestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/sleepy"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/sleepy/pytest"
     }
 
     @Test
     fun `test highlighted sleepy`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "import time\n" +
-                    "class SomeClass(unittest.TestCase):\n" +
-                    "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</warning>"
+            "test_file.py", "import time\n" +
+                    "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</warning>"
         )
         myFixture.checkHighlighting()
     }
 
     @Test
-    fun `test sleepy without unittest dependency`() {
+    fun `test sleepy wrong class name`() {
         myFixture.configureByText(
-            "test_file.py", "import unittest\n" +
-                    "import time\n" +
+            "test_file.py", "import time\n" +
                     "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        time.sleep(5)"

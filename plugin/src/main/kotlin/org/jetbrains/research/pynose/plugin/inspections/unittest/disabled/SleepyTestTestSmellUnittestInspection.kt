@@ -1,16 +1,16 @@
-package org.jetbrains.research.pynose.plugin.inspections.unittest
+package org.jetbrains.research.pynose.plugin.inspections.unittest.disabled
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
-import org.jetbrains.research.pynose.plugin.inspections.common.ExceptionHandlingTestSmellVisitor
+import org.jetbrains.research.pynose.plugin.inspections.common.disabled.SleepyTestTestSmellVisitor
 
-class ExceptionHandlingTestSmellUnittestInspection : AbstractTestSmellInspection() {
-    private val LOG = Logger.getInstance(ExceptionHandlingTestSmellUnittestInspection::class.java)
+class SleepyTestTestSmellUnittestInspection : AbstractTestSmellInspection() {
+    private val LOG = Logger.getInstance(SleepyTestTestSmellUnittestInspection::class.java)
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
-        return ExceptionHandlingTestSmellVisitor(holder, session)
+        return SleepyTestTestSmellVisitor(holder, session)
     }
 }
