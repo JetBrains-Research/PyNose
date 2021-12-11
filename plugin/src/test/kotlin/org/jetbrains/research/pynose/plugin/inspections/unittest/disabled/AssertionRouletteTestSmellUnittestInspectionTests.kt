@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,18 +10,20 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class AssertionRouletteTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class AssertionRouletteTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(AssertionRouletteTestSmellInspection())
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Unittests"
+        myFixture.enableInspections(AssertionRouletteTestSmellUnittestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/assertion_roulette"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/assertion_roulette/unittest"
     }
 
     @Test
@@ -58,6 +60,33 @@ class AssertionRouletteTestSmellInspectionTests : AbstractTestSmellInspectionTes
                     "        assert 1 == 1, \"What's the point?\"\n" +
                     "        self.assertFalse(1 == 2)\n" +
                     "        assert False, \"Oh no! This assertion failed!\""
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test assertions of different types with comments`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        assert 2 == 2, \"comment\"\n" +
+                    "        self.assertEqual(4 + 5, 9, msg=\"comment\")"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test assertions with other logic`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "       y = 10\n" +
+                    "       if y > 1:\n" +
+                    "           for x in range(1, 20):\n" +
+                    "               y += 2\n" +
+                    "       assert y > 10"
         )
         myFixture.checkHighlighting()
     }
