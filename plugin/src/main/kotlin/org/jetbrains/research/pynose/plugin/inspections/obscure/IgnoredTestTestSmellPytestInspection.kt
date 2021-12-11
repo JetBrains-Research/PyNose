@@ -46,7 +46,7 @@ open class IgnoredTestTestSmellPytestInspection : AbstractTestSmellInspection() 
                                 .collectElements(testMethod) { element -> (element is PyDecorator) }
                                 .forEach { target -> processPyDecorator(target as PyDecorator) }
                         }
-                    PytestInspectionsUtils.gatherValidPytestClasses(file)
+                    PytestInspectionsUtils.gatherPytestClasses(file)
                         .forEach { pyClass ->
                             pyClass.decoratorList?.decorators?.forEach { decorator ->
                                 if (decoratorText.any { text -> decorator.text.startsWith(text) }

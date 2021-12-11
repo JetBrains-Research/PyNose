@@ -66,10 +66,3 @@ class <warning descr="Consider adding the reason why the test is marked as ignor
     @pytest.mark.skip()
     def <warning descr="Consider adding the reason why the test is marked as ignored">test_something</warning>(self):
         assert 1 == 1
-
-
-@pytest.mark.skip()
-class JustAnotherClass:
-    @pytest.mark.skip()
-    def test_something(self):
-        assert 1 == 1

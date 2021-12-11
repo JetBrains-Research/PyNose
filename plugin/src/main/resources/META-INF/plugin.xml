@@ -39,9 +39,9 @@
                          groupName="PyNose"
                          enabledByDefault="true"
                          level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.disabled.ConditionalTestLogicTestSmellInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.ConditionalTestLogicTestSmellPytestInspection"
                          displayName="Conditional logic test"
-                         shortName="ConditionalTestLogicTestSmellInspection"/>
+                         shortName="ConditionalTestLogicTestSmellPytestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
@@ -50,14 +50,6 @@
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.ConditionalTestLogicTestSmellUnittestInspection"
                          displayName="Conditional logic test (unittest)"
                          shortName="ConditionalTestLogicTestSmellUnittestInspection"/>
-        <localInspection language="Python"
-                         groupPath="Python"
-                         groupName="PyNose"
-                         enabledByDefault="false"
-                         level="WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.ConditionalTestLogicTestSmellPytestInspection"
-                         displayName="Conditional logic test (pytest)"
-                         shortName="ConditionalTestLogicTestSmellPytestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
@@ -249,7 +241,7 @@
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.TestMaverickTestSmellUnittestInspection"
                          displayName="Test maverick"
-                         shortName="TestMaverickTestSmellInspection"/>
+                         shortName="TestMaverickTestSmellUnittestInspection"/>
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
