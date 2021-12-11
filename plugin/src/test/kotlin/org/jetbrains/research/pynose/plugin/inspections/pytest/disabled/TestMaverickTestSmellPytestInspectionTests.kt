@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -9,18 +9,18 @@ import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTest
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class TestMaverickTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class TestMaverickTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(TestMaverickTestSmellInspection())
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
+        myFixture.enableInspections(TestMaverickTestSmellPytestInspection())
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/maverick"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/maverick/pytest"
     }
 
     @Test
