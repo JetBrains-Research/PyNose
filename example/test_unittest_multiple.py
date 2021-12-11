@@ -17,7 +17,7 @@ class NotTestCase:
 class SomeClass(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(SomeClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
         self.z = 5
@@ -109,6 +109,7 @@ class SkippedClass(unittest.TestCase):
         try:
             f = open('myfile.txt')
             s = f.readline()
+
             i = int(s.strip())
         except OSError as err:
             print("OS error: {0}".format(err))

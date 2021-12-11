@@ -57,5 +57,4 @@ object PytestInspectionsUtils {
             .forEach { pyClass -> returnList.add(pyClass) }
         return returnList
     }
-
 }
