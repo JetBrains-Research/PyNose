@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.plugin.inspections.disabled
+package org.jetbrains.research.pynose.plugin.inspections.unittest.disabled
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
@@ -10,18 +10,20 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
 
-class ConditionalTestLogicTestSmellInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
+class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/conditional_logic"
+        return "src/test/resources/org/jetbrains/research/pynose/plugin/inspections/data/conditional_logic/unittest"
     }
 
     @BeforeAll
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "Unittests"
-        myFixture.enableInspections(ConditionalTestLogicTestSmellInspection())
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns "Unittests"
+        myFixture.enableInspections(ConditionalTestLogicTestSmellUnittestInspection())
     }
 
     @Test
