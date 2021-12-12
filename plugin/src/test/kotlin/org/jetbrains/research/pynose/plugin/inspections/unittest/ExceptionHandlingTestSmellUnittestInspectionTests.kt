@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.ExceptionHandlingTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -19,7 +20,7 @@ class ExceptionHandlingTestSmellUnittestInspectionTests : AbstractTestSmellInspe
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
         } returns "Unittests"
-        myFixture.enableInspections(ExceptionHandlingTestSmellUnittestInspection())
+        myFixture.enableInspections(ExceptionHandlingTestSmellInspection())
     }
 
     override fun getTestDataPath(): String {
