@@ -6,6 +6,10 @@ class SomeClass(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(SomeClass, self).__init__(*args, **kwargs)
         x = 5
+        y = 6
+
+        z = 7
+
 
     def test_something(self):
         pass
