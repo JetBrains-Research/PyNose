@@ -19,6 +19,8 @@ class TestMaverickTestSmellPytestInspection : AbstractTestSmellInspection() {
 
             override fun visitPyFile(file: PyFile) {
                 super.visitPyFile(file)
+                val setUpFields: MutableSet<String> = mutableSetOf()
+                val testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
                 PytestInspectionsUtils.gatherPytestClasses(file).forEach { pyClass ->
                     val testMethods = pyClass.statementList.statements
                         .filterIsInstance<PyFunction>()
@@ -26,10 +28,8 @@ class TestMaverickTestSmellPytestInspection : AbstractTestSmellInspection() {
                     testMethods.forEach { testMethod ->
                         testMethodSetUpFieldsUsage[testMethod] = mutableSetOf()
                     }
-                    processSetUpFunction(pyClass, testMethods)
+                    processSetUpFunction(pyClass, testMethods, setUpFields, testMethodSetUpFieldsUsage)
                 }
-                testMethodSetUpFieldsUsage.clear()
-                setUpFields.clear()
             }
         }
     }

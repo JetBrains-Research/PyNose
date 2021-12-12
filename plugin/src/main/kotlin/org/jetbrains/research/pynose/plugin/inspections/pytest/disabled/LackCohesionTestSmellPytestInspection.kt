@@ -19,10 +19,12 @@ class LackCohesionTestSmellPytestInspection : AbstractTestSmellInspection() {
             override fun visitPyFile(file: PyFile) {
                 super.visitPyFile(file)
                 if (PytestInspectionsUtils.isValidPytestFile(file)) {
+                    val cosineSimilarityScores: MutableMap<Pair<PyFunction, PyFunction>, Double> = mutableMapOf()
+                    testClassCohesionScore = 0.0
                     val classes = PytestInspectionsUtils.gatherPytestClasses(file)
                     if (classes.isEmpty()) {
                         val methodList = PytestInspectionsUtils.gatherValidPytestMethods(file)
-                        processMethodList(methodList)
+                        processMethodList(methodList, cosineSimilarityScores)
                         if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
                             registerLackCohesion(file) // todo: what to register?
                         }
@@ -31,16 +33,12 @@ class LackCohesionTestSmellPytestInspection : AbstractTestSmellInspection() {
                             val methodList = c.statementList.statements
                                 .filterIsInstance<PyFunction>()
                                 .filter { pyFunction -> PytestInspectionsUtils.isValidPytestMethodInsideFile(pyFunction) }
-                            processMethodList(methodList)
+                            processMethodList(methodList, cosineSimilarityScores)
                             if (1 - testClassCohesionScore >= threshold && cosineSimilarityScores.isNotEmpty()) {
                                 registerLackCohesion(c.nameIdentifier!!)
                             }
                         }
                     }
-                    testClassCohesionScore = 0.0
-                    splitIdentifier = true
-                    removeStopWords = false
-                    cosineSimilarityScores.clear()
                 }
             }
         }

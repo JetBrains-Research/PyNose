@@ -3,13 +3,12 @@ package org.jetbrains.research.pynose.plugin.inspections.common.disabled
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.*
+import java.util.Locale
 import kotlin.math.sqrt
 
 open class LackCohesionTestSmellVisitor(
@@ -33,11 +32,9 @@ open class LackCohesionTestSmellVisitor(
         "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while",
         "with", "yield"
     )
-    protected val cosineSimilarityScores: MutableMap<Pair<PyFunction, PyFunction>, Double> = mutableMapOf()
-    protected var splitIdentifier = true
-    protected var removeStopWords = false
+    private var splitIdentifier = true
+    private var removeStopWords = false
     protected var threshold = 0.6 // from the paper
-
     protected var testClassCohesionScore = 0.0
 
     fun registerLackCohesion(valueParam: PsiElement) {
@@ -82,7 +79,10 @@ open class LackCohesionTestSmellVisitor(
             .map { s: String? -> STEMMER.stem(s) }
     }
 
-    protected fun processMethodList(methodList: List<PyFunction>) {
+    protected fun processMethodList(
+        methodList: List<PyFunction>,
+        cosineSimilarityScores: MutableMap<Pair<PyFunction, PyFunction>, Double>
+    ) {
         for (i in methodList.indices) {
             for (j in i + 1 until methodList.size) {
                 val score: Double = calculateCosineSimilarityBetweenMethods(methodList[i], methodList[j])
