@@ -14,11 +14,14 @@ class ConstructorInitializationTestSmellQuickFix : LocalQuickFix {
         return TestSmellBundle.message("quickfixes.constructor.message")
     }
 
+    private val initRegex: Regex by lazy { "^def __init__\\(.*?\\):".toRegex() }
+    private val superInitRegex: Regex by lazy { "\n[ ]*super\\(.*?.\\)\\.__init__\\(.*?\\)\n".toRegex() }
+
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val problemElement = descriptor.psiElement
         val body = problemElement.parent.text
-            .replace("^def __init__\\(.*?\\):".toRegex(), "")
-            .replace("\n[ ]*super\\(.*?.\\)\\.__init__\\(.*?\\)\n".toRegex(), "")
+            .replace(initRegex, "")
+            .replace(superInitRegex, "")
         val newExpressionText = "def setUp(self):\n$body"
         val elementGenerator: PyElementGenerator = PyElementGenerator.getInstance(project)
         problemElement.parent.replace(
