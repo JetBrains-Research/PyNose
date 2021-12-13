@@ -38,7 +38,7 @@
                          groupPath="Python"
                          groupName="PyNose"
                          enabledByDefault="false"
-                         level="WARNING"
+                         level="WEAK_WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.universal.ConditionalTestLogicTestSmellInspection"
                          displayName="Conditional logic test"
                          shortName="ConditionalTestLogicTestSmellInspection"/>
