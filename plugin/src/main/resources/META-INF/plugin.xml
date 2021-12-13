@@ -30,7 +30,7 @@
                          groupPath="Python"
                          groupName="PyNose"
                          enabledByDefault="true"
-                         level="WARNING"
+                         level="WEAK WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.ConstructorInitializationTestSmellUnittestInspection"
                          displayName="Constructor initialization test"
                          shortName="ConstructorInitializationTestSmellUnittestInspection"/>
