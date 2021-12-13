@@ -15,7 +15,7 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : RedundantAssertionTestSmellVisitor(holder, session) {
-            // todo: assertTrue(x < x) is not detected
+            // todo: assertTrue(x < x) is not detected yet
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 val callee = callExpression.callee ?: return

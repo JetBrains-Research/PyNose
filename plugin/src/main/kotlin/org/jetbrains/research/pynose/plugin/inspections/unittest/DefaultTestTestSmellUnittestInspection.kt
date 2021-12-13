@@ -31,7 +31,6 @@ open class DefaultTestTestSmellUnittestInspection : AbstractTestSmellInspection(
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node) && node.name == "MyTestCase") {
-                    // todo: can't move this fix to quick fix class
                     val defaultTestSmellQuickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(node)
                     registerDefault(node.nameIdentifier!!, defaultTestSmellQuickFix)
                 }

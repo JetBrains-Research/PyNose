@@ -53,7 +53,6 @@ class LackCohesionTestSmellPytestInspectionTests : AbstractTestSmellInspectionTe
 
     // todo does not pass yet, even with the annotation
     /*
-    @Disabled("Fix todo first")
     @Test
     fun `test lack cohesion in a file`() {
         myFixture.configureByFile("test_lack_cohesion_file.py")
