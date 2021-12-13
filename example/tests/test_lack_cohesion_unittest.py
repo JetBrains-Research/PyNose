@@ -4,7 +4,7 @@ import unittest
 class SomeClass(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(SomeClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
         self.z = 5
@@ -17,7 +17,7 @@ class SomeClass(unittest.TestCase):
         self.z -= 1
 
     def test_print_x(self):
-        print(x)
+        print(self.x)
 
     def test_check_hi(self):
         assert self.w == "hi"
