@@ -36,8 +36,7 @@ open class MagicNumberTestSmellVisitor(
                 (arg is PyNumericLiteralExpression && !ignoredNumbers.contains(arg.text))
                         || (arg is PyBinaryExpression
                         && arg.children.any { child ->
-                    child is PyNumericLiteralExpression
-                            && !ignoredNumbers.contains(child.text)
+                    child is PyNumericLiteralExpression && !ignoredNumbers.contains(child.text)
                 })
             }) {
             registerMagicNumber(assertStatement)
