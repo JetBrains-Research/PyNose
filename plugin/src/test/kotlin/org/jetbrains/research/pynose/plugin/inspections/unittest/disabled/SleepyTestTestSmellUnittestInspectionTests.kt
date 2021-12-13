@@ -49,7 +49,7 @@ class SleepyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTe
                     "        time.sleep(5)"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test

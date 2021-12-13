@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.RedundantPrintTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -17,7 +18,7 @@ class RedundantPrintTestSmellPytestInspectionTests : AbstractTestSmellInspection
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
-        myFixture.enableInspections(RedundantPrintTestSmellPytestInspection())
+        myFixture.enableInspections(RedundantPrintTestSmellInspection())
     }
 
     override fun getTestDataPath(): String {
@@ -28,9 +29,9 @@ class RedundantPrintTestSmellPytestInspectionTests : AbstractTestSmellInspection
     fun `test highlighted redundant print`() {
         myFixture.configureByText(
             "test_file.py", "def test_something(self):\n" +
-                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello!\")</warning>\n" +
+                    "    <weak_warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello!\")</weak_warning>\n" +
                     "    assert 1 == 1\n" +
-                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello again!\")</warning>"
+                    "    <weak_warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello again!\")</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -40,9 +41,9 @@ class RedundantPrintTestSmellPytestInspectionTests : AbstractTestSmellInspection
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello!\")</warning>\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello!\")</weak_warning>\n" +
                     "        assert 1 == 1\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello again!\")</warning>"
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.redundant.print.description")}\">print(\"hello again!\")</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -55,7 +56,7 @@ class RedundantPrintTestSmellPytestInspectionTests : AbstractTestSmellInspection
                     "        print(\"hello!\")"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
