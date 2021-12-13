@@ -1,6 +1,7 @@
 # PyNose: a Test Smell Detector for Python
 
-PyNose is a test smell detector tool for Python. The tool runs inside PyCharm IDE.
+PyNose is a test smell detector tool for Python. 
+It runs as a plugin inside PyCharm IDE (*since version 2021.1.3*) 
 
 ## Description
 
@@ -10,6 +11,8 @@ opened project. This can help python developers avoid test smells in their code.
 [comment]: <> (installation??)
 
 When you open a project in PyCharm, a number of inspections will be available for usage.
+
+PyNose will retrieve information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
 
 Some inspections are initially disabled, however you can enable them from the settings.
 
@@ -48,3 +51,8 @@ Some inspections are initially disabled, however you can enable them from the se
   <br></br>
   ![Exception handling example](assets/gifs/exception_handling_example.gif)
   <br></br>
+
+
+If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.
+
+**Note: the outdated version of the tool (which was initially described in "PyNose: A Test Smell Detector For Python" paper) can be found in `ASE2021` branch.**
