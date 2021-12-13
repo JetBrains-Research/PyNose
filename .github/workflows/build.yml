@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ inspections ]
+    branches: [ inspections, master ]
   pull_request:
-    branches: [ inspections ]
+    branches: [ inspections, master ]
 
 jobs:
   setup:
