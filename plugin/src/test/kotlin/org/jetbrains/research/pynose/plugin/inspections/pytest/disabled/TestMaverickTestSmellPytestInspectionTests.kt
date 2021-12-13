@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.junit.Test
@@ -15,7 +16,7 @@ class TestMaverickTestSmellPytestInspectionTests : AbstractTestSmellInspectionTe
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
+        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns TestRunner.PYTEST
         myFixture.enableInspections(TestMaverickTestSmellPytestInspection())
     }
 

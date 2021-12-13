@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyRaiseStatement
 import com.jetbrains.python.psi.PyTryExceptStatement
+import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.quickfixes.common.ExceptionHandlingTestSmellStatementQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
@@ -23,7 +24,7 @@ class ExceptionHandlingTestSmellInspection : AbstractUniversalTestSmellInspectio
         return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerTryExcept(valueParam: PsiElement) {
                 val isUnittestMode = valueParam.project.service<TestRunnerServiceFacade>()
-                    .getConfiguredTestRunner(valueParam.containingFile) == "Unittests"
+                    .getConfiguredTestRunner(valueParam.containingFile) == TestRunner.UNITTESTS
                 holder.registerProblem(
                     valueParam,
                     TestSmellBundle.message("inspections.exception.description"),

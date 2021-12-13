@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
+import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -18,7 +19,7 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
-        } returns "Unittests"
+        } returns TestRunner.UNITTESTS
         myFixture.enableInspections(MagicNumberTestTestSmellUnittestInspection())
     }
 

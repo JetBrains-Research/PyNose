@@ -29,8 +29,8 @@ abstract class AbstractTestSmellInspection : PyInspection() {
         session: LocalInspectionToolSession
     ): PsiElementVisitor {
         return when (holder.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(holder.file)) {
-            "pytest" -> buildPytestVisitor(holder, session)
-            "Unittests" -> buildUnittestVisitor(holder, session)
+            TestRunner.PYTEST -> buildPytestVisitor(holder, session)
+            TestRunner.UNITTESTS -> buildUnittestVisitor(holder, session)
             else -> PsiElementVisitor.EMPTY_VISITOR
         }
     }
