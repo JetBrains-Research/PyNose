@@ -1,5 +1,5 @@
 group = "org.jetbrains.research.pynose"
-version = "1.0-SNAPSHOT"
+version = "1.0-alpha"
 
 val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
 
