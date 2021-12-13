@@ -18,7 +18,7 @@ class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellInspection::class.java)
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerEmpty(valueParam: PsiElement) {
                 holder.registerProblem(
                     valueParam,

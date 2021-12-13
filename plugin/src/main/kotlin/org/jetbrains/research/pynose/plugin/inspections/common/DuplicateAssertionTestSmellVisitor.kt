@@ -11,7 +11,7 @@ import org.jetbrains.research.pynose.plugin.quickfixes.common.DuplicateAssertion
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
-    PyInspectionVisitor(holder, session) {
+    PyInspectionVisitor(holder, getContext(session)) {
 
     protected fun registerDuplicate(valueParam: PsiElement) {
         holder!!.registerProblem(

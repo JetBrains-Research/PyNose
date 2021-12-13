@@ -56,7 +56,7 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
             )
         }
 
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {

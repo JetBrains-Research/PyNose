@@ -20,7 +20,7 @@ class ExceptionHandlingTestSmellInspection : AbstractUniversalTestSmellInspectio
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellInspection::class.java)
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerTryExcept(valueParam: PsiElement) {
                 val isUnittestMode = valueParam.project.service<TestRunnerServiceFacade>()
                     .getConfiguredTestRunner(valueParam.containingFile) == "Unittests"

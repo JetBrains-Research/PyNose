@@ -49,9 +49,9 @@ subprojects {
 
     intellij {
         type.set("PC")
-        version.set("PC-2021.1.3")
+        version.set("PC-2021.3")
         updateSinceUntilBuild.set(false)
-        plugins.set(listOf("PythonCore:211.7628.24"))
+        plugins.set(listOf("PythonCore:213.5744.248"))
     }
 
     tasks.withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()

@@ -26,7 +26,7 @@ class ConstructorInitializationTestSmellUnittestInspection : AbstractTestSmellIn
                 ConstructorInitializationTestSmellQuickFix()
             )
         }
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node)) {

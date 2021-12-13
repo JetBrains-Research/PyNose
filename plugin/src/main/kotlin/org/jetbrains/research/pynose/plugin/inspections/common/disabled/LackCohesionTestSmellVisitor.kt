@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 open class LackCohesionTestSmellVisitor(
     holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, session) {
+) : PyInspectionVisitor(holder, getContext(session)) {
     private val STEMMER = PorterStemmer()
     private val STOP_WORDS: Set<String> = setOf(
         "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
@@ -74,7 +74,7 @@ open class LackCohesionTestSmellVisitor(
             if (splitIdentifier) "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|\\s+|_|\\d+" else "\\s+"
         ).toTypedArray()
         return tokens
-            .map { arg -> arg.toLowerCase(Locale.getDefault()) }
+            .map { arg -> arg.lowercase(Locale.getDefault()) }
             .filter { t -> !removeStopWords || !STOP_WORDS.contains(t) }
             .map { s -> STEMMER.stem(s) }
     }

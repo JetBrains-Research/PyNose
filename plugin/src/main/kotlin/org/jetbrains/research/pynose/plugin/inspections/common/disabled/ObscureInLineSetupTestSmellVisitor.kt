@@ -13,7 +13,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class ObscureInLineSetupTestSmellVisitor(
     holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, session) {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     private fun registerObscureInLineSetup(valueParam: PsiElement) {
         holder!!.registerProblem(

@@ -13,7 +13,7 @@ import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
-    PyInspectionVisitor(holder, session) {
+    PyInspectionVisitor(holder, getContext(session)) {
 
     private val OPERATOR_TEXT = mutableSetOf("==", "!=", ">", ">=", "<=", "<", "is")
 

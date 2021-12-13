@@ -18,7 +18,7 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
         holder: ProblemsHolder,
         session: LocalInspectionToolSession
     ): PyInspectionVisitor {
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerConditional(
                 valueParam: PsiElement,
                 offset: Int = 0,

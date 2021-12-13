@@ -12,7 +12,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class AssertionRouletteTestSmellVisitor(
     holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, session) {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     protected fun registerRoulette(valueParam: PsiElement) {
         holder!!.registerProblem(

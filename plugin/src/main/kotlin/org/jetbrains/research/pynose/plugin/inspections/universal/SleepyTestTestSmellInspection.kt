@@ -23,7 +23,7 @@ class SleepyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(SleepyTestTestSmellInspection::class.java)
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : PyInspectionVisitor(holder, session) {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
 
             private fun registerSleepy(valueParam: PsiElement) {
                 holder.registerProblem(

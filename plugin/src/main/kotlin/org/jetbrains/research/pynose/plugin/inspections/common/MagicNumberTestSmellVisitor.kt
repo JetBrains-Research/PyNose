@@ -14,7 +14,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class MagicNumberTestSmellVisitor(
     holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, session) {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     protected val ignoredNumbers = setOf("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "100")
 

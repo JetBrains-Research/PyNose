@@ -15,7 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class TestMaverickTestSmellVisitor(
     holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, session) {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     private var inSetUpMode: Boolean = true
     private var methodFirstParamName: String? = null
