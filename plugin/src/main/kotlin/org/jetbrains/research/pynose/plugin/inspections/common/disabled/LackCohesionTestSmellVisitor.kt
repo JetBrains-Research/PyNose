@@ -51,15 +51,15 @@ open class LackCohesionTestSmellVisitor(
         val vec1 = Counter.fromCollection(tokens1)
         val vec2 = Counter.fromCollection(tokens2)
         val intersection = vec1.getItems()
-            .filter { o: String -> vec2.getItems().contains(o) }
+            .filter { o -> vec2.getItems().contains(o) }
             .toSet()
-        val numerator = intersection.sumOf { commonToken: String ->
+        val numerator = intersection.sumOf { commonToken ->
             vec1.getCount(commonToken) * vec2.getCount(commonToken)
         }
-        val sum1 = vec1.getItems().sumOf { t: String ->
+        val sum1 = vec1.getItems().sumOf { t ->
             vec1.getCount(t) * vec1.getCount(t)
         }
-        val sum2 = vec2.getItems().sumOf { t: String ->
+        val sum2 = vec2.getItems().sumOf { t ->
             vec2.getCount(t) * vec2.getCount(t)
         }
         val denominator = sqrt(sum1.toDouble()) * sqrt(sum2.toDouble())
@@ -74,9 +74,9 @@ open class LackCohesionTestSmellVisitor(
             if (splitIdentifier) "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|\\s+|_|\\d+" else "\\s+"
         ).toTypedArray()
         return tokens
-            .map { obj: String -> obj.toLowerCase(Locale.getDefault()) }
-            .filter { t: String? -> !removeStopWords || !STOP_WORDS.contains(t) }
-            .map { s: String? -> STEMMER.stem(s) }
+            .map { arg -> arg.toLowerCase(Locale.getDefault()) }
+            .filter { t -> !removeStopWords || !STOP_WORDS.contains(t) }
+            .map { s -> STEMMER.stem(s) }
     }
 
     protected fun processMethodList(
@@ -98,7 +98,7 @@ open class LackCohesionTestSmellVisitor(
         private val counts: MutableMap<T, Int> = mutableMapOf()
 
         fun add(t: T) {
-            counts.merge(t, 1) { a: Int?, b: Int? -> Integer.sum(a!!, b!!) }
+            counts.merge(t, 1) { a, b -> Integer.sum(a, b) }
         }
 
         fun getCount(t: T): Int {

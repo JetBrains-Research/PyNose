@@ -36,7 +36,7 @@ open class TestMaverickTestSmellVisitor(
     ) {
         val setUpFunction = pyClass.statementList.statements
             .filterIsInstance<PyFunction>()
-            .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUp" }
+            .firstOrNull { pyFunction -> pyFunction.name == "setUp" }
         if (setUpFunction != null) {
             inSetUpMode = true
             processPyFunction(setUpFunction, setUpFields, testMethodSetUpFieldsUsage)
@@ -44,7 +44,7 @@ open class TestMaverickTestSmellVisitor(
 
         val setUpClassFunction = pyClass.statementList.statements
             .filterIsInstance<PyFunction>()
-            .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUpClass" }
+            .firstOrNull { pyFunction -> pyFunction.name == "setUpClass" }
         if (setUpClassFunction != null) {
             inSetUpMode = true
             processPyFunction(setUpClassFunction, setUpFields, testMethodSetUpFieldsUsage)
@@ -73,7 +73,7 @@ open class TestMaverickTestSmellVisitor(
                     )
                 }
         }
-        if (testMethodSetUpFieldsUsage.values.any { obj: Set<String?> -> obj.isEmpty() }
+        if (testMethodSetUpFieldsUsage.values.any { arg -> arg.isEmpty() }
             && setUpFields.isNotEmpty()) {
             registerMaverick(pyClass.nameIdentifier!!)
         }
