@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.ConditionalTestLogicTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -23,7 +24,7 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
         } returns "pytest"
-        myFixture.enableInspections(ConditionalTestLogicTestSmellPytestInspection())
+        myFixture.enableInspections(ConditionalTestLogicTestSmellInspection())
     }
 
     @Test
@@ -31,8 +32,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "if</warning> (2 > 1):" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "if</weak_warning> (2 > 1):" +
                     "            pass"
         )
         myFixture.checkHighlighting()
@@ -46,7 +47,7 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -54,8 +55,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "for</warning> _ in range(10):" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "for</weak_warning> _ in range(10):" +
                     "            pass"
         )
         myFixture.checkHighlighting()
@@ -70,7 +71,7 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
                     "            pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -78,8 +79,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "def test_something(self):\n" +
                     "    x = 0\n" +
-                    "    <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "while</warning> x < 10:" +
+                    "    <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "while</weak_warning> x < 10:" +
                     "        x += 1"
         )
         myFixture.checkHighlighting()
@@ -90,8 +91,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "[x**2 for x in range(10)]</warning>"
+                    "        S = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "[x**2 for x in range(10)]</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -101,8 +102,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "def test_something(self):\n" +
                     "    x = [10, '30', 30, 10, '56']\n" +
-                    "    ux = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "{int(xx) for xx in x}</warning>"
+                    "    ux = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "{int(xx) for xx in x}</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -112,8 +113,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        S = <warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "{num: num**2 for num in range(1, 11)}</warning>"
+                    "        S = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "{num: num**2 for num in range(1, 11)}</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -122,8 +123,8 @@ class ConditionalTestLogicTestSmellPytestInspectionTests : AbstractTestSmellInsp
     fun `test highlighted generator`() {
         myFixture.configureByText(
             "test_file.py", "def test_something(self):\n" +
-                    "    S = list(<warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "2 * n for n in range(50)</warning>)"
+                    "    S = list(<weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
+                    "2 * n for n in range(50)</weak_warning>)"
         )
         myFixture.checkHighlighting()
     }
