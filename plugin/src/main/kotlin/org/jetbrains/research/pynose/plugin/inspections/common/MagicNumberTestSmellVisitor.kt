@@ -21,7 +21,7 @@ open class MagicNumberTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.magic.number.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 

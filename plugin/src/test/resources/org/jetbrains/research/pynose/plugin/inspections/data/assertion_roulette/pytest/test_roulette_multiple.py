@@ -1,6 +1,6 @@
 class TestClass:
 
-    def <warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</warning>(self):
+    def <weak_warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</weak_warning>(self):
         assert 2 == 2
         assert 4 + 5 == 9
         assert "H" == "J"
@@ -16,7 +16,7 @@ class TestClass:
         assert False
 
 
-def <warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_outside</warning>(self):
+def <weak_warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_outside</weak_warning>(self):
     assert 4 + 5 == 9
     assert not 4 + 5 == 4
     assert 2 == 2

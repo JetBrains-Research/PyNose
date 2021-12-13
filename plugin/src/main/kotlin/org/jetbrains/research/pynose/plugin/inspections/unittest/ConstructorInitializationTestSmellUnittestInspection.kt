@@ -21,7 +21,7 @@ class ConstructorInitializationTestSmellUnittestInspection : AbstractTestSmellIn
             holder.registerProblem(
                 valueParam,
                 TestSmellBundle.message("inspections.constructor.initialization.description"),
-                ProblemHighlightType.WARNING
+                ProblemHighlightType.WEAK_WARNING
             )
         }
         return object : PyInspectionVisitor(holder, session) {

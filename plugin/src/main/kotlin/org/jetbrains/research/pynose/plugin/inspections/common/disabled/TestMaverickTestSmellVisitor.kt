@@ -24,7 +24,7 @@ open class TestMaverickTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.maverick.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 

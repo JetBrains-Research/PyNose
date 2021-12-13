@@ -8,7 +8,7 @@ import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyFunction
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
-import java.util.Locale
+import java.util.*
 import kotlin.math.sqrt
 
 open class LackCohesionTestSmellVisitor(
@@ -41,7 +41,7 @@ open class LackCohesionTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.lack.cohesion.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 

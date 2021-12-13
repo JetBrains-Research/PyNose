@@ -22,7 +22,7 @@ open class DefaultTestTestSmellUnittestInspection : AbstractTestSmellInspection(
             holder.registerProblem(
                 valueParam,
                 TestSmellBundle.message("inspections.default.description"),
-                ProblemHighlightType.WARNING,
+                ProblemHighlightType.WEAK_WARNING,
                 defaultTestSmellQuickFix
             )
         }
