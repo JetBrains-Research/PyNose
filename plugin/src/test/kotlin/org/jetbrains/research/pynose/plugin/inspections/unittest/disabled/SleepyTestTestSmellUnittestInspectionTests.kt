@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.SleepyTestTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -19,7 +20,7 @@ class SleepyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTe
         every {
             myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
         } returns "Unittests"
-        myFixture.enableInspections(SleepyTestTestSmellUnittestInspection())
+        myFixture.enableInspections(SleepyTestTestSmellInspection())
     }
 
     override fun getTestDataPath(): String {
@@ -33,7 +34,7 @@ class SleepyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTe
                     "import time\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</warning>"
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -48,7 +49,7 @@ class SleepyTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTe
                     "        time.sleep(5)"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test

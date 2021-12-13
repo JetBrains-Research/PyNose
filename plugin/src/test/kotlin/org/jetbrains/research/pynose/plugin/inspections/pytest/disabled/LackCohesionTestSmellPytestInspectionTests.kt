@@ -35,14 +35,14 @@ class LackCohesionTestSmellPytestInspectionTests : AbstractTestSmellInspectionTe
     fun `test lack of cohesion without unittest dependency`() {
         myFixture.configureByFile("test_lack_cohesion_no_dependency.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
     fun `test normal cohesion`() {
         myFixture.configureByFile("test_normal_cohesion.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -53,7 +53,6 @@ class LackCohesionTestSmellPytestInspectionTests : AbstractTestSmellInspectionTe
 
     // todo does not pass yet, even with the annotation
     /*
-    @Disabled("Fix todo first")
     @Test
     fun `test lack cohesion in a file`() {
         myFixture.configureByFile("test_lack_cohesion_file.py")

@@ -7,9 +7,7 @@ class SomeClass(unittest.TestCase):
         super(SomeClass, self).__init__(*args, **kwargs)
         x = 5
         y = 6
-
         z = 7
-
 
     def test_something(self):
         pass

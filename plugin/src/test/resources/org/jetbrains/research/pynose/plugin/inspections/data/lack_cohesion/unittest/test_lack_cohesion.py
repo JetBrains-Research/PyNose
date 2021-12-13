@@ -1,7 +1,7 @@
 import unittest
 
 
-class <warning descr="Test cases in this test suite are not cohesive">SomeClass</warning>(unittest.TestCase):
+class <weak_warning descr="Test cases in this test suite are not cohesive">SomeClass</weak_warning>(unittest.TestCase):
 
     def __init__(self):
         super().__init__()

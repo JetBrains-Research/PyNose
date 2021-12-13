@@ -22,7 +22,7 @@ def test_fail(self):
 class SomeClass:
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(SomeClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
         self.z = 5
@@ -57,7 +57,7 @@ class MyTestCase(SomeClass):
         assert 2 == 2
 
 
-class OtherClass:
+class TestClass:
 
     def test_obscure(self):
         x1 = 5

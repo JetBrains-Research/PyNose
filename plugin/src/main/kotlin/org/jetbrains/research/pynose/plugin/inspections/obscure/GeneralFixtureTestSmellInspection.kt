@@ -29,7 +29,7 @@ class GeneralFixtureTestSmellInspection : PyInspection() {
             holder.registerProblem(
                 valueParam,
                 TestSmellBundle.message("inspections.general.fixture.description"),
-                ProblemHighlightType.WARNING
+                ProblemHighlightType.WEAK_WARNING
             )
         }
 

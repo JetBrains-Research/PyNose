@@ -4,7 +4,7 @@ import unittest
 class SomeClass(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestingClass, self).__init__(*args, **kwargs)
+        super(SomeClass, self).__init__(*args, **kwargs)
         self.x = 'Hello'
         self.y = 1
 

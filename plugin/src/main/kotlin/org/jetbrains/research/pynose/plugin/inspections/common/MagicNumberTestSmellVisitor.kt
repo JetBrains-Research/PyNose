@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyBinaryExpression
-import com.jetbrains.python.psi.PyExpression
 import com.jetbrains.python.psi.PyNumericLiteralExpression
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -17,11 +16,13 @@ open class MagicNumberTestSmellVisitor(
     session: LocalInspectionToolSession
 ) : PyInspectionVisitor(holder, session) {
 
-    fun registerMagicNumber(valueParam: PsiElement) {
+    protected val ignoredNumbers = setOf("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "100")
+
+    protected fun registerMagicNumber(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.magic.number.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 
@@ -31,11 +32,11 @@ open class MagicNumberTestSmellVisitor(
         if (assertArgs.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
             return
         }
-        if (assertArgs.any { obj: PyExpression? ->
-                obj is PyNumericLiteralExpression
-                        || (obj is PyBinaryExpression
-                        && obj.children.any { child ->
-                    child is PyNumericLiteralExpression
+        if (assertArgs.any { arg ->
+                (arg is PyNumericLiteralExpression && !ignoredNumbers.contains(arg.text))
+                        || (arg is PyBinaryExpression
+                        && arg.children.any { child ->
+                    child is PyNumericLiteralExpression && !ignoredNumbers.contains(child.text)
                 })
             }) {
             registerMagicNumber(assertStatement)

@@ -3,13 +3,13 @@ import unittest
 
 class SomeClass(unittest.TestCase):
 
-    def <warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</warning>(self):
+    def <weak_warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</weak_warning>(self):
         self.assertEqual(4 + 5, 9)
         self.assertEqual(4 + 5, 9)
         self.assertNotEqual(4 + 5, 4)
         self.assertNotEqual(4 + 5, 5)
 
-    def <warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something_else</warning>(self):
+    def <weak_warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something_else</weak_warning>(self):
         assert 2 == 2
         self.assertEqual(4 + 5, 9)
         assert "H" == "J"
@@ -32,7 +32,7 @@ def test_outside(self):
 
 class SomeOtherClass(unittest.TestCase):
 
-    def <warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</warning>(self):
+    def <weak_warning descr="Test case has multiple non-documented assertions, consider separating or documenting them">test_something</weak_warning>(self):
         self.assertEqual(4 + 5, 9)
         self.assertNotEqual(4 + 5, 4)
         assert 2 == 2

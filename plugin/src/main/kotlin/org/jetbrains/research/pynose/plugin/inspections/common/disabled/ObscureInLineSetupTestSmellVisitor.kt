@@ -15,19 +15,18 @@ open class ObscureInLineSetupTestSmellVisitor(
     session: LocalInspectionToolSession
 ) : PyInspectionVisitor(holder, session) {
 
-    private val testMethodLocalVarCount: MutableMap<PyFunction, MutableSet<String?>> = mutableMapOf()
-
     private fun registerObscureInLineSetup(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.obscure.setup.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 
     private fun processPyAssignmentStatement(
         assignmentStatement: PyAssignmentStatement,
-        testMethod: PyFunction
+        testMethod: PyFunction,
+        testMethodLocalVarCount: MutableMap<PyFunction, MutableSet<String?>>
     ) {
         val localVars: MutableSet<String?> = testMethodLocalVarCount.getOrPut(testMethod) { mutableSetOf() }
         assignmentStatement.targets
@@ -35,22 +34,25 @@ open class ObscureInLineSetupTestSmellVisitor(
             .forEach { target -> localVars.add(target.name) }
     }
 
-    protected fun getObscureInLineSetup() {
+    protected fun getObscureInLineSetup(testMethodLocalVarCount: MutableMap<PyFunction, MutableSet<String?>>) {
         testMethodLocalVarCount.keys
             .filter { x -> testMethodLocalVarCount[x]!!.size > 10 }
             .forEach { x ->
                 registerObscureInLineSetup(x.nameIdentifier!!)
             }
-        testMethodLocalVarCount.clear()
     }
 
-    protected fun processTestMethod(testMethod: PyFunction) {
+    protected fun processTestMethod(
+        testMethod: PyFunction,
+        testMethodLocalVarCount: MutableMap<PyFunction, MutableSet<String?>>
+    ) {
         PsiTreeUtil
             .collectElements(testMethod) { element -> (element is PyAssignmentStatement) }
             .forEach { target ->
                 processPyAssignmentStatement(
                     target as PyAssignmentStatement,
-                    testMethod
+                    testMethod,
+                    testMethodLocalVarCount
                 )
             }
     }

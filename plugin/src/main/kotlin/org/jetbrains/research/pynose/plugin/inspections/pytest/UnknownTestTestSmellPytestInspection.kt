@@ -24,7 +24,7 @@ class UnknownTestTestSmellPytestInspection : AbstractTestSmellInspection() {
             holder.registerProblem(
                 valueParam,
                 TestSmellBundle.message("inspections.unknown.description"),
-                ProblemHighlightType.WARNING
+                ProblemHighlightType.WEAK_WARNING
             )
         }
 

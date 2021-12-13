@@ -1,7 +1,7 @@
 import unittest
 
 
-class <warning descr="Test suite fixture is too general">SomeClass</warning>(unittest.TestCase):
+class <weak_warning descr="Test suite fixture is too general">SomeClass</weak_warning>(unittest.TestCase):
     x: int
     s: str
     z: str

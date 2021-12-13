@@ -1,4 +1,4 @@
-class <warning descr="This test suite fixture's setup method is not used in some of the test cases">TestClass</warning>():
+class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">TestClass</weak_warning>():
     x: int
     s: str
     z: str
@@ -18,7 +18,7 @@ class <warning descr="This test suite fixture's setup method is not used in some
         print("hello!")
 
 
-class <warning descr="This test suite fixture's setup method is not used in some of the test cases">TestOtherClass</warning>():
+class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">TestOtherClass</weak_warning>():
     x: int
     s: str
     z: str

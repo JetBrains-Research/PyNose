@@ -12,7 +12,7 @@ class SomeClass(unittest.TestCase):
         assert self.x == 10
         self.assertNotEqual(self.x, self.w)
 
-    @unittest.skip()
+    @unittest.skip("reason")
     def test_something_else(self):
         assert self.s != "bye"
         assert self.x != 15
@@ -22,14 +22,14 @@ class SomeClass(unittest.TestCase):
         print("did something")
 
 
-@unittest.skipIf(2 > 1)
+@unittest.skipIf(2 > 1, "reason")
 class OtherClass(unittest.TestCase):
     x: int
     s: str
     z: str
     w: int = 10
 
-    @unittest.skip()
+    @unittest.skip("reason")
     def setUp(self):
         self.x = 10
         self.s = "hello"
@@ -40,7 +40,7 @@ class OtherClass(unittest.TestCase):
         assert self.x == 10
         self.assertEqual(self.x, self.w)
 
-    @unittest.skipIf(w < 10)
+    @unittest.skipIf(w < 10, "reason")
     def test_something_else_other(self):
         assert self.s != "hi"
         assert self.x != 12

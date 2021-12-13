@@ -7,7 +7,7 @@ class TestClass:
     w: int = 5
 
     @pytest.mark.skip()
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something</weak_warning>(self):
         assert self.x == 10
         assert self.x != self.w
 
@@ -30,7 +30,7 @@ class TestClass:
         assert self.x != 15
 
     @pytest.mark.xfail()
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something_another</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something_another</weak_warning>(self):
         assert self.s != "bye"
         assert self.x != 15
 
@@ -47,7 +47,7 @@ class TestOtherClass():
         self.z = "bye"
 
     @pytest.mark.skipif(w < 10)
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something_other</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something_other</weak_warning>(self):
         assert self.x == 10
         assert self.x == self.w
 
@@ -62,7 +62,7 @@ class TestOtherClass():
 
 
 @pytest.mark.skip()
-class <warning descr="Consider adding the reason why the test is marked as ignored">TestAnotherClass</warning>():
+class <weak_warning descr="Consider adding the reason why the test is marked as ignored">TestAnotherClass</weak_warning>():
     @pytest.mark.skip()
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something</weak_warning>(self):
         assert 1 == 1

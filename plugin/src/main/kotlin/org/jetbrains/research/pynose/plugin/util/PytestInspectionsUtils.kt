@@ -30,7 +30,7 @@ object PytestInspectionsUtils {
         return file.name.startsWith("test") || file.name.endsWith("test")
     }
 
-    // TODO: implement caching?
+    // TODO: caching?
     fun gatherValidPytestMethods(file: PyFile): List<PyFunction> {
         val returnList: MutableList<PyFunction> = mutableListOf()
         file.statements

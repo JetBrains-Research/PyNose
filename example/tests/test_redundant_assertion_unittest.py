@@ -6,15 +6,15 @@ class SomeClass(unittest.TestCase):
     def test_something(self):
         assert 1 == 1
         self.assertTrue(1)
-        self.assertEqual(2, 3)
-        self.assertTrue()
+        self.assertEqual(2 + 1, 3)
+        self.assertTrue(22)
         self.assertEqual(1, 1)
 
     def do_something(self):
-        assert 2 < 2
+        assert 2 <= 2
 
     def test_something_else(self):
-        assert "a" < "a"
+        assert "a" <= "a"
 
 
 class OtherClass(unittest.TestCase):
@@ -23,7 +23,7 @@ class OtherClass(unittest.TestCase):
         assert 1 == 1
 
     def test_something_other(self):
-        self.assertTrue(4 <= 4)
+        self.assertTrue(4 >= 4)
 
 
 class AnotherClass:

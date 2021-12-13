@@ -1,17 +1,17 @@
 class TestClass:
 
     def test_something(self):
-        <warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</warning>
+        <weak_warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</weak_warning>
 
     def do_something(self):
         print("print")
 
     def test_something_else(self):
-        <warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</warning>
+        <weak_warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</weak_warning>
 
 
 def test_something_other():
-    <warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</warning>
+    <weak_warning descr="Print statements are considered to be redundant in unit tests, consider removing them">print("print")</weak_warning>
 
 
 class AnotherClass:
