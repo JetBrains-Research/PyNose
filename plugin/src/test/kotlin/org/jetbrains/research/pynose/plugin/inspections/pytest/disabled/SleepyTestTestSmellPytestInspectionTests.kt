@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.SleepyTestTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -17,7 +18,7 @@ class SleepyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTest
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
-        myFixture.enableInspections(SleepyTestTestSmellPytestInspection())
+        myFixture.enableInspections(SleepyTestTestSmellInspection())
     }
 
     override fun getTestDataPath(): String {
@@ -29,7 +30,7 @@ class SleepyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTest
         myFixture.configureByText(
             "test_file.py", "import time\n" +
                     "def test_something(self):\n" +
-                    "    <warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</warning>"
+                    "    <weak_warning descr=\"${TestSmellBundle.message("inspections.sleepy.description")}\">time.sleep(5)</weak_warning>"
         )
         myFixture.checkHighlighting()
     }

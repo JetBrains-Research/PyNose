@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
+import org.jetbrains.research.pynose.plugin.inspections.universal.EmptyTestTestSmellInspection
 import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTestWithSdk
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
@@ -17,7 +18,7 @@ class EmptyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestW
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
         every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns "pytest"
-        myFixture.enableInspections(EmptyTestTestSmellPytestInspection())
+        myFixture.enableInspections(EmptyTestTestSmellInspection())
     }
 
     override fun getTestDataPath(): String {
