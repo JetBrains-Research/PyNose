@@ -16,7 +16,9 @@ open class MagicNumberTestSmellVisitor(
     session: LocalInspectionToolSession
 ) : PyInspectionVisitor(holder, session) {
 
-    fun registerMagicNumber(valueParam: PsiElement) {
+    protected val ignoredNumbers = setOf("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "100")
+
+    protected fun registerMagicNumber(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.magic.number.description"),
@@ -31,10 +33,11 @@ open class MagicNumberTestSmellVisitor(
             return
         }
         if (assertArgs.any { arg ->
-                arg is PyNumericLiteralExpression
+                (arg is PyNumericLiteralExpression && !ignoredNumbers.contains(arg.text))
                         || (arg is PyBinaryExpression
                         && arg.children.any { child ->
                     child is PyNumericLiteralExpression
+                            && !ignoredNumbers.contains(child.text)
                 })
             }) {
             registerMagicNumber(assertStatement)
