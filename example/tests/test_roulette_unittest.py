@@ -38,7 +38,7 @@ class SomeOtherClass(unittest.TestCase):
         assert 2 == 2
         assert 3 == 3
         assert 2 == 2
-        assert "H" == "J"
+        assert "H" != "J"
 
 
 class OtherClass:
