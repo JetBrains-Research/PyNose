@@ -31,7 +31,7 @@ class ObscureInLineSetupTestSmellUnittestInspectionTests : AbstractTestSmellInsp
         myFixture.configureByText(
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.obscure.setup.description")}\">test_something</warning>(self):\n" +
+                    "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.obscure.setup.description")}\">test_something</weak_warning>(self):\n" +
                     "        x1 = 1\n" +
                     "        x2 = 2\n" +
                     "        x3 = 3\n" +
@@ -92,7 +92,7 @@ class ObscureInLineSetupTestSmellUnittestInspectionTests : AbstractTestSmellInsp
                     "        assert x1 != x2"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test

@@ -31,9 +31,9 @@ class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspection
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 1 == 1</warning>\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 1 == 1</weak_warning>\n" +
                     "        assert \"H\" != \"F\"\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 2 == 1 + 2</warning>\n"
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 2 == 1 + 2</weak_warning>\n"
         )
         myFixture.checkHighlighting()
     }
@@ -42,7 +42,7 @@ class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspection
     fun `test highlighted combination of numbers and letters`() {
         myFixture.configureByText(
             "test_file.py", "def test_something(self):\n" +
-                    "    <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert \"G\" != 2</warning>"
+                    "    <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert \"G\" != 2</weak_warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -55,7 +55,7 @@ class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspection
                     "        assert 1 == 1"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test

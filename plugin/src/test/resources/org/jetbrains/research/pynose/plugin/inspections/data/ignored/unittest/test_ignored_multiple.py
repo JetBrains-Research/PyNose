@@ -8,7 +8,7 @@ class SomeClass(unittest.TestCase):
     w: int = 5
 
     @unittest.skip()
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something</weak_warning>(self):
         assert self.x == 10
         self.assertNotEqual(self.x, self.w)
 
@@ -39,7 +39,7 @@ class OtherClass(unittest.TestCase):
         self.z = "bye"
 
     @unittest.skipIf(w < 10)
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something_other</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something_other</weak_warning>(self):
         assert self.x == 10
         self.assertEqual(self.x, self.w)
 
@@ -54,9 +54,9 @@ class OtherClass(unittest.TestCase):
 
 
 @unittest.skip()
-class <warning descr="Consider adding the reason why the test is marked as ignored">AnotherSkippedClass</warning>(unittest.TestCase):
+class <weak_warning descr="Consider adding the reason why the test is marked as ignored">AnotherSkippedClass</weak_warning>(unittest.TestCase):
     @unittest.skip()
-    def <warning descr="Consider adding the reason why the test is marked as ignored">test_something</warning>(self):
+    def <weak_warning descr="Consider adding the reason why the test is marked as ignored">test_something</weak_warning>(self):
         assert 1 == 1
 
 

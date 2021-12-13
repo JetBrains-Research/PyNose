@@ -45,13 +45,13 @@ class TestMaverickTestSmellUnittestInspectionTests : AbstractTestSmellInspection
     fun `test maverick without unittest dependency`() {
         myFixture.configureByFile("test_maverick_no_dependency.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
     fun `test maverick normal`() {
         myFixture.configureByFile("test_maverick_normal.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 }

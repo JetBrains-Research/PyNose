@@ -35,13 +35,13 @@ class LackCohesionTestSmellUnittestInspectionTests : AbstractTestSmellInspection
     fun `test lack of cohesion without unittest dependency`() {
         myFixture.configureByFile("test_lack_cohesion_no_dependency.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
     fun `test normal cohesion`() {
         myFixture.configureByFile("test_normal_cohesion.py")
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 }

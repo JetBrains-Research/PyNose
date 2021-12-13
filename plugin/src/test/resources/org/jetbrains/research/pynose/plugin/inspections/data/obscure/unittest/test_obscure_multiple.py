@@ -7,7 +7,7 @@ class SomeClass(unittest.TestCase):
         self.x = 'Hello'
         self.y = 1
 
-    def <warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something</warning>(self):
+    def <weak_warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something</weak_warning>(self):
         a = 1
         b = 2
         c = 3
@@ -23,7 +23,7 @@ class SomeClass(unittest.TestCase):
         assert self.y == 2
 
 
-    def <warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something_else</warning>(self):
+    def <weak_warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something_else</weak_warning>(self):
         a = 1
         b = 2
         c = 3
@@ -54,7 +54,7 @@ class SomeClass(unittest.TestCase):
 
 class OtherClass(unittest.TestCase):
 
-    def <warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something</warning>(self):
+    def <weak_warning descr="Test case contains too many setup steps, consider moving them to a fixture or to a separate method">test_something</weak_warning>(self):
         a = 1
         b = 2
         c = 3

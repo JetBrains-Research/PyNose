@@ -28,7 +28,7 @@ class UnknownTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
         myFixture.configureByText(
                 "test_file.py", "import unittest\n" +
                 "class SomeClass(unittest.TestCase):\n" +
-                "    def <warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something</warning>(self):\n" +
+                "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something</weak_warning>(self):\n" +
                 "        pass"
         )
         myFixture.checkHighlighting()
@@ -39,9 +39,9 @@ class UnknownTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
         myFixture.configureByText(
                 "test_file.py", "import unittest\n" +
                 "class SomeClass(unittest.TestCase):\n" +
-                "    def <warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something</warning>(self):\n" +
+                "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something</weak_warning>(self):\n" +
                 "        pass\n\n" +
-                "    def <warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something_else</warning>(self):\n" +
+                "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.unknown.description")}\">test_something_else</weak_warning>(self):\n" +
                 "        x = 1"
         )
         myFixture.checkHighlighting()

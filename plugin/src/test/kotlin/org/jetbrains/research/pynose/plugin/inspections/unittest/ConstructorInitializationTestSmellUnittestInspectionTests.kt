@@ -29,8 +29,8 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
         myFixture.configureByText(
                 "test_file.py", "import unittest\n" +
                 "class SomeClass(unittest.TestCase):\n" +
-                "    def <warning descr=\"${TestSmellBundle.message("inspections.constructor.initialization.description")}\">" +
-                "__init__</warning>(self):\n" +
+                "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.constructor.initialization.description")}\">" +
+                "__init__</weak_warning>(self):\n" +
                 "        pass"
         )
         myFixture.checkHighlighting()
@@ -45,7 +45,7 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
                 "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -57,7 +57,7 @@ class ConstructorInitializationTestSmellUnittestInspectionTests : AbstractTestSm
                 "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
