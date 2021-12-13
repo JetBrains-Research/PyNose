@@ -3,19 +3,19 @@ import unittest
 
 class SomeClass(unittest.TestCase):
 
-    def <warning descr="This test case has no assertion in it">test_something</warning>(self):
+    def <weak_warning descr="This test case has no assertion in it">test_something</weak_warning>(self):
         pass
 
     def do_something(self):
         pass
 
-    def <warning descr="This test case has no assertion in it">test_something_else</warning>(self):
+    def <weak_warning descr="This test case has no assertion in it">test_something_else</weak_warning>(self):
         x = 2
 
 
 class OtherClass(unittest.TestCase):
 
-    def <warning descr="This test case has no assertion in it">test_something_other</warning>(self):
+    def <weak_warning descr="This test case has no assertion in it">test_something_other</weak_warning>(self):
         print("Hello")
 
 

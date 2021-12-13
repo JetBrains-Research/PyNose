@@ -14,18 +14,18 @@ open class AssertionRouletteTestSmellVisitor(
     session: LocalInspectionToolSession
 ) : PyInspectionVisitor(holder, session) {
 
-    val assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>> = mutableMapOf()
-    val testHasAssertionRoulette: MutableMap<PyFunction, Boolean> = mutableMapOf()
-
     protected fun registerRoulette(valueParam: PsiElement) {
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.roulette.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 
-    fun detectAssertStatementsRoulette() {
+    fun detectAssertStatementsRoulette(
+        assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>>,
+        testHasAssertionRoulette: MutableMap<PyFunction, Boolean>
+    ) {
         for (testMethod in assertStatementsInTests.keys) {
             val asserts: MutableSet<PyAssertStatement>? = assertStatementsInTests[testMethod]
             if (asserts!!.size < 2) {
@@ -44,7 +44,11 @@ open class AssertionRouletteTestSmellVisitor(
         }
     }
 
-    fun processPyAssertStatement(assertStatement: PyAssertStatement, testMethod: PyFunction) {
+    fun processPyAssertStatement(
+        assertStatement: PyAssertStatement,
+        testMethod: PyFunction,
+        assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>>
+    ) {
         assertStatementsInTests.getOrPut(testMethod) { mutableSetOf() }.add(assertStatement)
     }
 }

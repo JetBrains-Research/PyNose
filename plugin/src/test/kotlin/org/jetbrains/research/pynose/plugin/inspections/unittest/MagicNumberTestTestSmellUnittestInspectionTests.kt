@@ -32,9 +32,9 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 1 == 1</warning>\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 17 == 1</weak_warning>\n" +
                     "        assert \"H\" != \"F\"\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertTrue(2 == 1 + 2)</warning>\n"
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertTrue(22 == 1 + 2)</weak_warning>\n"
         )
 
         myFixture.checkHighlighting()
@@ -46,7 +46,7 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertEqual(\"G\", 2)</warning>"
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertEqual(\"G\", 882)</weak_warning>"
         )
 
         myFixture.checkHighlighting()
@@ -58,11 +58,11 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
             "test_file.py", "import unittest\n" +
                     "class SomeClass():\n" +
                     "    def test_something(self):\n" +
-                    "        assert 1 == 1"
+                    "        assert 1 == 81"
         )
 
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test

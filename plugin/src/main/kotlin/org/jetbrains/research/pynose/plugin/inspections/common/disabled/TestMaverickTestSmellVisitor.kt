@@ -17,8 +17,6 @@ open class TestMaverickTestSmellVisitor(
     session: LocalInspectionToolSession
 ) : PyInspectionVisitor(holder, session) {
 
-    protected val testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>> = mutableMapOf()
-    protected val setUpFields: MutableSet<String> = mutableSetOf()
     private var inSetUpMode: Boolean = true
     private var methodFirstParamName: String? = null
 
@@ -26,43 +24,66 @@ open class TestMaverickTestSmellVisitor(
         holder!!.registerProblem(
             valueParam,
             TestSmellBundle.message("inspections.maverick.description"),
-            ProblemHighlightType.WARNING
+            ProblemHighlightType.WEAK_WARNING
         )
     }
 
-    protected fun processSetUpFunction(pyClass: PyClass, testMethods: List<PyFunction>) {
+    protected fun processSetUpFunction(
+        pyClass: PyClass,
+        testMethods: List<PyFunction>,
+        setUpFields: MutableSet<String>,
+        testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>>
+    ) {
         val setUpFunction = pyClass.statementList.statements
             .filterIsInstance<PyFunction>()
-            .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUp" }
+            .firstOrNull { pyFunction -> pyFunction.name == "setUp" }
         if (setUpFunction != null) {
             inSetUpMode = true
-            processPyFunction(setUpFunction)
+            processPyFunction(setUpFunction, setUpFields, testMethodSetUpFieldsUsage)
         }
 
         val setUpClassFunction = pyClass.statementList.statements
             .filterIsInstance<PyFunction>()
-            .firstOrNull { pyFunction: PyFunction -> pyFunction.name == "setUpClass" }
+            .firstOrNull { pyFunction -> pyFunction.name == "setUpClass" }
         if (setUpClassFunction != null) {
             inSetUpMode = true
-            processPyFunction(setUpClassFunction)
+            processPyFunction(setUpClassFunction, setUpFields, testMethodSetUpFieldsUsage)
         }
 
         inSetUpMode = false
         for (testMethod in testMethods) {
             PsiTreeUtil
                 .collectElements(testMethod) { r -> (r is PyReferenceExpression) }
-                .forEach { ref -> processPyReferenceExpression(ref as PyReferenceExpression, testMethod) }
+                .forEach { ref ->
+                    processPyReferenceExpression(
+                        ref as PyReferenceExpression,
+                        testMethod,
+                        setUpFields,
+                        testMethodSetUpFieldsUsage
+                    )
+                }
             PsiTreeUtil
                 .collectElements(testMethod) { element -> (element is PyTargetExpression) }
-                .forEach { target -> processPyTargetExpression(target as PyTargetExpression, testMethod) }
+                .forEach { target ->
+                    processPyTargetExpression(
+                        target as PyTargetExpression,
+                        testMethod,
+                        setUpFields,
+                        testMethodSetUpFieldsUsage
+                    )
+                }
         }
-        if (testMethodSetUpFieldsUsage.values.any { obj: Set<String?> -> obj.isEmpty() }
+        if (testMethodSetUpFieldsUsage.values.any { arg -> arg.isEmpty() }
             && setUpFields.isNotEmpty()) {
             registerMaverick(pyClass.nameIdentifier!!)
         }
     }
 
-    private fun processPyFunction(function: PyFunction) {
+    private fun processPyFunction(
+        function: PyFunction,
+        setUpFields: MutableSet<String>,
+        testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>>
+    ) {
         if (inSetUpMode) {
             if (function.name == "setUp" || function.name == "setUpClass") {
                 if (function.parameterList.parameters.isNotEmpty()) {
@@ -71,11 +92,22 @@ open class TestMaverickTestSmellVisitor(
             }
             PsiTreeUtil
                 .collectElements(function) { element -> (element is PyTargetExpression) }
-                .forEach { target -> processPyTargetExpression(target as PyTargetExpression, function) }
+                .forEach { target ->
+                    processPyTargetExpression(
+                        target as PyTargetExpression,
+                        function,
+                        setUpFields,
+                        testMethodSetUpFieldsUsage
+                    )
+                }
         }
     }
 
-    private fun processPyTargetExpression(targetExpression: PyTargetExpression, method: PyFunction) {
+    private fun processPyTargetExpression(
+        targetExpression: PyTargetExpression, method: PyFunction,
+        setUpFields: MutableSet<String>,
+        testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>>
+    ) {
         if (!inSetUpMode) {
             if (setUpFields.contains(targetExpression.text)) {
                 testMethodSetUpFieldsUsage[method]!!.add(targetExpression.text)
@@ -89,7 +121,9 @@ open class TestMaverickTestSmellVisitor(
 
     private fun processPyReferenceExpression(
         referenceExpression: PyReferenceExpression,
-        testMethod: PyFunction
+        testMethod: PyFunction,
+        setUpFields: MutableSet<String>,
+        testMethodSetUpFieldsUsage: MutableMap<PyFunction, MutableSet<String>>
     ) {
         if (inSetUpMode || !setUpFields.contains(referenceExpression.text)) {
             return

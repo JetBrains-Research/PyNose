@@ -1,4 +1,4 @@
-class <warning descr="Test cases in this test suite are not cohesive">TestClass</warning>:
+class <weak_warning descr="Test cases in this test suite are not cohesive">TestClass</weak_warning>:
 
     def __init__(self):
         super().__init__()
@@ -20,7 +20,7 @@ class <warning descr="Test cases in this test suite are not cohesive">TestClass<
         assert self.w == "hi"
 
 
-class <warning descr="Test cases in this test suite are not cohesive">TestOtherClass</warning>:
+class <weak_warning descr="Test cases in this test suite are not cohesive">TestOtherClass</weak_warning>:
 
     def __init__(self):
         super().__init__()

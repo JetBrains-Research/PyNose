@@ -39,7 +39,7 @@ class DefaultTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                 "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -51,15 +51,15 @@ class DefaultTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                 "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
     fun `test default highlighting`() {
         myFixture.configureByText(
                 "test_file.py", "import unittest\n" +
-                "class <warning descr=\"${TestSmellBundle.message("inspections.default.description")}\">MyTestCase" +
-                "</warning>(unittest.TestCase):\n" +
+                "class <weak_warning descr=\"${TestSmellBundle.message("inspections.default.description")}\">MyTestCase" +
+                "</weak_warning>(unittest.TestCase):\n" +
                 "    def test_something(self):\n" +
                 "        pass"
         )

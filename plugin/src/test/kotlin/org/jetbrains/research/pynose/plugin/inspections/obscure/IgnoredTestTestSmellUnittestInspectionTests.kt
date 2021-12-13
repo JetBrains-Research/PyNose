@@ -36,7 +36,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -48,7 +48,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -61,7 +61,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -69,8 +69,8 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
         myFixture.configureByText(
             "test_file.py", "import unittest\n" +
                     "@unittest.skip()\n" +
-                    "class <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "SomeClass</warning>(unittest.TestCase):\n" +
+                    "class <weak_warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
+                    "SomeClass</weak_warning>(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        pass"
         )
@@ -87,7 +87,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -96,8 +96,8 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skip()\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "test_something</warning>(self):\n" +
+                    "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
+                    "test_something</weak_warning>(self):\n" +
                     "        pass"
         )
         myFixture.checkHighlighting()
@@ -113,7 +113,7 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
                     "        pass"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -122,8 +122,8 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipIf(mylib.__version__ < (1, 3))\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "test_something</warning>(self):\n" +
+                    "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
+                    "test_something</weak_warning>(self):\n" +
                     "        pass"
         )
         myFixture.checkHighlighting()
@@ -135,8 +135,8 @@ class IgnoredTestTestSmellUnittestInspectionTests : AbstractTestSmellInspectionT
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    @unittest.skipUnless(mylib.__version__ < (1, 3))\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
-                    "test_something</warning>(self):\n" +
+                    "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.ignored.description")}\">" +
+                    "test_something</weak_warning>(self):\n" +
                     "        pass"
         )
         myFixture.checkHighlighting()

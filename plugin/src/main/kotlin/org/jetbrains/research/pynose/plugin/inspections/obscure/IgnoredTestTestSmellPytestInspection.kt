@@ -27,7 +27,7 @@ open class IgnoredTestTestSmellPytestInspection : AbstractTestSmellInspection() 
                 holder.registerProblem(
                     valueParam,
                     TestSmellBundle.message("inspections.ignored.description"),
-                    ProblemHighlightType.WARNING
+                    ProblemHighlightType.WEAK_WARNING
                 )
             }
 

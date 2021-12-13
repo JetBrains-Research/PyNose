@@ -1,7 +1,7 @@
 import unittest
 
 
-class <warning descr="This test suite fixture's setup method is not used in some of the test cases">SomeClass</warning>(unittest.TestCase):
+class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">SomeClass</weak_warning>(unittest.TestCase):
     x: int
     s: str
     z: str
@@ -21,7 +21,7 @@ class <warning descr="This test suite fixture's setup method is not used in some
         print("hello!")
 
 
-class <warning descr="This test suite fixture's setup method is not used in some of the test cases">OtherClass</warning>(unittest.TestCase):
+class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">OtherClass</weak_warning>(unittest.TestCase):
     x: int
     s: str
     z: str

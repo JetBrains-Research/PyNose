@@ -4,10 +4,6 @@ import unittest
 class SomeClass(unittest.TestCase):
 
     def test_something(self):
-        with self.assertRaises(ValueError):
-            x = 3
-        with self.assertRaises(ValueError):
-            x = 3
         try:
             x = 5
         except ValueError:

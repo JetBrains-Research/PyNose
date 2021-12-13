@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
-import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyWithItem
 import org.jetbrains.research.pynose.plugin.quickfixes.common.DuplicateAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -18,7 +18,7 @@ open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
             valueParam,
             TestSmellBundle.message("inspections.duplicate.description"),
             ProblemHighlightType.WARNING,
-            DuplicateAssertionTestSmellQuickFix()
+            if (valueParam.parent is PyWithItem) null else DuplicateAssertionTestSmellQuickFix()
         )
     }
 

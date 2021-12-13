@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyFile
+import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.disabled.AssertionRouletteTestSmellVisitor
 import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
@@ -19,18 +20,18 @@ class AssertionRouletteTestSmellPytestInspection : AbstractTestSmellInspection()
             override fun visitPyFile(node: PyFile) {
                 super.visitPyFile(node)
                 if (PytestInspectionsUtils.isValidPytestFile(node)) {
-                    testHasAssertionRoulette.clear()
-                    assertStatementsInTests.clear()
+                    val assertStatementsInTests: MutableMap<PyFunction, MutableSet<PyAssertStatement>> = mutableMapOf()
+                    val testHasAssertionRoulette: MutableMap<PyFunction, Boolean> = mutableMapOf()
                     PytestInspectionsUtils.gatherValidPytestMethods(node)
                         .forEach { testMethod ->
                             testHasAssertionRoulette[testMethod] = false
                             PsiTreeUtil
                                 .collectElements(testMethod) { element -> (element is PyAssertStatement) }
                                 .forEach { target ->
-                                    processPyAssertStatement(target as PyAssertStatement, testMethod)
+                                    processPyAssertStatement(target as PyAssertStatement, testMethod, assertStatementsInTests)
                                 }
                         }
-                    detectAssertStatementsRoulette()
+                    detectAssertStatementsRoulette(assertStatementsInTests, testHasAssertionRoulette)
                     testHasAssertionRoulette.keys
                         .filter { key -> testHasAssertionRoulette[key]!! }
                         .forEach { pyFunction -> registerRoulette(pyFunction.nameIdentifier!!) }

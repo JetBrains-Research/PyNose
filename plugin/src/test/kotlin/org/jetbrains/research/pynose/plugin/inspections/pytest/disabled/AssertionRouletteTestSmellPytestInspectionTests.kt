@@ -28,7 +28,7 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
     fun `test highlighted basic assertion roulette`() {
         myFixture.configureByText(
             "test_file.py",
-            "def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
+            "def <weak_warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</weak_warning>(self):\n" +
                     "    assert 1 == 1\n" +
                     "    assert 2 == 2\n" +
                     "    assert 2 == 2"
@@ -40,7 +40,7 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
     fun `test highlighted basic assertion roulette in class`() {
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
-                    "    def <warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</warning>(self):\n" +
+                    "    def <weak_warning descr=\"${TestSmellBundle.message("inspections.roulette.description")}\">test_something</weak_warning>(self):\n" +
                     "        assert 1 == 1\n" +
                     "        assert 2 == 2\n" +
                     "        assert 2 == 2"
@@ -70,7 +70,7 @@ class AssertionRouletteTestSmellPytestInspectionTests : AbstractTestSmellInspect
                     "        assert 3 == 3"
         )
         val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
