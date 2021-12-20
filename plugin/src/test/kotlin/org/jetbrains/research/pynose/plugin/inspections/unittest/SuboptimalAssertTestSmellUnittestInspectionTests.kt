@@ -1,7 +1,17 @@
 package org.jetbrains.research.pynose.plugin.inspections.unittest
 
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.python.psi.PyClass
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunner
@@ -10,6 +20,7 @@ import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTest
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
+import java.io.File
 
 class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
@@ -168,6 +179,42 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     fun `test suboptimal multiple`() {
         myFixture.configureByFile("test_suboptimal_multiple.py")
         myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test inspection's visitor independently`() {
+        myFixture.configureByFile("test_suboptimal_multiple.py")
+        val project: Project = myFixture.project
+        val psiFile: PsiFile = myFixture.file
+
+        val inspectionManager = InspectionManager.getInstance(project)
+        val holder = ProblemsHolder(inspectionManager, psiFile, false)
+        val inspectionVisitor = SuboptimalAssertTestSmellUnittestInspection().buildVisitor(holder, false) as PsiElementVisitor
+
+        WriteCommandAction.runWriteCommandAction(project) {
+            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java)
+                .forEach {
+                    it.accept(inspectionVisitor)
+                }
+        }
+
+        print(holder.results)
+        assertNotEmpty(holder.results)
+    }
+
+    @Test
+    fun `test something`() {
+        val projectRoot = File("C:\\Users\\Olesya\\PycharmProjects\\PyNoseTest")
+        ApplicationManager.getApplication().invokeAndWait {
+            val project = ProjectUtil.openOrImport(projectRoot.toPath())
+            WriteCommandAction.runWriteCommandAction(project) {
+                project.projectFile
+                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java)
+                    .forEach {
+                        it.accept(inspectionVisitor)
+                    }
+            }
+        }
     }
 
 }
