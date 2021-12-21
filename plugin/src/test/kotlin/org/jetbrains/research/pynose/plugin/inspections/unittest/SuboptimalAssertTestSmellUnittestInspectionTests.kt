@@ -1,17 +1,7 @@
 package org.jetbrains.research.pynose.plugin.inspections.unittest
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.PyClass
 import io.mockk.every
 import io.mockk.mockkObject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunner
@@ -20,7 +10,6 @@ import org.jetbrains.research.pynose.plugin.util.AbstractTestSmellInspectionTest
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import org.junit.Test
 import org.junit.jupiter.api.BeforeAll
-import java.io.File
 
 class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspectionTestWithSdk() {
 
@@ -39,16 +28,16 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test highlighted suboptimal equality`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, False)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, True)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, False)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, True)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, None)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, None)</warning>"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, False)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, True)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, False)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, True)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, None)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, None)</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -56,12 +45,12 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test correct suboptimal equality replacements`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        self.assertFalse(X)\n" +
-                "        self.assertTrue(X)"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        self.assertFalse(X)\n" +
+                    "        self.assertTrue(X)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -70,13 +59,13 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test highlighted suboptimal is`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIs(X, True)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIsNot(X, False)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIsNot(X, None)</warning>"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIs(X, True)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIsNot(X, False)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertIsNot(X, None)</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -85,12 +74,12 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test correct suboptimal is replacements`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        self.assertIsNone(X)\n" +
-                "        self.assertIsNotNone(X)"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        self.assertIsNone(X)\n" +
+                    "        self.assertIsNotNone(X)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -99,18 +88,18 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test highlighted suboptimal comparison`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        Y = 6\n" +
-                "        Z = {4, 6}\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X != Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X == Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X < Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X >= Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X not in Z)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X in Z)</warning>"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        Y = 6\n" +
+                    "        Z = {4, 6}\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X != Y)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X == Y)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X < Y)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X >= Y)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X not in Z)</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X in Z)</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -118,20 +107,20 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test correct suboptimal comparison replacements`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass(unittest.TestCase):\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        Y = 6\n" +
-                "        Z = {5, 7}\n" +
-                "        self.assertEqual(X, Y)\n" +
-                "        self.assertNotEqual(X, Y)\n" +
-                "        self.assertIs(X, Y)\n" +
-                "        self.assertIsNot(X, Y)\n" +
-                "        self.assertLessEqual(X, Y)\n" +
-                "        self.assertGreater(X, Y)\n" +
-                "        self.assertIn(X, Z)\n" +
-                "        self.assertNotIn(Y, Z)"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        Y = 6\n" +
+                    "        Z = {5, 7}\n" +
+                    "        self.assertEqual(X, Y)\n" +
+                    "        self.assertNotEqual(X, Y)\n" +
+                    "        self.assertIs(X, Y)\n" +
+                    "        self.assertIsNot(X, Y)\n" +
+                    "        self.assertLessEqual(X, Y)\n" +
+                    "        self.assertGreater(X, Y)\n" +
+                    "        self.assertIn(X, Z)\n" +
+                    "        self.assertNotIn(Y, Z)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -140,17 +129,17 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test suboptimal assertion without unittest dependency`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass():\n" +
-                "    def test_something(self):\n" +
-                "        X = 5\n" +
-                "        Y = 6\n" +
-                "        self.assertTrue(X is Y)\n" +
-                "        self.assertTrue(X is not Y)\n" +
-                "        self.assertEqual(X, None)\n" +
-                "        self.assertNotEqual(X, None)\n" +
-                "        self.assertTrue(X <= Y)\n" +
-                "        self.assertFalse(X > Y)"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass():\n" +
+                    "    def test_something(self):\n" +
+                    "        X = 5\n" +
+                    "        Y = 6\n" +
+                    "        self.assertTrue(X is Y)\n" +
+                    "        self.assertTrue(X is not Y)\n" +
+                    "        self.assertEqual(X, None)\n" +
+                    "        self.assertNotEqual(X, None)\n" +
+                    "        self.assertTrue(X <= Y)\n" +
+                    "        self.assertFalse(X > Y)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -159,17 +148,17 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test suboptimal assertion with non-unittest function name`() {
         myFixture.configureByText(
-                "test_file.py", "import unittest\n" +
-                "class SomeClass():\n" +
-                "    def do_something(self):\n" +
-                "        X = 5\n" +
-                "        Y = 6\n" +
-                "        self.assertTrue(X is Y)\n" +
-                "        self.assertTrue(X is not Y)\n" +
-                "        self.assertEqual(X, None)\n" +
-                "        self.assertNotEqual(X, None)\n" +
-                "        self.assertTrue(X <= Y)\n" +
-                "        self.assertFalse(X > Y)"
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass():\n" +
+                    "    def do_something(self):\n" +
+                    "        X = 5\n" +
+                    "        Y = 6\n" +
+                    "        self.assertTrue(X is Y)\n" +
+                    "        self.assertTrue(X is not Y)\n" +
+                    "        self.assertEqual(X, None)\n" +
+                    "        self.assertNotEqual(X, None)\n" +
+                    "        self.assertTrue(X <= Y)\n" +
+                    "        self.assertFalse(X > Y)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -179,42 +168,6 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
     fun `test suboptimal multiple`() {
         myFixture.configureByFile("test_suboptimal_multiple.py")
         myFixture.checkHighlighting()
-    }
-
-    @Test
-    fun `test inspection's visitor independently`() {
-        myFixture.configureByFile("test_suboptimal_multiple.py")
-        val project: Project = myFixture.project
-        val psiFile: PsiFile = myFixture.file
-
-        val inspectionManager = InspectionManager.getInstance(project)
-        val holder = ProblemsHolder(inspectionManager, psiFile, false)
-        val inspectionVisitor = SuboptimalAssertTestSmellUnittestInspection().buildVisitor(holder, false) as PsiElementVisitor
-
-        WriteCommandAction.runWriteCommandAction(project) {
-            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java)
-                .forEach {
-                    it.accept(inspectionVisitor)
-                }
-        }
-
-        print(holder.results)
-        assertNotEmpty(holder.results)
-    }
-
-    @Test
-    fun `test something`() {
-        val projectRoot = File("C:\\Users\\Olesya\\PycharmProjects\\PyNoseTest")
-        ApplicationManager.getApplication().invokeAndWait {
-            val project = ProjectUtil.openOrImport(projectRoot.toPath())
-            WriteCommandAction.runWriteCommandAction(project) {
-                project.projectFile
-                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java)
-                    .forEach {
-                        it.accept(inspectionVisitor)
-                    }
-            }
-        }
     }
 
 }
