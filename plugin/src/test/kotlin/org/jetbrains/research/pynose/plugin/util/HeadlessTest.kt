@@ -18,7 +18,9 @@ class HeadlessTest : AbstractTestSmellInspectionTestWithSdk() {
     }
 
     @Test
-    fun `test something`() {
+    fun `test headless`() {
+
+        // set yours
         val projectRoot = File("C:\\Users\\Olesya\\PycharmProjects\\PyNoseTest")
         ApplicationManager.getApplication().invokeAndWait {
 
@@ -49,6 +51,7 @@ class HeadlessTest : AbstractTestSmellInspectionTestWithSdk() {
 //                                    it.accept(inspectionVisitor)
 //                                }
 
+                            // currently visits only psi files
                             psiFile.accept(inspectionVisitor)
                             println(holder.results)
                         }
