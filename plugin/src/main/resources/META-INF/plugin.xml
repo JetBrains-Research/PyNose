@@ -185,6 +185,9 @@
                          displayName="Test maverick"
                          shortName="TestMaverickTestSmellPytestInspection"/>
     </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <appStarter implementation="org.jetbrains.research.pynose.headless.HeadlessRunner"/>
+    </extensions>
 
     <actions>
         <!-- Add your actions here -->

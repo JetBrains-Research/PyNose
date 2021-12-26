@@ -3,7 +3,6 @@ package org.jetbrains.research.pynose.plugin.inspections.unittest
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.MagicNumberTestSmellVisitor
@@ -12,7 +11,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 class MagicNumberTestTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(MagicNumberTestTestSmellUnittestInspection::class.java)
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
 
         return object : MagicNumberTestSmellVisitor(holder, session) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {

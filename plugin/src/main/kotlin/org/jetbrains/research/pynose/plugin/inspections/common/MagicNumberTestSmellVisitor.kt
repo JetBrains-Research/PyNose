@@ -4,17 +4,17 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
-import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyBinaryExpression
 import com.jetbrains.python.psi.PyNumericLiteralExpression
+import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class MagicNumberTestSmellVisitor(
-    holder: ProblemsHolder?,
-    session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, getContext(session)) {
+    val holder: ProblemsHolder?,
+    val session: LocalInspectionToolSession
+) : PyRecursiveElementVisitor() {
 
     protected val ignoredNumbers = setOf("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "100")
 
