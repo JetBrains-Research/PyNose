@@ -93,7 +93,7 @@
                          groupName="Unittest"
                          enabledByDefault="false"
                          level="WEAK WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.MagicNumberTestTestSmellUnittestInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.MagicNumberTestTestSmellUnittestInspection"
                          displayName="Magic number test"
                          shortName="MagicNumberTestTestSmellUnittestInspection"/>
         <localInspection language="Python"
@@ -101,7 +101,7 @@
                          groupName="Pytest"
                          enabledByDefault="false"
                          level="WEAK WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.MagicNumberTestTestSmellPytestInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.MagicNumberTestTestSmellPytestInspection"
                          displayName="Magic number test"
                          shortName="MagicNumberTestTestSmellPytestInspection"/>
         <localInspection language="Python"
