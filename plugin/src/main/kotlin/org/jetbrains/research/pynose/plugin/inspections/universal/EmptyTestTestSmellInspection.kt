@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspectionVisitor
+import com.jetbrains.python.psi.PyExpressionStatement
 import com.jetbrains.python.psi.PyFunction
 import com.jetbrains.python.psi.PyPassStatement
 import org.jetbrains.research.pynose.plugin.quickfixes.common.EmptyTestTestSmellQuickFix
@@ -31,7 +32,8 @@ class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
             override fun visitPyFunction(testMethod: PyFunction) {
                 super.visitPyFunction(testMethod)
                 val statements = testMethod.statementList.statements
-                if (statements.size == 1 && statements[0] is PyPassStatement
+                if (statements.size == 1 && (statements[0] is PyPassStatement
+                            || statements[0] is PyExpressionStatement && statements[0].text == "...")
                     && GeneralInspectionsUtils.checkValidMethod(testMethod)
                 ) {
                     registerEmpty(testMethod.nameIdentifier!!)
