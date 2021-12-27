@@ -65,7 +65,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPyForStatement(forStatement: PyForStatement) {
                 super.visitPyForStatement(forStatement)
                 if (GeneralInspectionsUtils.checkValidParent(forStatement)
-                    && checkAssertionInConditionalBlock(forStatement)) {
+                    && checkAssertionInConditionalBlock(forStatement)
+                ) {
                     registerConditional(forStatement, 0, "for".length)
                 }
             }
@@ -73,7 +74,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPyWhileStatement(whileStatement: PyWhileStatement) {
                 super.visitPyWhileStatement(whileStatement)
                 if (GeneralInspectionsUtils.checkValidParent(whileStatement)
-                    && checkAssertionInConditionalBlock(whileStatement)) {
+                    && checkAssertionInConditionalBlock(whileStatement)
+                ) {
                     registerConditional(whileStatement, 0, "while".length)
                 }
             }
@@ -81,7 +83,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPyListCompExpression(listCompExpression: PyListCompExpression) {
                 super.visitPyListCompExpression(listCompExpression)
                 if (GeneralInspectionsUtils.checkValidParent(listCompExpression)
-                    && checkAssertionInConditionalBlock(listCompExpression)) {
+                    && checkAssertionInConditionalBlock(listCompExpression)
+                ) {
                     registerConditional(listCompExpression)
                 }
             }
@@ -89,7 +92,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPySetCompExpression(setCompExpression: PySetCompExpression) {
                 super.visitPySetCompExpression(setCompExpression)
                 if (GeneralInspectionsUtils.checkValidParent(setCompExpression)
-                    && checkAssertionInConditionalBlock(setCompExpression)) {
+                    && checkAssertionInConditionalBlock(setCompExpression)
+                ) {
                     registerConditional(setCompExpression)
                 }
             }
@@ -97,7 +101,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPyDictCompExpression(dictCompExpression: PyDictCompExpression) {
                 super.visitPyDictCompExpression(dictCompExpression)
                 if (GeneralInspectionsUtils.checkValidParent(dictCompExpression)
-                    && checkAssertionInConditionalBlock(dictCompExpression)) {
+                    && checkAssertionInConditionalBlock(dictCompExpression)
+                ) {
                     registerConditional(dictCompExpression)
                 }
             }
@@ -105,7 +110,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
             override fun visitPyGeneratorExpression(generatorExpression: PyGeneratorExpression) {
                 super.visitPyGeneratorExpression(generatorExpression)
                 if (GeneralInspectionsUtils.checkValidParent(generatorExpression)
-                    && checkAssertionInConditionalBlock(generatorExpression)) {
+                    && checkAssertionInConditionalBlock(generatorExpression)
+                ) {
                     registerConditional(generatorExpression)
                 }
             }

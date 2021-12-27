@@ -5,9 +5,14 @@ class SomeClass(unittest.TestCase):
 
     def test_something(self):
         y = 10
+        if y < 20:
+            y += 1
+        if y > 1:
+            assert y == 10
         if y > 1:
             for x in range(1, 20):
                 y += 2
+                assert y > 9
         assert y > 10
 
     def test_something_else(self):
