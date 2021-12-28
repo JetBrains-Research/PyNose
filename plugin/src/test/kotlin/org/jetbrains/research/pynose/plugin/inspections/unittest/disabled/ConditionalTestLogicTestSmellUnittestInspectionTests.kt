@@ -36,7 +36,7 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
                     "    def test_something(self):\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "if</weak_warning> (2 > 1):" +
-                    "            pass"
+                    "            assert 2 == 2"
         )
         myFixture.checkHighlighting()
     }
@@ -47,7 +47,20 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
             "test_file.py", "class SomeClass():\n" +
                     "    def test_something(self):\n" +
                     "        if (2 > 1):" +
-                    "            pass"
+                    "            assert 2 == 2"
+        )
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
+    }
+
+    @Test
+    fun `test for statement with no assertion`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "for _ in range(10):" +
+                    "            assert 4 < 5"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
@@ -61,7 +74,7 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
                     "    def test_something(self):\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
                     "for</weak_warning> _ in range(10):" +
-                    "            pass"
+                    "            assert 4 < 5"
         )
         myFixture.checkHighlighting()
     }
@@ -73,7 +86,7 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def do_something(self):\n" +
                     "        for _ in range(10):" +
-                    "            pass"
+                    "            self.assertTrue(5 > 6)"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
@@ -87,8 +100,9 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
                     "    def test_something(self):\n" +
                     "        x = 0\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "while</weak_warning> x < 10:" +
-                    "            x += 1"
+                    "while</weak_warning> x < 10:\n" +
+                    "            x += 1\n" +
+                    "            self.assertGreater(x, 0)\n"
         )
         myFixture.checkHighlighting()
     }
@@ -99,10 +113,10 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        S = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "[x**2 for x in range(10)]</weak_warning>"
+                    "        S = [x**2 for x in range(10)]"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -112,10 +126,10 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        x = [10, '30', 30, 10, '56']\n" +
-                    "        ux = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "{int(xx) for xx in x}</weak_warning>"
+                    "        ux = {int(xx) for xx in x}"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -124,10 +138,10 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        S = <weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "{num: num**2 for num in range(1, 11)}</weak_warning>"
+                    "        S = {num: num**2 for num in range(1, 11)}"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
@@ -136,10 +150,10 @@ class ConditionalTestLogicTestSmellUnittestInspectionTests : AbstractTestSmellIn
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        S = list(<weak_warning descr=\"${TestSmellBundle.message("inspections.conditional.description")}\">" +
-                    "2 * n for n in range(50)</weak_warning>)"
+                    "        S = list(2 * n for n in range(50))"
         )
-        myFixture.checkHighlighting()
+        val highlightInfos = myFixture.doHighlighting()
+        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
 
     @Test
