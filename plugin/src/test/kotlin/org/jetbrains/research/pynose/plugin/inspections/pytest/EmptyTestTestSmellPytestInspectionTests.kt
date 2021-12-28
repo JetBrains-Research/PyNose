@@ -51,6 +51,16 @@ class EmptyTestTestSmellPytestInspectionTests : AbstractTestSmellInspectionTestW
     }
 
     @Test
+    fun `test highlighted ellipsis empty tests`() {
+        myFixture.configureByText(
+            "test_file.py",
+            "def <warning descr=\"${TestSmellBundle.message("inspections.empty.description")}\">test_something</warning>(self):\n" +
+                    "    ..."
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
     fun `test empty multiple`() {
         myFixture.configureByFile("test_empty_multiple.py")
         myFixture.checkHighlighting()
