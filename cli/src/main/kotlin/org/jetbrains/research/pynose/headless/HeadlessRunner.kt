@@ -16,10 +16,12 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
 import org.jetbrains.research.pynose.plugin.inspections.pytest.MagicNumberTestTestSmellPytestInspection
+import org.jetbrains.research.pynose.plugin.inspections.unittest.MagicNumberTestTestSmellUnittestInspection
 import kotlin.system.exitProcess
 
 class HeadlessRunner : ApplicationStarter {
@@ -60,11 +62,11 @@ class HeadlessRunner : ApplicationStarter {
                         psiFileList.forEach { psiFile ->
                             val holder = ProblemsHolder(inspectionManager, psiFile, false)
                             val session = LocalInspectionToolSession(psiFile, 0, psiFile.textLength)
-//                            val unittestInspectionVisitor =
-//                                MagicNumberTestTestSmellUnittestInspection().buildVisitor(holder, false, session)
-//                            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
-//                                it.accept(unittestInspectionVisitor)
-//                            }
+                            val unittestInspectionVisitor =
+                                MagicNumberTestTestSmellUnittestInspection().buildVisitor(holder, false, session)
+                            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
+                                it.accept(unittestInspectionVisitor)
+                            }
                             val pytestInspectionVisitor =
                                 MagicNumberTestTestSmellPytestInspection().buildVisitor(holder, false, session)
                             PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
