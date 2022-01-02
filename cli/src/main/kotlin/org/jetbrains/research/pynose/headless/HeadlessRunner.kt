@@ -1,5 +1,7 @@
 package org.jetbrains.research.pynose.headless
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
@@ -42,6 +44,7 @@ class HeadlessRunner : ApplicationStarter {
         }
 
         val projectRoot = args[1]
+        val jsonObject = JsonObject()
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             setupSdk(project, projectRoot)
@@ -67,14 +70,26 @@ class HeadlessRunner : ApplicationStarter {
                             PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
                                 it.accept(pytestInspectionVisitor)
                             }
-                            println("In ${psiFile.name} ${holder.results.size} magic number test smells were found")
-                            holder.resultsArray.forEach { x ->
-                                println(PsiTreeUtil.getParentOfType(x.psiElement, PyFunction::class.java))
+                            jsonObject.addProperty("name", "Magic number")
+                            jsonObject.addProperty("hasSmell",  holder.resultsArray.isNotEmpty())
+                            val entry = JsonArray()
+                            val casesMap = mutableMapOf<String, Int>()
+                            holder.resultsArray.forEach { testSmell ->
+                                val name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
+                                casesMap.getOrPut(name!!) {0}
+                                casesMap[name] = casesMap[name]!!.plus(1)
                             }
+                            casesMap.forEach { (x, y) ->
+                                entry.add(x)
+                                entry.add(y)
+                            }
+                            jsonObject.add("detail", entry)
+                            println("In ${psiFile.name} ${holder.results.size} magic number test smells were found")
                         }
                     }
             }
         }
+        println(jsonObject)
         ApplicationManager.getApplication().runWriteAction {
             ProjectJdkTable.getInstance().removeJdk(sdk)
         }
