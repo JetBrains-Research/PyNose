@@ -21,9 +21,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
 import kotlin.system.exitProcess
 
@@ -53,8 +51,11 @@ class HeadlessRunner : ApplicationStarter {
         val outputDir = args[2]
         val splitter = File.separator.replace("\\", "\\\\")
         val pathComponents = projectRoot.split(splitter)
-        val outputFileName = outputDir + File.separatorChar + pathComponents[pathComponents.size - 1] + ".json";
+        val outputFileName = outputDir + File.separatorChar + "PyNoseStat" + ".json";
+        val file = File(outputFileName)
         println("outputFileName = $outputFileName")
+        // create a new file
+        val b = file.createNewFile()
         val projectResult = JsonArray()
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
@@ -75,11 +76,6 @@ class HeadlessRunner : ApplicationStarter {
                             Util.getPytestInspectionsFunctionLevel().forEach { (inspection, inspectionName) ->
                                 val holder = ProblemsHolder(inspectionManager, psiFile, false)
                                 val session = LocalInspectionToolSession(psiFile, 0, psiFile.textLength)
-//                                val unittestInspectionVisitor =
-//                                    MagicNumberTestTestSmellUnittestInspection().buildVisitor(holder, false, session)
-//                                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
-//                                    it.accept(unittestInspectionVisitor)
-//                                }
                                 val inspectionVisitor = inspection.buildVisitor(holder, false, session)
                                 PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
                                     it.accept(inspectionVisitor)
@@ -115,9 +111,10 @@ class HeadlessRunner : ApplicationStarter {
             .create()
             .toJson(JsonParser.parseString(projectResult.toString()))
         try {
-            val bufferedWriter = BufferedWriter(FileWriter(outputFileName))
-            bufferedWriter.write(jsonString)
-            bufferedWriter.close()
+//            val bufferedWriter = BufferedWriter(FileWriter(outputFileName))
+//            bufferedWriter.write(jsonString)
+//            bufferedWriter.close()
+            file.writeText(jsonString)
         } catch (e: IOException) {
             e.printStackTrace()
         }
