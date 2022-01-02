@@ -9,6 +9,7 @@ dependencies {
 open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     @get:Input
     val projectLocation: String? by project
+    val outputDir: String? by project
 
     init {
         jvmArgs = listOf("-Djava.awt.headless=true")
@@ -22,7 +23,8 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "cli",
-            projectLocation
+            projectLocation,
+            outputDir
         )
     }
 }

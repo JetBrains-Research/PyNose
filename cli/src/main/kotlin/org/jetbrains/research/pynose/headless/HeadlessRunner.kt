@@ -1,7 +1,9 @@
 package org.jetbrains.research.pynose.headless
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
@@ -16,13 +18,15 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
-import org.jetbrains.research.pynose.plugin.inspections.pytest.MagicNumberTestTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.unittest.MagicNumberTestTestSmellUnittestInspection
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 import kotlin.system.exitProcess
+
 
 class HeadlessRunner : ApplicationStarter {
 
@@ -46,7 +50,12 @@ class HeadlessRunner : ApplicationStarter {
         }
 
         val projectRoot = args[1]
-        val jsonObject = JsonObject()
+        val outputDir = args[2]
+        val splitter = File.separator.replace("\\", "\\\\")
+        val pathComponents = projectRoot.split(splitter)
+        val outputFileName = outputDir + File.separatorChar + pathComponents[pathComponents.size - 1] + ".json";
+        println("outputFileName = $outputFileName")
+        val projectResult = JsonArray()
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             setupSdk(project, projectRoot)
@@ -60,38 +69,58 @@ class HeadlessRunner : ApplicationStarter {
                         FilenameIndex.getFilesByName(project, vFile.name, GlobalSearchScope.projectScope(project))
                     }.forEach { psiFileList ->
                         psiFileList.forEach { psiFile ->
-                            val holder = ProblemsHolder(inspectionManager, psiFile, false)
-                            val session = LocalInspectionToolSession(psiFile, 0, psiFile.textLength)
-                            val unittestInspectionVisitor =
-                                MagicNumberTestTestSmellUnittestInspection().buildVisitor(holder, false, session)
-                            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
-                                it.accept(unittestInspectionVisitor)
+                            val fileResult = JsonObject()
+                            fileResult.addProperty("filename", psiFile.name)
+                            val fileResultArray = JsonArray()
+                            Util.getPytestInspectionsFunctionLevel().forEach { (inspection, inspectionName) ->
+                                val holder = ProblemsHolder(inspectionManager, psiFile, false)
+                                val session = LocalInspectionToolSession(psiFile, 0, psiFile.textLength)
+//                                val unittestInspectionVisitor =
+//                                    MagicNumberTestTestSmellUnittestInspection().buildVisitor(holder, false, session)
+//                                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
+//                                    it.accept(unittestInspectionVisitor)
+//                                }
+                                val inspectionVisitor = inspection.buildVisitor(holder, false, session)
+                                PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
+                                    it.accept(inspectionVisitor)
+                                }
+                                val result = JsonObject()
+                                result.addProperty("name", inspectionName)
+                                result.addProperty("hasSmell", holder.resultsArray.isNotEmpty())
+                                val entry = JsonArray()
+                                val casesMap = mutableMapOf<String, Int>()
+                                holder.resultsArray.forEach { testSmell ->
+                                    val name =
+                                        PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
+                                    casesMap.getOrPut(name!!) { 0 }
+                                    casesMap[name] = casesMap[name]!!.plus(1)
+                                }
+                                casesMap.forEach { (x, y) ->
+                                    entry.add(x)
+                                    entry.add(y)
+                                }
+                                result.add("detail", entry)
+                                fileResultArray.add(result)
+//                                println("In ${psiFile.name} ${holder.results.size} $inspectionName test smells were found")
                             }
-                            val pytestInspectionVisitor =
-                                MagicNumberTestTestSmellPytestInspection().buildVisitor(holder, false, session)
-                            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
-                                it.accept(pytestInspectionVisitor)
-                            }
-                            jsonObject.addProperty("name", "Magic number")
-                            jsonObject.addProperty("hasSmell",  holder.resultsArray.isNotEmpty())
-                            val entry = JsonArray()
-                            val casesMap = mutableMapOf<String, Int>()
-                            holder.resultsArray.forEach { testSmell ->
-                                val name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
-                                casesMap.getOrPut(name!!) {0}
-                                casesMap[name] = casesMap[name]!!.plus(1)
-                            }
-                            casesMap.forEach { (x, y) ->
-                                entry.add(x)
-                                entry.add(y)
-                            }
-                            jsonObject.add("detail", entry)
-                            println("In ${psiFile.name} ${holder.results.size} magic number test smells were found")
+                            fileResult.add("file result", fileResultArray)
+                            projectResult.add(fileResult)
                         }
                     }
             }
         }
-        println(jsonObject)
+        println(projectResult)
+        val jsonString = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+            .toJson(JsonParser.parseString(projectResult.toString()))
+        try {
+            val bufferedWriter = BufferedWriter(FileWriter(outputFileName))
+            bufferedWriter.write(jsonString)
+            bufferedWriter.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
         ApplicationManager.getApplication().runWriteAction {
             ProjectJdkTable.getInstance().removeJdk(sdk)
         }

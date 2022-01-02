@@ -15,16 +15,16 @@ import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.Obscur
 import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.TestMaverickTestSmellUnittestInspection
 import org.jetbrains.research.pynose.plugin.inspections.universal.*
 
-class Util {
-    fun getPytestInspectionsFunctionLevel(): List<PyInspection> {
-        return listOf<PyInspection>(
-            ConditionalTestLogicTestSmellInspection(),
-            EmptyTestTestSmellInspection(),
-            ExceptionHandlingTestSmellInspection(),
-            MagicNumberTestTestSmellPytestInspection(),
-            RedundantAssertionTestSmellPytestInspection(),
-            RedundantPrintTestSmellInspection(),
-            SleepyTestTestSmellInspection()
+object Util {
+    fun getPytestInspectionsFunctionLevel(): Map<PyInspection, String> {
+        return mapOf(
+            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional logic"),
+            Pair(EmptyTestTestSmellInspection(), "Empty test"),
+            Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
+            Pair(MagicNumberTestTestSmellPytestInspection(), "Magic number"),
+            Pair(RedundantAssertionTestSmellPytestInspection(), "Redundant assertion"),
+            Pair(RedundantPrintTestSmellInspection(), "Redundant print"),
+            Pair(SleepyTestTestSmellInspection(), "Sleepy test")
         )
     }
 
