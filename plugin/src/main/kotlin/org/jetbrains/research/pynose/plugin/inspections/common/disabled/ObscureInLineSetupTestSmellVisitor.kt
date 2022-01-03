@@ -5,15 +5,15 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssignmentStatement
 import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class ObscureInLineSetupTestSmellVisitor(
-    holder: ProblemsHolder?,
+    val holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyInspectionVisitor(holder, getContext(session)) {
+) : PyRecursiveElementVisitor() {
 
     private fun registerObscureInLineSetup(valueParam: PsiElement) {
         holder!!.registerProblem(

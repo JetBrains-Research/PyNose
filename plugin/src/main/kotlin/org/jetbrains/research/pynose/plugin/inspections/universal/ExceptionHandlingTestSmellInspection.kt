@@ -7,9 +7,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
-import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyRaiseStatement
+import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import com.jetbrains.python.psi.PyTryExceptStatement
 import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
@@ -20,8 +19,8 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 class ExceptionHandlingTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellInspection::class.java)
 
-    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : PyInspectionVisitor(holder, getContext(session)) {
+    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
+        return object : PyRecursiveElementVisitor() {
             private fun registerTryExcept(valueParam: PsiElement) {
                 val isUnittestMode = valueParam.project.service<TestRunnerServiceFacade>()
                     .getConfiguredTestRunner(valueParam.containingFile) == TestRunner.UNITTESTS

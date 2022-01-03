@@ -19,6 +19,7 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyFunction
+import org.apache.commons.lang3.tuple.MutablePair
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
 import java.io.File
@@ -54,8 +55,7 @@ class HeadlessRunner : ApplicationStarter {
         val outputFileName = outputDir + File.separatorChar + "PyNoseStat" + ".json";
         val file = File(outputFileName)
         println("outputFileName = $outputFileName")
-        // create a new file
-        val b = file.createNewFile()
+        file.createNewFile()
         val projectResult = JsonArray()
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
@@ -71,7 +71,7 @@ class HeadlessRunner : ApplicationStarter {
                     }.forEach { psiFileList ->
                         psiFileList.forEach { psiFile ->
                             val fileResult = JsonObject()
-                            fileResult.addProperty("filename", psiFile.name)
+                            fileResult.addProperty("Filename", psiFile.name)
                             val fileResultArray = JsonArray()
                             Util.getPytestInspectionsFunctionLevel().forEach { (inspection, inspectionName) ->
                                 val holder = ProblemsHolder(inspectionManager, psiFile, false)
@@ -81,39 +81,38 @@ class HeadlessRunner : ApplicationStarter {
                                     it.accept(inspectionVisitor)
                                 }
                                 val result = JsonObject()
-                                result.addProperty("name", inspectionName)
-                                result.addProperty("hasSmell", holder.resultsArray.isNotEmpty())
+                                result.addProperty("Test smell name", inspectionName)
+                                result.addProperty("Has smell", holder.resultsArray.isNotEmpty())
                                 val entry = JsonArray()
-                                val casesMap = mutableMapOf<String, Int>()
+                                val casesMap = mutableMapOf<String, MutablePair<Int, MutableList<String>>>()
                                 holder.resultsArray.forEach { testSmell ->
                                     val name =
                                         PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
-                                    casesMap.getOrPut(name!!) { 0 }
-                                    casesMap[name] = casesMap[name]!!.plus(1)
+                                    casesMap.getOrPut(name!!) { MutablePair(0, mutableListOf()) }
+                                    casesMap[name]!!.left += 1
+                                    casesMap[name]!!.right.add(testSmell.psiElement.text)
                                 }
                                 casesMap.forEach { (x, y) ->
                                     entry.add(x)
-                                    entry.add(y)
+                                    entry.add(y.left)
+                                    val cases = JsonArray()
+                                    y.right.forEach {e -> cases.add(e)}
+                                    entry.add(cases)
                                 }
-                                result.add("detail", entry)
+                                result.add("Detail", entry)
                                 fileResultArray.add(result)
-//                                println("In ${psiFile.name} ${holder.results.size} $inspectionName test smells were found")
                             }
-                            fileResult.add("file result", fileResultArray)
+                            fileResult.add("Results for file", fileResultArray)
                             projectResult.add(fileResult)
                         }
                     }
             }
         }
-        println(projectResult)
         val jsonString = GsonBuilder()
             .setPrettyPrinting()
             .create()
             .toJson(JsonParser.parseString(projectResult.toString()))
         try {
-//            val bufferedWriter = BufferedWriter(FileWriter(outputFileName))
-//            bufferedWriter.write(jsonString)
-//            bufferedWriter.close()
             file.writeText(jsonString)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -125,3 +124,5 @@ class HeadlessRunner : ApplicationStarter {
     }
 
 }
+
+// :cli:runCliHeadless -P projectLocation="C:\Users\Olesya\PycharmProjects\PyNoseTest" -P outputDir="C:\Users\Olesya\refPyNose\PyNose\cli"

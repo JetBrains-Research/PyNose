@@ -3,8 +3,8 @@ package org.jetbrains.research.pynose.plugin.inspections.unittest
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.psi.PyCallExpression
+import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import com.jetbrains.python.psi.PyReferenceExpression
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.RedundantAssertionTestSmellVisitor
@@ -13,7 +13,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(RedundantAssertionTestSmellUnittestInspection::class.java)
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
         return object : RedundantAssertionTestSmellVisitor(holder, session) {
             // todo: assertTrue(x < x) is not detected yet
             override fun visitPyCallExpression(callExpression: PyCallExpression) {

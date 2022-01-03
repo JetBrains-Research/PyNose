@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -17,8 +16,8 @@ class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspec
     override fun buildUniversalVisitor(
         holder: ProblemsHolder,
         session: LocalInspectionToolSession
-    ): PyInspectionVisitor {
-        return object : PyInspectionVisitor(holder, getContext(session)) {
+    ): PyRecursiveElementVisitor {
+        return object : PyRecursiveElementVisitor() {
             private fun registerConditional(
                 valueParam: PsiElement,
                 offset: Int = 0,
