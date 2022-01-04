@@ -51,10 +51,14 @@ class HeadlessRunner : ApplicationStarter {
     private val pytestCsvMap: MutableMap<String, Int> = mutableMapOf()
 
     private fun setupSdk(project: Project, projectRoot: String) {
-        val projectManager = ProjectRootManager.getInstance(project)
-        sdk = PythonMockSdk(projectRoot).create("3.8")
-        val sdkConfigurer = SdkConfigurer(project, projectManager)
-        sdkConfigurer.setProjectSdk(sdk)
+        try {
+            val projectManager = ProjectRootManager.getInstance(project)
+            sdk = PythonMockSdk(projectRoot).create("3.8")
+            val sdkConfigurer = SdkConfigurer(project, projectManager)
+            sdkConfigurer.setProjectSdk(sdk)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun gatherJsonFunctionInformation(
@@ -213,6 +217,7 @@ class HeadlessRunner : ApplicationStarter {
                 it.accept(inspectionVisitor)
             }
             gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(true, inspectionName, holder)
         }
         Util.getUnittestInspectionsClassResultLevel().forEach { (inspection, inspectionName) ->
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
@@ -220,6 +225,7 @@ class HeadlessRunner : ApplicationStarter {
                 it.accept(inspectionVisitor)
             }
             gatherJsonClassOrFileInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(true, inspectionName, holder)
         }
     }
 
@@ -252,22 +258,37 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun writeToCsvFile(outputDir: String, projectName: String) {
+        var csvOutputFileName = ""
+        var csvOutputDirName = ""
         if (mode == TestRunner.PYTEST) {
             pytestCsvMap.toSortedMap()
-            val pytestWriter = Paths.get("$outputDir/pytest/${projectName}_stats.csv").bufferedWriter()
-            val pytestCsvPrinter = CSVPrinter(pytestWriter, CSVFormat.DEFAULT)
-            val headers = mutableListOf("project_name", "test_file_count")
+            csvOutputDirName = "$outputDir/pytest"
+            csvOutputFileName = "$outputDir/pytest/${projectName}_stats.csv"
+        } else if (mode == TestRunner.UNITTESTS) {
+            unittestCsvMap.toSortedMap()
+            csvOutputDirName = "$outputDir/unittest"
+            csvOutputFileName = "$outputDir/unittest/${projectName}_stats.csv"
+        }
+        val csvFile = File(csvOutputFileName)
+        val csvDir = File(csvOutputDirName)
+        csvDir.mkdirs()
+        println("csvOutputFileName = $csvOutputFileName")
+        csvFile.createNewFile()
+        val writer = Paths.get(csvOutputFileName).bufferedWriter()
+        val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
+        val headers = mutableListOf("project_name", "test_file_count")
+        val data = mutableListOf(projectName, fileCount.toString())
+        if (mode == TestRunner.PYTEST) {
             pytestCsvMap.keys.forEach { key -> headers.add(key) }
-            pytestCsvPrinter.printRecord(headers)
-            val data = mutableListOf(projectName, fileCount.toString())
             pytestCsvMap.keys.forEach { key -> data.add(pytestCsvMap[key].toString()) }
         } else if (mode == TestRunner.UNITTESTS) {
-            val unittestWriter = Paths.get("$outputDir/unittest/${projectName}_stats.csv").bufferedWriter()
-            val unittestCsvPrinter = CSVPrinter(
-                unittestWriter, CSVFormat.DEFAULT
-                    .withHeader("repo_name", "test_file_count", "test_method_count")
-            )
+            unittestCsvMap.keys.forEach { key -> headers.add(key) }
+            unittestCsvMap.keys.forEach { key -> data.add(unittestCsvMap[key].toString()) }
         }
+        csvPrinter.printRecord(headers)
+        csvPrinter.printRecord(data)
+        csvPrinter.flush()
+        csvPrinter.close()
     }
 
     override fun main(args: List<String>) {

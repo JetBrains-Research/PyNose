@@ -4,6 +4,7 @@ version = rootProject.version
 dependencies {
     implementation(project(":core"))
     implementation(project(":plugin"))
+    implementation("org.apache.commons:commons-csv:1.9.0")
 }
 
 open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
@@ -12,7 +13,7 @@ open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     val outputDir: String? by project
 
     init {
-        jvmArgs = listOf("-Djava.awt.headless=true")
+        jvmArgs = listOf("-Xms2G", "-Xmx5G", "-Djava.awt.headless=true")
         standardInput = System.`in`
         standardOutput = System.`out`
     }
