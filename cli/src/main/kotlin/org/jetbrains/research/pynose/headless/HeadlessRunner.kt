@@ -26,6 +26,8 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFunction
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.lang3.tuple.MutablePair
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
@@ -33,6 +35,8 @@ import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
+import kotlin.io.path.bufferedWriter
 import kotlin.system.exitProcess
 
 
@@ -41,6 +45,10 @@ class HeadlessRunner : ApplicationStarter {
     override fun getCommandName() = "cli"
 
     private lateinit var sdk: Sdk
+    private lateinit var mode: TestRunner
+    private var fileCount = 0
+    private val unittestCsvMap: MutableMap<String, Int> = mutableMapOf()
+    private val pytestCsvMap: MutableMap<String, Int> = mutableMapOf()
 
     private fun setupSdk(project: Project, projectRoot: String) {
         val projectManager = ProjectRootManager.getInstance(project)
@@ -62,14 +70,9 @@ class HeadlessRunner : ApplicationStarter {
             val name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
             casesMap.getOrPut(name!!) { MutablePair(0, mutableListOf()) }
             casesMap[name]!!.left += 1
-            val textRange = testSmell.textRangeInElement
-            if (textRange != null) {
-                casesMap[name]!!.right.add(
-                    testSmell.psiElement.text.substring(
-                        textRange.startOffset,
-                        textRange.endOffset
-                    )
-                )
+            val range = testSmell.textRangeInElement
+            if (range != null) {
+                casesMap[name]!!.right.add(testSmell.psiElement.text.substring(range.startOffset, range.endOffset))
             } else {
                 casesMap[name]!!.right.add(testSmell.psiElement.text)
             }
@@ -112,22 +115,20 @@ class HeadlessRunner : ApplicationStarter {
         jsonFileResultArray.add(jsonResult)
     }
 
-    private fun writeToJsonFile(projectResult: JsonArray, jsonFile: File) {
-        val jsonString = GsonBuilder()
-            .setPrettyPrinting()
-            .create()
-            .toJson(JsonParser.parseString(projectResult.toString()))
-        try {
-            jsonFile.writeText(jsonString)
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun gatherCsvInformation(unittest: Boolean, inspectionName: String, holder: ProblemsHolder) {
+        if (unittest) {
+            unittestCsvMap.getOrPut(inspectionName) { 0 }
+            unittestCsvMap[inspectionName] = unittestCsvMap[inspectionName]!!.plus(holder.resultCount)
+        } else {
+            pytestCsvMap.getOrPut(inspectionName) { 0 }
+            pytestCsvMap[inspectionName] = pytestCsvMap[inspectionName]!!.plus(holder.resultCount)
         }
     }
 
-    private fun initOutputFile(projectRoot: String, outputDir: String): File {
+    private fun initOutputJsonFile(projectRoot: String, outputDir: String): File {
         val splitter = File.separator.replace("\\", "\\\\")
         val pathComponents = projectRoot.split(splitter)
-        val jsonOutputFileName = outputDir + File.separatorChar + "PyNoseStat" + ".json";
+        val jsonOutputFileName = outputDir + File.separatorChar + "PyNoseStats.json";
         val jsonFile = File(jsonOutputFileName)
         println("jsonOutputFileName = $jsonOutputFileName")
         jsonFile.createNewFile()
@@ -156,18 +157,21 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun analyse(project: Project, inspectionManager: InspectionManager, jsonProjectResult: JsonArray) {
-        getFiles(project).forEach { psiFileList ->
+        val files = getFiles(project)
+        fileCount = files.count()
+        files.forEach { psiFileList ->
             psiFileList.forEach { psiFile ->
                 val jsonFileResult = JsonObject()
                 jsonFileResult.addProperty("Filename", psiFile.name)
                 val jsonFileResultArray = JsonArray()
                 val testRunner = project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(psiFile)
+                mode = testRunner
                 if (testRunner == TestRunner.PYTEST) {
                     analysePytest(inspectionManager, psiFile, jsonFileResultArray)
-                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray)
+                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, false)
                 } else if (testRunner == TestRunner.UNITTESTS) {
                     analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
-                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray)
+                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, true)
                 }
                 jsonFileResult.add("Results for file", jsonFileResultArray)
                 jsonProjectResult.add(jsonFileResult)
@@ -182,16 +186,19 @@ class HeadlessRunner : ApplicationStarter {
                 it.accept(inspectionVisitor)
             }
             gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(false, inspectionName, holder)
         }
         Util.getPytestInspectionsFileLaunchLevel().forEach { (inspection, inspectionName) ->
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
             psiFile.accept(inspectionVisitor)
             gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(false, inspectionName, holder)
         }
         Util.getPytestInspectionsFileResultLevel().forEach { (inspection, inspectionName) ->
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
             psiFile.accept(inspectionVisitor)
             gatherJsonClassOrFileInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(false, inspectionName, holder)
         }
     }
 
@@ -219,7 +226,8 @@ class HeadlessRunner : ApplicationStarter {
     private fun analyseUniversal(
         inspectionManager: InspectionManager,
         psiFile: PsiFile,
-        jsonFileResultArray: JsonArray
+        jsonFileResultArray: JsonArray,
+        unittest: Boolean
     ) {
         Util.getUniversalNonRecursiveInspections().forEach { (inspection, inspectionName) ->
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
@@ -227,6 +235,38 @@ class HeadlessRunner : ApplicationStarter {
                 it.accept(inspectionVisitor)
             }
             gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+            gatherCsvInformation(unittest, inspectionName, holder)
+        }
+    }
+
+    private fun writeToJsonFile(projectResult: JsonArray, jsonFile: File) {
+        val jsonString = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+            .toJson(JsonParser.parseString(projectResult.toString()))
+        try {
+            jsonFile.writeText(jsonString)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun writeToCsvFile(outputDir: String, projectName: String) {
+        if (mode == TestRunner.PYTEST) {
+            pytestCsvMap.toSortedMap()
+            val pytestWriter = Paths.get("$outputDir/pytest/${projectName}_stats.csv").bufferedWriter()
+            val pytestCsvPrinter = CSVPrinter(pytestWriter, CSVFormat.DEFAULT)
+            val headers = mutableListOf("project_name", "test_file_count")
+            pytestCsvMap.keys.forEach { key -> headers.add(key) }
+            pytestCsvPrinter.printRecord(headers)
+            val data = mutableListOf(projectName, fileCount.toString())
+            pytestCsvMap.keys.forEach { key -> data.add(pytestCsvMap[key].toString()) }
+        } else if (mode == TestRunner.UNITTESTS) {
+            val unittestWriter = Paths.get("$outputDir/unittest/${projectName}_stats.csv").bufferedWriter()
+            val unittestCsvPrinter = CSVPrinter(
+                unittestWriter, CSVFormat.DEFAULT
+                    .withHeader("repo_name", "test_file_count", "test_method_count")
+            )
         }
     }
 
@@ -236,16 +276,19 @@ class HeadlessRunner : ApplicationStarter {
             exitProcess(0)
         }
         val projectRoot = args[1]
-        val jsonFile = initOutputFile(projectRoot, args[2])
+        val jsonFile = initOutputJsonFile(projectRoot, args[2])
         val jsonProjectResult = JsonArray()
+        var projectName = ""
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
+            projectName = project.name
             setupSdk(project, projectRoot)
             val inspectionManager = InspectionManager.getInstance(project)
             WriteCommandAction.runWriteCommandAction(project) {
                 analyse(project, inspectionManager, jsonProjectResult)
             }
         }
+        writeToCsvFile(args[2], projectName)
         writeToJsonFile(jsonProjectResult, jsonFile)
         try {
             ApplicationManager.getApplication().runWriteAction {
@@ -256,7 +299,4 @@ class HeadlessRunner : ApplicationStarter {
         }
         exitProcess(0)
     }
-
 }
-
-// :cli:runCliHeadless -P projectLocation="C:\Users\Olesya\PycharmProjects\PyNoseTest" -P outputDir="C:\Users\Olesya\refPyNose\PyNose\cli"
