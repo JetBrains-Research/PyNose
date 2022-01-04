@@ -14,8 +14,8 @@ class SomeClass(unittest.TestCase):
     def test_something_else(self):
         self.assertFalse(1 == 2)
         self.assertFalse(1 == 3)
-        assert 1 == 1
-        assert 1 == 1
+        assert 1 == 15
+        assert 1 == 15
 
     def not_a_test(self):
         self.assertFalse(1 == 2)

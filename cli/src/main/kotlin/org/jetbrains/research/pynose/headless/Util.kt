@@ -41,20 +41,25 @@ object Util {
         )
     }
 
-    fun getUnittestInspections(): Map<PyInspection, String> {
+    fun getUnittestInspectionsFunctionResultLevel(): Map<PyInspection, String> {
         return mapOf(
             Pair(AssertionRouletteTestSmellUnittestInspection(), "Assertion roulette"),
             Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
             Pair(ConstructorInitializationTestSmellUnittestInspection(), "Constructor initialization"),
-            Pair(DefaultTestTestSmellUnittestInspection(), "Default test"),
             Pair(DuplicateAssertionTestSmellUnittestInspection(), "Duplicate assertion"),
             Pair(EmptyTestTestSmellInspection(), "Empty test"),
             Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
-            Pair(LackCohesionTestSmellUnittestInspection(), "Lack cohesion"),
             Pair(ObscureInLineSetupTestSmellUnittestInspection(), "Obscure in-line setup"),
             Pair(MagicNumberTestTestSmellUnittestInspection(), "Magic number"),
             Pair(RedundantAssertionTestSmellUnittestInspection(), "Redundant assertion"),
-            Pair(SuboptimalAssertTestSmellUnittestInspection(), "Suboptimal assertion"),
+            Pair(SuboptimalAssertTestSmellUnittestInspection(), "Suboptimal assertion")
+        )
+    }
+
+    fun getUnittestInspectionsClassResultLevel(): Map<PyInspection, String> {
+        return mapOf(
+            Pair(DefaultTestTestSmellUnittestInspection(), "Default test"),
+            Pair(LackCohesionTestSmellUnittestInspection(), "Lack cohesion"),
             Pair(TestMaverickTestSmellUnittestInspection(), "Test maverick")
         )
     }

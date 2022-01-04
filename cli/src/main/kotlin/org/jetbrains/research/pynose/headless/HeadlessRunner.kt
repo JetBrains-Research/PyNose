@@ -11,6 +11,7 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -28,6 +29,8 @@ import com.jetbrains.python.psi.PyFunction
 import org.apache.commons.lang3.tuple.MutablePair
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
+import org.jetbrains.research.pynose.plugin.inspections.TestRunner
+import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import java.io.File
 import java.io.IOException
 import kotlin.system.exitProcess
@@ -59,7 +62,17 @@ class HeadlessRunner : ApplicationStarter {
             val name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFunction::class.java)?.name
             casesMap.getOrPut(name!!) { MutablePair(0, mutableListOf()) }
             casesMap[name]!!.left += 1
-            casesMap[name]!!.right.add(testSmell.psiElement.text)
+            val textRange = testSmell.textRangeInElement
+            if (textRange != null) {
+                casesMap[name]!!.right.add(
+                    testSmell.psiElement.text.substring(
+                        textRange.startOffset,
+                        textRange.endOffset
+                    )
+                )
+            } else {
+                casesMap[name]!!.right.add(testSmell.psiElement.text)
+            }
         }
         val entry = JsonArray()
         casesMap.forEach { (ts, pair) ->
@@ -73,7 +86,7 @@ class HeadlessRunner : ApplicationStarter {
         jsonFileResultArray.add(jsonResult)
     }
 
-    private fun gatherJsonFileInformation(
+    private fun gatherJsonClassOrFileInformation(
         inspectionName: String,
         holder: ProblemsHolder,
         jsonFileResultArray: JsonArray
@@ -142,6 +155,81 @@ class HeadlessRunner : ApplicationStarter {
         return Pair(holder, inspectionVisitor)
     }
 
+    private fun analyse(project: Project, inspectionManager: InspectionManager, jsonProjectResult: JsonArray) {
+        getFiles(project).forEach { psiFileList ->
+            psiFileList.forEach { psiFile ->
+                val jsonFileResult = JsonObject()
+                jsonFileResult.addProperty("Filename", psiFile.name)
+                val jsonFileResultArray = JsonArray()
+                val testRunner = project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(psiFile)
+                if (testRunner == TestRunner.PYTEST) {
+                    analysePytest(inspectionManager, psiFile, jsonFileResultArray)
+                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray)
+                } else if (testRunner == TestRunner.UNITTESTS) {
+                    analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
+                    analyseUniversal(inspectionManager, psiFile, jsonFileResultArray)
+                }
+                jsonFileResult.add("Results for file", jsonFileResultArray)
+                jsonProjectResult.add(jsonFileResult)
+            }
+        }
+    }
+
+    private fun analysePytest(inspectionManager: InspectionManager, psiFile: PsiFile, jsonFileResultArray: JsonArray) {
+        Util.getPytestInspectionsFunctionLevel().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
+                it.accept(inspectionVisitor)
+            }
+            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+        }
+        Util.getPytestInspectionsFileLaunchLevel().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            psiFile.accept(inspectionVisitor)
+            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+        }
+        Util.getPytestInspectionsFileResultLevel().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            psiFile.accept(inspectionVisitor)
+            gatherJsonClassOrFileInformation(inspectionName, holder, jsonFileResultArray)
+        }
+    }
+
+    private fun analyseUnittest(
+        inspectionManager: InspectionManager,
+        psiFile: PsiFile,
+        jsonFileResultArray: JsonArray
+    ) {
+        Util.getUnittestInspectionsFunctionResultLevel().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
+                it.accept(inspectionVisitor)
+            }
+            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+        }
+        Util.getUnittestInspectionsClassResultLevel().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
+                it.accept(inspectionVisitor)
+            }
+            gatherJsonClassOrFileInformation(inspectionName, holder, jsonFileResultArray)
+        }
+    }
+
+    private fun analyseUniversal(
+        inspectionManager: InspectionManager,
+        psiFile: PsiFile,
+        jsonFileResultArray: JsonArray
+    ) {
+        Util.getUniversalNonRecursiveInspections().forEach { (inspection, inspectionName) ->
+            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
+            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach {
+                it.accept(inspectionVisitor)
+            }
+            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
+        }
+    }
+
     override fun main(args: List<String>) {
         if (args.size < 2) {
             System.err.println("Specify project path as an argument")
@@ -155,46 +243,7 @@ class HeadlessRunner : ApplicationStarter {
             setupSdk(project, projectRoot)
             val inspectionManager = InspectionManager.getInstance(project)
             WriteCommandAction.runWriteCommandAction(project) {
-                getFiles(project).forEach { psiFileList ->
-                    psiFileList.forEach { psiFile ->
-                        val jsonFileResult = JsonObject()
-                        jsonFileResult.addProperty("Filename", psiFile.name)
-                        val jsonFileResultArray = JsonArray()
-                        Util.getPytestInspectionsFunctionLevel().forEach { (inspection, inspectionName) ->
-                            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-                            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
-                                it.accept(inspectionVisitor)
-                            }
-                            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
-                        }
-                        Util.getPytestInspectionsFileLaunchLevel().forEach { (inspection, inspectionName) ->
-                            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-                            psiFile.accept(inspectionVisitor)
-                            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
-                        }
-                        Util.getPytestInspectionsFileResultLevel().forEach { (inspection, inspectionName) ->
-                            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-                            psiFile.accept(inspectionVisitor)
-                            gatherJsonFileInformation(inspectionName, holder, jsonFileResultArray)
-                        }
-//                        Util.getUnittestInspections().forEach { (inspection, inspectionName) ->
-//                            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-//                            PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
-//                                it.accept(inspectionVisitor)
-//                            }
-//                            gatherJsonInformation(inspectionName, holder, jsonFileResultArray)
-//                        }
-                        Util.getUniversalNonRecursiveInspections().forEach { (inspection, inspectionName) ->
-                            val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-                            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach {
-                                it.accept(inspectionVisitor)
-                            }
-                            gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
-                        }
-                        jsonFileResult.add("Results for file", jsonFileResultArray)
-                        jsonProjectResult.add(jsonFileResult)
-                    }
-                }
+                analyse(project, inspectionManager, jsonProjectResult)
             }
         }
         writeToJsonFile(jsonProjectResult, jsonFile)
