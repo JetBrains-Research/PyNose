@@ -18,43 +18,51 @@ import org.jetbrains.research.pynose.plugin.inspections.universal.*
 object Util {
     fun getPytestInspectionsFunctionLevel(): Map<PyInspection, String> {
         return mapOf(
-            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional logic"),
+            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
             Pair(EmptyTestTestSmellInspection(), "Empty test"),
             Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
             Pair(MagicNumberTestTestSmellPytestInspection(), "Magic number"),
-            Pair(RedundantAssertionTestSmellPytestInspection(), "Redundant assertion"),
+            Pair(RedundantAssertionTestSmellPytestInspection(), "Redundant assertion")
+        )
+    }
+
+    fun getPytestInspectionsFileLaunchLevel(): Map<PyInspection, String> {
+        return mapOf(
+            Pair(AssertionRouletteTestSmellPytestInspection(), "Assertion roulette"),
+            Pair(DuplicateAssertionTestSmellPytestInspection(), "Duplicate assertion"),
+            Pair(ObscureInLineSetupTestSmellPytestInspection(), "Obscure in-line setup")
+        )
+    }
+
+    fun getPytestInspectionsFileResultLevel(): Map<PyInspection, String> {
+        return mapOf(
+            Pair(LackCohesionTestSmellPytestInspection(), "Lack cohesion"),
+            Pair(TestMaverickTestSmellPytestInspection(), "Test maverick")
+        )
+    }
+
+    fun getUnittestInspections(): Map<PyInspection, String> {
+        return mapOf(
+            Pair(AssertionRouletteTestSmellUnittestInspection(), "Assertion roulette"),
+            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
+            Pair(ConstructorInitializationTestSmellUnittestInspection(), "Constructor initialization"),
+            Pair(DefaultTestTestSmellUnittestInspection(), "Default test"),
+            Pair(DuplicateAssertionTestSmellUnittestInspection(), "Duplicate assertion"),
+            Pair(EmptyTestTestSmellInspection(), "Empty test"),
+            Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
+            Pair(LackCohesionTestSmellUnittestInspection(), "Lack cohesion"),
+            Pair(ObscureInLineSetupTestSmellUnittestInspection(), "Obscure in-line setup"),
+            Pair(MagicNumberTestTestSmellUnittestInspection(), "Magic number"),
+            Pair(RedundantAssertionTestSmellUnittestInspection(), "Redundant assertion"),
+            Pair(SuboptimalAssertTestSmellUnittestInspection(), "Suboptimal assertion"),
+            Pair(TestMaverickTestSmellUnittestInspection(), "Test maverick")
+        )
+    }
+
+    fun getUniversalNonRecursiveInspections(): Map<PyInspection, String> {
+        return mapOf(
             Pair(RedundantPrintTestSmellInspection(), "Redundant print"),
             Pair(SleepyTestTestSmellInspection(), "Sleepy test")
-        )
-    }
-
-    fun getPytestInspectionsFileLevel(): List<PyInspection> {
-        return listOf<PyInspection>(
-            AssertionRouletteTestSmellPytestInspection(),
-            DuplicateAssertionTestSmellPytestInspection(),
-            LackCohesionTestSmellPytestInspection(),
-            ObscureInLineSetupTestSmellPytestInspection(),
-            TestMaverickTestSmellPytestInspection()
-        )
-    }
-
-    fun getUnittestInspections(): List<PyInspection> {
-        return listOf<PyInspection>(
-            AssertionRouletteTestSmellUnittestInspection(),
-            ConditionalTestLogicTestSmellInspection(),
-            ConstructorInitializationTestSmellUnittestInspection(),
-            DefaultTestTestSmellUnittestInspection(),
-            DuplicateAssertionTestSmellUnittestInspection(),
-            EmptyTestTestSmellInspection(),
-            ExceptionHandlingTestSmellInspection(),
-            LackCohesionTestSmellUnittestInspection(),
-            ObscureInLineSetupTestSmellUnittestInspection(),
-            MagicNumberTestTestSmellUnittestInspection(),
-            RedundantAssertionTestSmellUnittestInspection(),
-            RedundantPrintTestSmellInspection(),
-            SleepyTestTestSmellInspection(),
-            SuboptimalAssertTestSmellUnittestInspection(),
-            TestMaverickTestSmellUnittestInspection()
         )
     }
 }
