@@ -137,14 +137,6 @@ class HeadlessRunner : ApplicationStarter {
         }
     }
 
-    private fun initOutputJsonFile(outputDir: String): File {
-        val jsonOutputFileName = outputDir + File.separatorChar + "PyNoseStats.json";
-        val jsonFile = File(jsonOutputFileName)
-        println("jsonOutputFileName = $jsonOutputFileName")
-        jsonFile.createNewFile()
-        return jsonFile
-    }
-
     private fun getFiles(project: Project): List<Array<PsiFile>> {
         return FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project))
             .filter { vFile ->
@@ -257,7 +249,15 @@ class HeadlessRunner : ApplicationStarter {
         }
     }
 
+    private fun initOutputJsonFile(outputDir: String): File {
+        val jsonOutputFileName = outputDir + File.separatorChar + "PyNoseStats.json";
+        val jsonFile = File(jsonOutputFileName)
+        jsonFile.createNewFile()
+        return jsonFile
+    }
+
     private fun writeToJsonFile(projectResult: JsonArray, jsonFile: File) {
+        println("jsonOutputFileName = ${jsonFile.name}")
         val jsonString = GsonBuilder()
             .setPrettyPrinting()
             .create()
