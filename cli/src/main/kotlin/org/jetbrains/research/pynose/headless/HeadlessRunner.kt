@@ -52,6 +52,7 @@ class HeadlessRunner : ApplicationStarter {
     private var fileCount = 0
     private val unittestCsvMap: MutableMap<String, Int> = mutableMapOf()
     private val pytestCsvMap: MutableMap<String, Int> = mutableMapOf()
+    private var setupFinished = false
 
     private fun setupSdk(project: Project) {
         try {
@@ -67,6 +68,7 @@ class HeadlessRunner : ApplicationStarter {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        setupFinished = true
     }
 
     private fun gatherJsonFunctionInformation(
@@ -257,7 +259,7 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun writeToJsonFile(projectResult: JsonArray, jsonFile: File) {
-        println("jsonOutputFileName = ${jsonFile.name}")
+        println("jsonOutputFileName = ${jsonFile.path}")
         val jsonString = GsonBuilder()
             .setPrettyPrinting()
             .create()
@@ -276,12 +278,12 @@ class HeadlessRunner : ApplicationStarter {
         var sortedUnittestCsvMap: MutableMap<String, Int> = mutableMapOf()
         if (mode == TestRunner.PYTEST) {
             sortedPytestCsvMap = TreeMap(pytestCsvMap)
-            csvOutputDirName = "$outputDir/pytest"
-            csvOutputFileName = "$outputDir/pytest/${projectName}_stats.csv"
+            csvOutputDirName = "$outputDir\\pytest"
+            csvOutputFileName = "$outputDir\\pytest/${projectName}_stats.csv"
         } else if (mode == TestRunner.UNITTESTS) {
             sortedUnittestCsvMap = TreeMap(unittestCsvMap)
-            csvOutputDirName = "$outputDir/unittest"
-            csvOutputFileName = "$outputDir/unittest/${projectName}_stats.csv"
+            csvOutputDirName = "$outputDir\\unittest"
+            csvOutputFileName = "$outputDir\\unittest\\${projectName}_stats.csv"
         }
         val csvFile = File(csvOutputFileName)
         val csvDir = File(csvOutputDirName)
@@ -314,10 +316,18 @@ class HeadlessRunner : ApplicationStarter {
         val jsonFile = initOutputJsonFile(args[2])
         val jsonProjectResult = JsonArray()
         var projectName = ""
+//            ApplicationManager.getApplication().invokeAndWait {
+//                val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
+//                projectName = project.name
+//                setupSdk(project)
+//            }
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             projectName = project.name
             setupSdk(project)
+            while (!setupFinished) {
+                Thread.sleep(200)
+            }
             val inspectionManager = InspectionManager.getInstance(project)
             WriteCommandAction.runWriteCommandAction(project) {
                 analyse(project, inspectionManager, jsonProjectResult)
