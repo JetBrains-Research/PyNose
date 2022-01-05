@@ -317,7 +317,7 @@ class HeadlessRunner : ApplicationStarter {
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             projectName = project.name
-            setupSdk(project, projectRoot)
+            setupSdk(project)
             val inspectionManager = InspectionManager.getInstance(project)
             WriteCommandAction.runWriteCommandAction(project) {
                 analyse(project, inspectionManager, jsonProjectResult)
