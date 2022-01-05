@@ -21,8 +21,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.descendants
 import com.jetbrains.python.inspections.PyInspection
-import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFunction
@@ -171,10 +171,10 @@ class HeadlessRunner : ApplicationStarter {
                 val testRunner = project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(psiFile)
                 mode = testRunner
                 if (testRunner == TestRunner.PYTEST) {
-                    analysePytest(inspectionManager, psiFile, jsonFileResultArray)
+//                    analysePytest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, false)
                 } else if (testRunner == TestRunner.UNITTESTS) {
-                    analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
+//                    analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, true)
                 }
                 jsonFileResult.add("Results for file", jsonFileResultArray)
@@ -235,10 +235,16 @@ class HeadlessRunner : ApplicationStarter {
         jsonFileResultArray: JsonArray,
         unittest: Boolean
     ) {
-        Util.getUniversalNonRecursiveInspections().forEach { (inspection, inspectionName) ->
+        Util.getUniversalInspections().forEach { (inspection, inspectionName) ->
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, inspection)
-            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach {
+//            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach {
+//                it.accept(inspectionVisitor)
+//            }
+            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
                 it.accept(inspectionVisitor)
+                it.descendants { true }.forEach { s ->
+                    s.accept(inspectionVisitor)
+                }
             }
             gatherJsonFunctionInformation(inspectionName, holder, jsonFileResultArray)
             gatherCsvInformation(unittest, inspectionName, holder)

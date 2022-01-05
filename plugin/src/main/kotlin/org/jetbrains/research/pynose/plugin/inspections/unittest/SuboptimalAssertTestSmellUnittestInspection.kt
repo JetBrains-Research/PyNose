@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.quickfixes.unittest.SuboptimalAssertionTestSmellQuickFix
@@ -44,7 +45,7 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
             .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
     }
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         fun registerSuboptimal(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,
@@ -54,7 +55,7 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
             )
         }
 
-        return object : PyRecursiveElementVisitor() {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 if (!UnittestInspectionsUtils.isValidUnittestParent(callExpression)) {

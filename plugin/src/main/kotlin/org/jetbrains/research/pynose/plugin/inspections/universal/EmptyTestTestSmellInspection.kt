@@ -5,9 +5,9 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyFunction
 import com.jetbrains.python.psi.PyPassStatement
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import org.jetbrains.research.pynose.plugin.quickfixes.common.EmptyTestTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -16,8 +16,8 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellInspection::class.java)
 
-    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
-        return object : PyRecursiveElementVisitor() {
+    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerEmpty(valueParam: PsiElement) {
                 holder.registerProblem(
                     valueParam,

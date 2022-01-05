@@ -4,16 +4,16 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyBinaryExpression
 import com.jetbrains.python.psi.PyLiteralExpression
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import org.jetbrains.research.pynose.plugin.quickfixes.common.RedundantAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-open class RedundantAssertionTestSmellVisitor(val holder: ProblemsHolder?, session: LocalInspectionToolSession) :
-    PyRecursiveElementVisitor() {
+open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, getContext(session)) {
 
     private val OPERATOR_TEXT = mutableSetOf("==", "!=", ">", ">=", "<=", "<", "is")
 

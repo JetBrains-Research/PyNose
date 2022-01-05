@@ -4,17 +4,17 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyFunction
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import opennlp.tools.stemmer.PorterStemmer
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 import java.util.*
 import kotlin.math.sqrt
 
 open class LackCohesionTestSmellVisitor(
-    val holder: ProblemsHolder?,
+    holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyRecursiveElementVisitor() {
+) : PyInspectionVisitor(holder, getContext(session)) {
     private val STEMMER = PorterStemmer()
     private val STOP_WORDS: Set<String> = setOf(
         "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",

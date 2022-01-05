@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFunction
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.quickfixes.unittest.ConstructorInitializationTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
@@ -16,7 +16,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 class ConstructorInitializationTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(ConstructorInitializationTestSmellUnittestInspection::class.java)
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         fun registerConstructorInitialization(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,
@@ -25,7 +25,7 @@ class ConstructorInitializationTestSmellUnittestInspection : AbstractTestSmellIn
                 ConstructorInitializationTestSmellQuickFix()
             )
         }
-        return object : PyRecursiveElementVisitor() {
+        return object : PyInspectionVisitor(holder, getContext(session)) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)
                 if (UnittestInspectionsUtils.isValidUnittestCase(node)) {

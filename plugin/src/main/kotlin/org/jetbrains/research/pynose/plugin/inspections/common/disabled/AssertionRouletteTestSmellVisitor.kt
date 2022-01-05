@@ -4,15 +4,15 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyFunction
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class AssertionRouletteTestSmellVisitor(
-    val holder: ProblemsHolder?,
+    holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyRecursiveElementVisitor() {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     protected fun registerRoulette(valueParam: PsiElement) {
         holder!!.registerProblem(

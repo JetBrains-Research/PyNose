@@ -5,13 +5,17 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.inspections.PyInspectionVisitor
+import com.jetbrains.python.psi.PyClass
+import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyReferenceExpression
+import com.jetbrains.python.psi.PyTargetExpression
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 open class TestMaverickTestSmellVisitor(
-    val holder: ProblemsHolder?,
+    holder: ProblemsHolder?,
     session: LocalInspectionToolSession
-) : PyRecursiveElementVisitor() {
+) : PyInspectionVisitor(holder, getContext(session)) {
 
     private var inSetUpMode: Boolean = true
     private var methodFirstParamName: String? = null

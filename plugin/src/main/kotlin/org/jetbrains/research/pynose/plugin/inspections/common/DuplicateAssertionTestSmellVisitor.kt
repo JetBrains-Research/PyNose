@@ -4,14 +4,14 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
-import com.jetbrains.python.psi.PyRecursiveElementVisitor
 import com.jetbrains.python.psi.PyWithItem
 import org.jetbrains.research.pynose.plugin.quickfixes.common.DuplicateAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
-open class DuplicateAssertionTestSmellVisitor(val holder: ProblemsHolder?, session: LocalInspectionToolSession) :
-    PyRecursiveElementVisitor() {
+open class DuplicateAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
+    PyInspectionVisitor(holder, getContext(session)) {
 
     protected fun registerDuplicate(valueParam: PsiElement) {
         holder!!.registerProblem(

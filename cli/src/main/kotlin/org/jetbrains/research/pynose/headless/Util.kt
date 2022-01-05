@@ -64,7 +64,7 @@ object Util {
         )
     }
 
-    fun getUniversalNonRecursiveInspections(): Map<PyInspection, String> {
+    fun getUniversalInspections(): Map<PyInspection, String> {
         return mapOf(
             Pair(RedundantPrintTestSmellInspection(), "Redundant print"),
             Pair(SleepyTestTestSmellInspection(), "Sleepy test")

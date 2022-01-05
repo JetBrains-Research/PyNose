@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.disabled.AssertionRouletteTestSmellVisitor
@@ -12,7 +13,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(AssertionRouletteTestSmellUnittestInspection::class.java)
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyRecursiveElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : AssertionRouletteTestSmellVisitor(holder, session) {
             override fun visitPyClass(pyClass: PyClass) {
                 if (UnittestInspectionsUtils.isValidUnittestCase(pyClass)) {
