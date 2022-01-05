@@ -316,11 +316,6 @@ class HeadlessRunner : ApplicationStarter {
         val jsonFile = initOutputJsonFile(args[2])
         val jsonProjectResult = JsonArray()
         var projectName = ""
-//            ApplicationManager.getApplication().invokeAndWait {
-//                val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
-//                projectName = project.name
-//                setupSdk(project)
-//            }
         ApplicationManager.getApplication().invokeAndWait {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             projectName = project.name
