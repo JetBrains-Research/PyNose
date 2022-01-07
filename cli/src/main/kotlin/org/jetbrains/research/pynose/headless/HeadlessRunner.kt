@@ -52,7 +52,6 @@ class HeadlessRunner : ApplicationStarter {
     private var fileCount = 0
     private val unittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
     private val pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
-    private var setupFinished = false
 
     private fun setupSdk(project: Project) {
         try {
@@ -68,7 +67,6 @@ class HeadlessRunner : ApplicationStarter {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        setupFinished = true
     }
 
     private fun gatherJsonFunctionInformation(
@@ -324,12 +322,20 @@ class HeadlessRunner : ApplicationStarter {
             val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
             projectName = project.name
             setupSdk(project)
-            while (!setupFinished) {
-                Thread.sleep(1000)
-            }
             val inspectionManager = InspectionManager.getInstance(project)
-            WriteCommandAction.runWriteCommandAction(project) {
-                analyse(project, inspectionManager, jsonProjectResult)
+            var i = 0
+            while (i < 10) {
+                i++
+                var success = true
+                WriteCommandAction.runWriteCommandAction(project) {
+                    try {
+                        analyse(project, inspectionManager, jsonProjectResult)
+                    } catch (ex: Exception) {
+                        success = false
+                        ex.printStackTrace()
+                    }
+                }
+                if (success) break
             }
         }
         val jsonFile = initOutputJsonFile(args[2], projectName)
