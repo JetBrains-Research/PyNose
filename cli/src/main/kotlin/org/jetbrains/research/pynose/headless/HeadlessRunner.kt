@@ -54,8 +54,8 @@ class HeadlessRunner : ApplicationStarter {
     private var pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
     private var aggregatedPytestHasHeader = false
     private var aggregatedUnittestHasHeader = false
-    private var agCsvPytestData : MutableList<MutableList<String>> = mutableListOf()
-    private var agCsvUnittestData : MutableList<MutableList<String>> = mutableListOf()
+    private var agCsvPytestData: MutableList<MutableList<String>> = mutableListOf()
+    private var agCsvUnittestData: MutableList<MutableList<String>> = mutableListOf()
 
     private fun setupSdk(project: Project) {
         try {
@@ -131,8 +131,12 @@ class HeadlessRunner : ApplicationStarter {
         jsonFileResultArray.add(jsonResult)
     }
 
-    private fun
-            gatherCsvInformation(unittest: Boolean, inspectionName: String, holder: ProblemsHolder, psiFile: PsiFile) {
+    private fun gatherCsvInformation(
+        unittest: Boolean,
+        inspectionName: String,
+        holder: ProblemsHolder,
+        psiFile: PsiFile
+    ) {
         if (unittest) {
             unittestCsvMap.getOrPut(inspectionName) { mutableSetOf() }
             if (holder.resultCount > 0) {
@@ -351,6 +355,7 @@ class HeadlessRunner : ApplicationStarter {
                 val projectRoot = projectDir.path
                 val jsonProjectResult = JsonArray()
                 var projectName = ""
+                val outputDir = args[2]
                 ApplicationManager.getApplication().invokeAndWait {
                     val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
                     projectName = project.name
@@ -364,18 +369,18 @@ class HeadlessRunner : ApplicationStarter {
                                 val inspectionManager = InspectionManager.getInstance(project)
                                 analyse(project, inspectionManager, jsonProjectResult)
                             }
-                        } catch (ex: Exception) {
+                        } catch (e: Exception) {
                             success = false
-                            ex.printStackTrace()
+                            e.printStackTrace()
                         }
                         if (success) break
                     }
                 }
-                val jsonFile = initOutputJsonFile(args[2], projectName)
-                writeToCsvFile(args[2], projectName)
+                val jsonFile = initOutputJsonFile(outputDir, projectName)
+                writeToCsvFile(outputDir, projectName)
                 writeToJsonFile(jsonProjectResult, jsonFile)
-                writeToAggregatedCsv(args[2], "pytest")
-                writeToAggregatedCsv(args[2], "unittest")
+                writeToAggregatedCsv(outputDir, "pytest")
+                writeToAggregatedCsv(outputDir, "unittest")
                 try {
                     ApplicationManager.getApplication().runWriteAction {
                         ProjectJdkTable.getInstance().removeJdk(sdk)
@@ -383,8 +388,8 @@ class HeadlessRunner : ApplicationStarter {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            } catch (eee: Exception) {
-                eee.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         exitProcess(0)
