@@ -50,8 +50,12 @@ class HeadlessRunner : ApplicationStarter {
     private lateinit var sdk: Sdk
     private lateinit var mode: TestRunner
     private var fileCount = 0
-    private val unittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
-    private val pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
+    private var unittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
+    private var pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
+    private var aggregatedPytestHasHeader = false
+    private var aggregatedUnittestHasHeader = false
+    private var agCsvPytestData : MutableList<MutableList<String>> = mutableListOf()
+    private var agCsvUnittestData : MutableList<MutableList<String>> = mutableListOf()
 
     private fun setupSdk(project: Project) {
         try {
@@ -282,71 +286,106 @@ class HeadlessRunner : ApplicationStarter {
         if (mode == TestRunner.PYTEST) {
             sortedPytestCsvMap = TreeMap(pytestCsvMap)
             csvOutputDirName = "$outputDir\\pytest"
-            csvOutputFileName = "$outputDir\\pytest/${projectName}_stats.csv"
+            csvOutputFileName = "$outputDir\\pytest\\${projectName}_stats.csv"
         } else if (mode == TestRunner.UNITTESTS) {
             sortedUnittestCsvMap = TreeMap(unittestCsvMap)
             csvOutputDirName = "$outputDir\\unittest"
             csvOutputFileName = "$outputDir\\unittest\\${projectName}_stats.csv"
         }
-        val csvFile = File(csvOutputFileName)
-        val csvDir = File(csvOutputDirName)
-        csvDir.mkdirs()
-        println("csvOutputFileName = $csvOutputFileName")
-        csvFile.createNewFile()
+        File(csvOutputDirName).mkdirs()
+        File(csvOutputFileName).createNewFile()
         val writer = Paths.get(csvOutputFileName).bufferedWriter()
         val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
-        val headers = mutableListOf("project_name", "test_file_count")
+        val header = mutableListOf("project_name", "test_file_count")
         val data = mutableListOf(projectName, fileCount.toString())
         if (mode == TestRunner.PYTEST) {
-            sortedPytestCsvMap.keys.forEach { key -> headers.add(key) }
+            sortedPytestCsvMap.keys.forEach { key -> header.add(key) }
             sortedPytestCsvMap.keys.forEach { key -> data.add(sortedPytestCsvMap[key]?.size.toString()) }
+            if (!aggregatedPytestHasHeader) {
+                agCsvPytestData.add(header)
+            }
+            aggregatedPytestHasHeader = true
+            agCsvPytestData.add(data)
         } else if (mode == TestRunner.UNITTESTS) {
-            sortedUnittestCsvMap.keys.forEach { key -> headers.add(key) }
+            sortedUnittestCsvMap.keys.forEach { key -> header.add(key) }
             sortedUnittestCsvMap.keys.forEach { key -> data.add(sortedUnittestCsvMap[key]?.size.toString()) }
+            if (!aggregatedUnittestHasHeader) {
+                agCsvUnittestData.add(header)
+            }
+            aggregatedUnittestHasHeader = true
+            agCsvUnittestData.add(data)
         }
-        csvPrinter.printRecord(headers)
+        csvPrinter.printRecord(header)
         csvPrinter.printRecord(data)
+        csvPrinter.flush()
+        csvPrinter.close()
+    }
+
+    private fun writeToAggregatedCsv(outputDir: String, testFramework: String) {
+        val agCsvOutputFileName = "$outputDir\\$testFramework\\aggregated_stats.csv"
+        val csvFile = File(agCsvOutputFileName)
+        File("$outputDir\\pytest").mkdirs()
+        csvFile.createNewFile()
+        val writer = Paths.get(agCsvOutputFileName).bufferedWriter()
+        val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
+        if (testFramework == "pytest") {
+            agCsvPytestData.forEach { line -> csvPrinter.printRecord(line) }
+        } else {
+            agCsvUnittestData.forEach { line -> csvPrinter.printRecord(line) }
+        }
         csvPrinter.flush()
         csvPrinter.close()
     }
 
     override fun main(args: List<String>) {
         if (args.size < 2) {
-            System.err.println("Specify project path as an argument")
+            System.err.println("Specify project and output paths as arguments")
             exitProcess(0)
         }
-        val projectRoot = args[1]
-        val jsonProjectResult = JsonArray()
-        var projectName = ""
-        ApplicationManager.getApplication().invokeAndWait {
-            val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
-            projectName = project.name
-            setupSdk(project)
-            val inspectionManager = InspectionManager.getInstance(project)
-            var i = 0
-            while (i < 10) {
-                i++
-                var success = true
-                WriteCommandAction.runWriteCommandAction(project) {
-                    try {
-                        analyse(project, inspectionManager, jsonProjectResult)
-                    } catch (ex: Exception) {
-                        success = false
-                        ex.printStackTrace()
+        val repoRoot = File(args[1])
+        repoRoot.listFiles()?.forEach { projectDir ->
+            try {
+                unittestCsvMap = mutableMapOf()
+                pytestCsvMap = mutableMapOf()
+                fileCount = 0
+                val projectRoot = projectDir.path
+                val jsonProjectResult = JsonArray()
+                var projectName = ""
+                ApplicationManager.getApplication().invokeAndWait {
+                    val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
+                    projectName = project.name
+                    setupSdk(project)
+                    var i = 0
+                    while (i < 10) {
+                        i++
+                        var success = true
+                        try {
+                            WriteCommandAction.runWriteCommandAction(project) {
+                                val inspectionManager = InspectionManager.getInstance(project)
+                                analyse(project, inspectionManager, jsonProjectResult)
+                            }
+                        } catch (ex: Exception) {
+                            success = false
+                            ex.printStackTrace()
+                        }
+                        if (success) break
                     }
                 }
-                if (success) break
+                val jsonFile = initOutputJsonFile(args[2], projectName)
+                writeToCsvFile(args[2], projectName)
+                writeToJsonFile(jsonProjectResult, jsonFile)
+                writeToAggregatedCsv(args[2], "pytest")
+                writeToAggregatedCsv(args[2], "unittest")
+                try {
+                    ApplicationManager.getApplication().runWriteAction {
+                        ProjectJdkTable.getInstance().removeJdk(sdk)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } catch (eee: Exception) {
+                eee.printStackTrace()
             }
-        }
-        val jsonFile = initOutputJsonFile(args[2], projectName)
-        writeToCsvFile(args[2], projectName)
-        writeToJsonFile(jsonProjectResult, jsonFile)
-        try {
-            ApplicationManager.getApplication().runWriteAction {
-                ProjectJdkTable.getInstance().removeJdk(sdk)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
         exitProcess(0)
     }
