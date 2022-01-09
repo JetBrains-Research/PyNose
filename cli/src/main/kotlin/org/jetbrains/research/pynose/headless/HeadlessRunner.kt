@@ -274,6 +274,7 @@ class HeadlessRunner : ApplicationStarter {
     private fun initOutputJsonFile(outputDir: String, projectName: String): File {
         val jsonOutputFileName = "$outputDir$separator${projectName}_ext_stats.json"
         val jsonFile = File(jsonOutputFileName)
+        File(outputDir).mkdirs()
         jsonFile.createNewFile()
         return jsonFile
     }
