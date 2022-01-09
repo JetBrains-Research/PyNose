@@ -56,6 +56,7 @@ class HeadlessRunner : ApplicationStarter {
     private var aggregatedUnittestHasHeader = false
     private var agCsvPytestData: MutableList<MutableList<String>> = mutableListOf()
     private var agCsvUnittestData: MutableList<MutableList<String>> = mutableListOf()
+    private val separator = File.separatorChar
 
     private fun setupSdk(project: Project) {
         try {
@@ -271,7 +272,7 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun initOutputJsonFile(outputDir: String, projectName: String): File {
-        val jsonOutputFileName = outputDir + File.separatorChar + "${projectName}_ext_stats.json"
+        val jsonOutputFileName = outputDir + separator + "${projectName}_ext_stats.json"
         val jsonFile = File(jsonOutputFileName)
         jsonFile.createNewFile()
         return jsonFile
@@ -291,12 +292,12 @@ class HeadlessRunner : ApplicationStarter {
 
     private fun writeToCsvFile(outputDir: String, projectName: String) {
         val sortedUnittestCsvMap = TreeMap(unittestCsvMap)
-        val csvUnittestOutputFileName = "$outputDir\\unittest\\${projectName}_stats.csv"
+        val csvUnittestOutputFileName = "$outputDir${separator}unittest${separator}${projectName}_stats.csv"
         val sortedPytestCsvMap = TreeMap(pytestCsvMap)
-        val csvPytestOutputFileName = "$outputDir\\pytest\\${projectName}_stats.csv"
-        File("$outputDir\\unittest").mkdirs()
+        val csvPytestOutputFileName = "$outputDir${separator}pytest${separator}${projectName}_stats.csv"
+        File("$outputDir${separator}unittest").mkdirs()
         File(csvUnittestOutputFileName).createNewFile()
-        File("$outputDir\\pytest").mkdirs()
+        File("$outputDir${separator}pytest").mkdirs()
         File(csvPytestOutputFileName).createNewFile()
         val unittestWriter = Paths.get(csvUnittestOutputFileName).bufferedWriter()
         val csvUnittestPrinter = CSVPrinter(unittestWriter, CSVFormat.DEFAULT)
@@ -331,9 +332,9 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun writeToAggregatedCsv(outputDir: String, testFramework: String) {
-        val agCsvOutputFileName = "$outputDir\\$testFramework\\aggregated_stats.csv"
+        val agCsvOutputFileName = "$outputDir${separator}$testFramework${separator}aggregated_stats.csv"
         val csvFile = File(agCsvOutputFileName)
-        File("$outputDir\\pytest").mkdirs()
+        File("$outputDir${separator}pytest").mkdirs()
         csvFile.createNewFile()
         val writer = Paths.get(agCsvOutputFileName).bufferedWriter()
         val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
@@ -382,8 +383,8 @@ class HeadlessRunner : ApplicationStarter {
                         if (success) break
                     }
                 }
-                val jsonUnittestFile = initOutputJsonFile("$outputDir\\unittest", projectName)
-                val jsonPytestFile = initOutputJsonFile("$outputDir\\pytest", projectName)
+                val jsonUnittestFile = initOutputJsonFile("$outputDir${separator}unittest", projectName)
+                val jsonPytestFile = initOutputJsonFile("$outputDir${separator}pytest", projectName)
                 writeToCsvFile(outputDir, projectName)
                 writeToJsonFile(jsonUnittestProjectResult, jsonUnittestFile)
                 writeToJsonFile(jsonPytestProjectResult, jsonPytestFile)
