@@ -272,7 +272,7 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun initOutputJsonFile(outputDir: String, projectName: String): File {
-        val jsonOutputFileName = outputDir + separator + "${projectName}_ext_stats.json"
+        val jsonOutputFileName = "$outputDir$separator${projectName}_ext_stats.json"
         val jsonFile = File(jsonOutputFileName)
         jsonFile.createNewFile()
         return jsonFile
@@ -296,8 +296,8 @@ class HeadlessRunner : ApplicationStarter {
         val sortedPytestCsvMap = TreeMap(pytestCsvMap)
         val csvPytestOutputFileName = "$outputDir${separator}pytest${separator}${projectName}_stats.csv"
         File("$outputDir${separator}unittest").mkdirs()
-        File(csvUnittestOutputFileName).createNewFile()
         File("$outputDir${separator}pytest").mkdirs()
+        File(csvUnittestOutputFileName).createNewFile()
         File(csvPytestOutputFileName).createNewFile()
         val unittestWriter = Paths.get(csvUnittestOutputFileName).bufferedWriter()
         val csvUnittestPrinter = CSVPrinter(unittestWriter, CSVFormat.DEFAULT)
