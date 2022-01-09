@@ -1,19 +1,11 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.FilenameIndex
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.PyBundle
+import com.jetbrains.python.psi.PyFromImportStatement
 import com.jetbrains.python.psi.PyImportStatement
-import com.jetbrains.python.sdk.pythonSdk
-import com.jetbrains.python.testing.PythonTestConfigurationType
-import com.jetbrains.python.testing.TestRunnerService
-import com.jetbrains.python.testing.autoDetectTests.PyAutoDetectionConfigurationFactory
 
 enum class TestRunner {
     PYTEST, UNITTESTS, UNKNOWN, AUTODETECT;
@@ -31,50 +23,26 @@ enum class TestRunner {
 @Service
 object TestRunnerServiceFacade {
 
-    private val moduleTestRunnerMap: MutableMap<PsiFile, Module> = mutableMapOf()
-    private val testRunnerForProject: MutableMap<Project, TestRunner> = mutableMapOf()
-
     fun getConfiguredTestRunner(file: PsiFile): TestRunner {
-        if (!moduleTestRunnerMap.containsKey(file)) {
-            moduleTestRunnerMap[file] = ModuleUtilCore.findModuleForPsiElement(file) ?: return TestRunner.UNKNOWN
-        }
-        val selectedFactoryName = TestRunnerService.getInstance(moduleTestRunnerMap[file]).selectedFactory.name
-        val runner = TestRunner.parse(selectedFactoryName)
-        if (runner == TestRunner.AUTODETECT) {
-
-            // костыль
-            val project = file.project
-            if (testRunnerForProject.containsKey(project)) {
-                return testRunnerForProject[project]!!
+        var hasUnittest = false
+        PsiTreeUtil.findChildrenOfType(file, PyFromImportStatement::class.java).forEach { pyFromImportStatement ->
+            if (pyFromImportStatement.importSource?.name?.contains("pytest") == true) {
+                return TestRunner.PYTEST
+            } else if (pyFromImportStatement.importSource?.name?.contains("unittest") == true) {
+                hasUnittest = true
             }
-            testRunnerForProject[project] = TestRunner.PYTEST
-            FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project))
-                .filter { vFile ->
-                    vFile.name.startsWith("test_") || vFile.name.endsWith("_test.py")
-                }
-                .map { vFile ->
-                    FilenameIndex.getFilesByName(project, vFile.name, GlobalSearchScope.projectScope(project))
-                }.forEach { files ->
-                    files.forEach { f ->
-                        if (PsiTreeUtil.findChildrenOfType(f, PyImportStatement::class.java).isNotEmpty()) {
-                            testRunnerForProject[project] = TestRunner.UNITTESTS
-                            return TestRunner.UNITTESTS
-                        }
-                    }
-                }
-            return testRunnerForProject[project]!!
-            // костыль
-
-            val sdk = file.project.pythonSdk ?: return TestRunner.UNKNOWN
-            // Retrieving the first installed test factory
-            for (factory in PythonTestConfigurationType.getInstance().typedFactories) {
-                if (factory.isFrameworkInstalled(sdk) && factory !is PyAutoDetectionConfigurationFactory) {
-                    return TestRunner.parse(factory.name)
+        }
+        PsiTreeUtil.findChildrenOfType(file, PyImportStatement::class.java).forEach { pyImportStatement ->
+            pyImportStatement.importElements.forEach { importElem ->
+                if (importElem.importedQName.toString().contains("pytest")) {
+                    return TestRunner.PYTEST
+                } else if (importElem.importedQName.toString().contains("unittest")) {
+                    hasUnittest = true
                 }
             }
-            return TestRunner.UNKNOWN
-        } else {
-            return runner
         }
+        return if (hasUnittest) {
+            TestRunner.UNITTESTS
+        } else TestRunner.UNKNOWN
     }
 }

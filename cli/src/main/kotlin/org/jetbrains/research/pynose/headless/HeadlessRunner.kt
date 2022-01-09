@@ -172,7 +172,12 @@ class HeadlessRunner : ApplicationStarter {
         return Pair(holder, inspectionVisitor)
     }
 
-    private fun analyse(project: Project, inspectionManager: InspectionManager, jsonProjectResult: JsonArray) {
+    private fun analyse(
+        project: Project,
+        inspectionManager: InspectionManager,
+        jsonUnittestProjectResult: JsonArray,
+        jsonPytestProjectResult: JsonArray
+    ) {
         val files = getFiles(project)
         fileCount = files.count()
         files.forEach { psiFileList ->
@@ -185,12 +190,14 @@ class HeadlessRunner : ApplicationStarter {
                 if (testRunner == TestRunner.PYTEST) {
                     analysePytest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, false)
+                    jsonFileResult.add("Results for file", jsonFileResultArray)
+                    jsonPytestProjectResult.add(jsonFileResult)
                 } else if (testRunner == TestRunner.UNITTESTS) {
                     analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, true)
+                    jsonFileResult.add("Results for file", jsonFileResultArray)
+                    jsonUnittestProjectResult.add(jsonFileResult)
                 }
-                jsonFileResult.add("Results for file", jsonFileResultArray)
-                jsonProjectResult.add(jsonFileResult)
             }
         }
     }
@@ -271,7 +278,6 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun writeToJsonFile(projectResult: JsonArray, jsonFile: File) {
-        println("jsonOutputFileName = ${jsonFile.path}")
         val jsonString = GsonBuilder()
             .setPrettyPrinting()
             .create()
@@ -284,46 +290,44 @@ class HeadlessRunner : ApplicationStarter {
     }
 
     private fun writeToCsvFile(outputDir: String, projectName: String) {
-        var csvOutputFileName = ""
-        var csvOutputDirName = ""
-        var sortedPytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
-        var sortedUnittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
-        if (mode == TestRunner.PYTEST) {
-            sortedPytestCsvMap = TreeMap(pytestCsvMap)
-            csvOutputDirName = "$outputDir\\pytest"
-            csvOutputFileName = "$outputDir\\pytest\\${projectName}_stats.csv"
-        } else if (mode == TestRunner.UNITTESTS) {
-            sortedUnittestCsvMap = TreeMap(unittestCsvMap)
-            csvOutputDirName = "$outputDir\\unittest"
-            csvOutputFileName = "$outputDir\\unittest\\${projectName}_stats.csv"
+        val sortedUnittestCsvMap = TreeMap(unittestCsvMap)
+        val csvUnittestOutputFileName = "$outputDir\\unittest\\${projectName}_stats.csv"
+        val sortedPytestCsvMap = TreeMap(pytestCsvMap)
+        val csvPytestOutputFileName = "$outputDir\\pytest\\${projectName}_stats.csv"
+        File("$outputDir\\unittest").mkdirs()
+        File(csvUnittestOutputFileName).createNewFile()
+        File("$outputDir\\pytest").mkdirs()
+        File(csvPytestOutputFileName).createNewFile()
+        val unittestWriter = Paths.get(csvUnittestOutputFileName).bufferedWriter()
+        val csvUnittestPrinter = CSVPrinter(unittestWriter, CSVFormat.DEFAULT)
+        val unittestHeader = mutableListOf("project_name", "test_file_count")
+        val unittestData = mutableListOf(projectName, fileCount.toString())
+        val pytestWriter = Paths.get(csvPytestOutputFileName).bufferedWriter()
+        val csvPytestPrinter = CSVPrinter(pytestWriter, CSVFormat.DEFAULT)
+        val pytestHeader = mutableListOf("project_name", "test_file_count")
+        val pytestData = mutableListOf(projectName, fileCount.toString())
+        sortedPytestCsvMap.keys.forEach { key -> pytestHeader.add(key) }
+        sortedPytestCsvMap.keys.forEach { key -> pytestData.add(sortedPytestCsvMap[key]?.size.toString()) }
+        if (!aggregatedPytestHasHeader) {
+            agCsvPytestData.add(pytestHeader)
         }
-        File(csvOutputDirName).mkdirs()
-        File(csvOutputFileName).createNewFile()
-        val writer = Paths.get(csvOutputFileName).bufferedWriter()
-        val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
-        val header = mutableListOf("project_name", "test_file_count")
-        val data = mutableListOf(projectName, fileCount.toString())
-        if (mode == TestRunner.PYTEST) {
-            sortedPytestCsvMap.keys.forEach { key -> header.add(key) }
-            sortedPytestCsvMap.keys.forEach { key -> data.add(sortedPytestCsvMap[key]?.size.toString()) }
-            if (!aggregatedPytestHasHeader) {
-                agCsvPytestData.add(header)
-            }
-            aggregatedPytestHasHeader = true
-            agCsvPytestData.add(data)
-        } else if (mode == TestRunner.UNITTESTS) {
-            sortedUnittestCsvMap.keys.forEach { key -> header.add(key) }
-            sortedUnittestCsvMap.keys.forEach { key -> data.add(sortedUnittestCsvMap[key]?.size.toString()) }
-            if (!aggregatedUnittestHasHeader) {
-                agCsvUnittestData.add(header)
-            }
-            aggregatedUnittestHasHeader = true
-            agCsvUnittestData.add(data)
+        aggregatedPytestHasHeader = true
+        agCsvPytestData.add(pytestData)
+        sortedUnittestCsvMap.keys.forEach { key -> unittestHeader.add(key) }
+        sortedUnittestCsvMap.keys.forEach { key -> unittestData.add(sortedUnittestCsvMap[key]?.size.toString()) }
+        if (!aggregatedUnittestHasHeader) {
+            agCsvUnittestData.add(unittestHeader)
         }
-        csvPrinter.printRecord(header)
-        csvPrinter.printRecord(data)
-        csvPrinter.flush()
-        csvPrinter.close()
+        aggregatedUnittestHasHeader = true
+        agCsvUnittestData.add(unittestData)
+        csvUnittestPrinter.printRecord(unittestHeader)
+        csvUnittestPrinter.printRecord(unittestData)
+        csvUnittestPrinter.flush()
+        csvUnittestPrinter.close()
+        csvPytestPrinter.printRecord(pytestHeader)
+        csvPytestPrinter.printRecord(pytestData)
+        csvPytestPrinter.flush()
+        csvPytestPrinter.close()
     }
 
     private fun writeToAggregatedCsv(outputDir: String, testFramework: String) {
@@ -354,7 +358,8 @@ class HeadlessRunner : ApplicationStarter {
                 pytestCsvMap = mutableMapOf()
                 fileCount = 0
                 val projectRoot = projectDir.path
-                val jsonProjectResult = JsonArray()
+                val jsonUnittestProjectResult = JsonArray()
+                val jsonPytestProjectResult = JsonArray()
                 var projectName = ""
                 val outputDir = args[2]
                 ApplicationManager.getApplication().invokeAndWait {
@@ -368,7 +373,7 @@ class HeadlessRunner : ApplicationStarter {
                         try {
                             WriteCommandAction.runWriteCommandAction(project) {
                                 val inspectionManager = InspectionManager.getInstance(project)
-                                analyse(project, inspectionManager, jsonProjectResult)
+                                analyse(project, inspectionManager, jsonUnittestProjectResult, jsonPytestProjectResult)
                             }
                         } catch (e: Exception) {
                             success = false
@@ -377,9 +382,11 @@ class HeadlessRunner : ApplicationStarter {
                         if (success) break
                     }
                 }
-                val jsonFile = initOutputJsonFile(outputDir, projectName)
+                val jsonUnittestFile = initOutputJsonFile("$outputDir\\unittest", projectName)
+                val jsonPytestFile = initOutputJsonFile("$outputDir\\pytest", projectName)
                 writeToCsvFile(outputDir, projectName)
-                writeToJsonFile(jsonProjectResult, jsonFile)
+                writeToJsonFile(jsonUnittestProjectResult, jsonUnittestFile)
+                writeToJsonFile(jsonPytestProjectResult, jsonPytestFile)
                 writeToAggregatedCsv(outputDir, "pytest")
                 writeToAggregatedCsv(outputDir, "unittest")
                 try {
