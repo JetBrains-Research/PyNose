@@ -23,10 +23,16 @@ enum class TestRunner {
 @Service
 object TestRunnerServiceFacade {
 
+    private val testRunnerForFile: MutableMap<PsiFile, TestRunner> = mutableMapOf()
+
     fun getConfiguredTestRunner(file: PsiFile): TestRunner {
+        if (testRunnerForFile.containsKey(file) && testRunnerForFile[file] != null) {
+            return testRunnerForFile[file]!!
+        }
         var hasUnittest = false
         PsiTreeUtil.findChildrenOfType(file, PyFromImportStatement::class.java).forEach { pyFromImportStatement ->
             if (pyFromImportStatement.importSource?.name?.contains("pytest") == true) {
+                testRunnerForFile[file] = TestRunner.PYTEST
                 return TestRunner.PYTEST
             } else if (pyFromImportStatement.importSource?.name?.contains("unittest") == true) {
                 hasUnittest = true
@@ -42,7 +48,11 @@ object TestRunnerServiceFacade {
             }
         }
         return if (hasUnittest) {
+            testRunnerForFile[file] = TestRunner.UNITTESTS
             TestRunner.UNITTESTS
-        } else TestRunner.UNKNOWN
+        } else {
+            testRunnerForFile[file] = TestRunner.UNKNOWN
+            TestRunner.UNKNOWN
+        }
     }
 }
