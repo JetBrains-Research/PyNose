@@ -49,7 +49,8 @@ class HeadlessRunner : ApplicationStarter {
 
     private lateinit var sdk: Sdk
     private var mode = TestRunner.UNKNOWN
-    private var fileCount = 0
+    private var unittestFileCount = 0
+    private var pytestFileCount = 0
     private var unittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
     private var pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
     private var aggregatedPytestHasHeader = false
@@ -180,7 +181,6 @@ class HeadlessRunner : ApplicationStarter {
         jsonPytestProjectResult: JsonArray
     ) {
         val files = getFiles(project)
-        fileCount = files.count()
         files.forEach { psiFileList ->
             psiFileList.forEach { psiFile ->
                 val jsonFileResult = JsonObject()
@@ -189,11 +189,13 @@ class HeadlessRunner : ApplicationStarter {
                 val testRunner = project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(psiFile)
                 mode = testRunner
                 if (testRunner == TestRunner.PYTEST) {
+                    pytestFileCount++
                     analysePytest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, false)
                     jsonFileResult.add("Results for file", jsonFileResultArray)
                     jsonPytestProjectResult.add(jsonFileResult)
                 } else if (testRunner == TestRunner.UNITTESTS) {
+                    unittestFileCount++
                     analyseUnittest(inspectionManager, psiFile, jsonFileResultArray)
                     analyseUniversal(inspectionManager, psiFile, jsonFileResultArray, true)
                     jsonFileResult.add("Results for file", jsonFileResultArray)
@@ -303,11 +305,11 @@ class HeadlessRunner : ApplicationStarter {
         val unittestWriter = Paths.get(csvUnittestOutputFileName).bufferedWriter()
         val csvUnittestPrinter = CSVPrinter(unittestWriter, CSVFormat.DEFAULT)
         val unittestHeader = mutableListOf("project_name", "test_file_count")
-        val unittestData = mutableListOf(projectName, fileCount.toString())
+        val unittestData = mutableListOf(projectName, unittestFileCount.toString())
         val pytestWriter = Paths.get(csvPytestOutputFileName).bufferedWriter()
         val csvPytestPrinter = CSVPrinter(pytestWriter, CSVFormat.DEFAULT)
         val pytestHeader = mutableListOf("project_name", "test_file_count")
-        val pytestData = mutableListOf(projectName, fileCount.toString())
+        val pytestData = mutableListOf(projectName, pytestFileCount.toString())
         sortedPytestCsvMap.keys.forEach { key -> pytestHeader.add(key) }
         sortedPytestCsvMap.keys.forEach { key -> pytestData.add(sortedPytestCsvMap[key]?.size.toString()) }
         if (!aggregatedPytestHasHeader) {
@@ -354,11 +356,13 @@ class HeadlessRunner : ApplicationStarter {
             exitProcess(0)
         }
         val repoRoot = File(args[1])
+        var counter = 1
         repoRoot.listFiles()?.forEach { projectDir ->
             try {
                 unittestCsvMap = mutableMapOf()
                 pytestCsvMap = mutableMapOf()
-                fileCount = 0
+                unittestFileCount = 0
+                pytestFileCount = 0
                 val projectRoot = projectDir.path
                 val jsonUnittestProjectResult = JsonArray()
                 val jsonPytestProjectResult = JsonArray()
@@ -367,6 +371,7 @@ class HeadlessRunner : ApplicationStarter {
                 ApplicationManager.getApplication().invokeAndWait {
                     val project = ProjectUtil.openOrImport(projectRoot, null, true) ?: return@invokeAndWait
                     projectName = project.name
+                    println("Processing repo #$counter: $projectName")
                     setupSdk(project)
                     var i = 0
                     while (i < 10) {
@@ -398,6 +403,8 @@ class HeadlessRunner : ApplicationStarter {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+                println("Finished processing repo #$counter: $projectName\n")
+                counter++
             } catch (e: Exception) {
                 e.printStackTrace()
             }
