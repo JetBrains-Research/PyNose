@@ -48,7 +48,7 @@ class HeadlessRunner : ApplicationStarter {
     override fun getCommandName() = "cli"
 
     private lateinit var sdk: Sdk
-    private lateinit var mode: TestRunner
+    private var mode = TestRunner.UNKNOWN
     private var fileCount = 0
     private var unittestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
     private var pytestCsvMap: MutableMap<String, MutableSet<PsiFile>> = mutableMapOf()
@@ -114,12 +114,13 @@ class HeadlessRunner : ApplicationStarter {
         jsonResult.addProperty("Test smell name", inspectionName)
         jsonResult.addProperty("Has smell", holder.resultsArray.isNotEmpty())
         val casesMap = mutableMapOf<String, Int>()
-        holder.resultsArray.forEach { testSmell ->
+        holder.resultsArray.forEach nameCheck@{ testSmell ->
             var name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyClass::class.java)?.name
             if (name == null) {
                 name = PsiTreeUtil.getParentOfType(testSmell.psiElement, PyFile::class.java)?.name
             }
-            casesMap.getOrPut(name!!) { 0 }
+            if (name == null) return@nameCheck
+            casesMap.getOrPut(name) { 0 }
             casesMap[name] = casesMap[name]!!.plus(1)
         }
         val entry = JsonArray()
@@ -357,7 +358,7 @@ class HeadlessRunner : ApplicationStarter {
                 var projectName = ""
                 val outputDir = args[2]
                 ApplicationManager.getApplication().invokeAndWait {
-                    val project = ProjectUtil.openProject(projectRoot, null, true) ?: return@invokeAndWait
+                    val project = ProjectUtil.openOrImport(projectRoot, null, true) ?: return@invokeAndWait
                     projectName = project.name
                     setupSdk(project)
                     var i = 0
