@@ -156,7 +156,7 @@ class HeadlessRunner : ApplicationStarter {
     private fun getFiles(project: Project): List<Array<PsiFile>> {
         return FilenameIndex.getAllFilesByExt(project, "py", GlobalSearchScope.projectScope(project))
             .filter { vFile ->
-                vFile.name.startsWith("test_") || vFile.name.endsWith("_test.py")
+                vFile.name.startsWith("test") || vFile.name.endsWith("test.py")
             }
             .map { vFile ->
                 FilenameIndex.getFilesByName(project, vFile.name, GlobalSearchScope.projectScope(project))
