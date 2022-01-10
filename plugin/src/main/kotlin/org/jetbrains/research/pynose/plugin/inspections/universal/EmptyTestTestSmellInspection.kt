@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.jetbrains.python.inspections.PyInspectionVisitor
+import com.jetbrains.python.psi.PyExpressionStatement
 import com.jetbrains.python.psi.PyFunction
 import com.jetbrains.python.psi.PyPassStatement
 import org.jetbrains.research.pynose.plugin.quickfixes.common.EmptyTestTestSmellQuickFix
@@ -16,7 +17,10 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellInspection::class.java)
 
-    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
+    override fun buildUniversalVisitor(
+        holder: ProblemsHolder,
+        session: LocalInspectionToolSession
+    ): PyInspectionVisitor {
         return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerEmpty(valueParam: PsiElement) {
                 holder.registerProblem(
@@ -30,7 +34,8 @@ class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
             override fun visitPyFunction(testMethod: PyFunction) {
                 super.visitPyFunction(testMethod)
                 val statements = testMethod.statementList.statements
-                if (statements.size == 1 && statements[0] is PyPassStatement
+                if (statements.size == 1 && (statements[0] is PyPassStatement
+                            || statements[0] is PyExpressionStatement && statements[0].text == "...")
                     && GeneralInspectionsUtils.checkValidMethod(testMethod)
                 ) {
                     registerEmpty(testMethod.nameIdentifier!!)
