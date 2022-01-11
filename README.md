@@ -1,7 +1,18 @@
 # PyNose: a Test Smell Detector for Python
 
 PyNose is a test smell detector tool for Python. 
-It runs as a plugin inside PyCharm IDE (**since version 2021.3**) 
+It runs as a plugin inside the PyCharm IDE (version 2021.3) 
+
+**Note: PyNose is currently under active development, the older version of the tool that was initially described in the paper "PyNose: A Test Smell Detector For Python" can be found in the `ASE2021` branch.**
+
+## How to use in PyCharm
+
+1. Download the latest release of the plugin from [here](https://github.com/JetBrains-Research/PyNose/releases);
+2. Open PyCharm and go to `File`/`Settings`/`Plugins`;
+3. Select the gear icon, and choose `Install Plugin from Disk...`;
+4. Choose the downloaded ZIP archive;
+5. Click `Apply`;
+6. Restart the IDE.
 
 ## Description
 
@@ -12,7 +23,7 @@ opened project. This can help python developers avoid test smells in their code.
 
 When you open a project in PyCharm, a number of inspections will be available for usage.
 
-PyNose will retrieve information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
+PyNose will retrieve the information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
 
 Some inspections are initially disabled, however you can enable them from the settings.
 
@@ -36,9 +47,9 @@ Some inspections are initially disabled, however you can enable them from the se
 |Suboptimal Assert              |+       |-      |+ (replace with optimal)                |Warning      | Presence of one of the suboptimal asserts**|
 |Test Maverick                  |+       |+      |-                                       |Disabled     | A test suite contains at least one test case that does not use a single field from the setup method|
 
-*Disabled by default. If enabled - weak warning
+*Disabled by default. If enabled — weak warning.
 
-**List of suboptimal assertions is available [here](https://zenodo.org/record/5156098)
+**List of suboptimal assertions is available [here](https://zenodo.org/record/5156098).
 
 ## Usage examples
 
@@ -52,7 +63,6 @@ Some inspections are initially disabled, however you can enable them from the se
   ![Exception handling example](assets/gifs/exception_handling_example.gif)
   <br></br>
 
+## Contacts
 
 If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.
-
-**Note: the outdated version of the tool (which was initially described in "PyNose: A Test Smell Detector For Python" paper) can be found in `ASE2021` branch.**
