@@ -38,6 +38,18 @@ class RedundantAssertionTestSmellUnittestInspectionTests : AbstractTestSmellInsp
     }
 
     @Test
+    fun `test highlighted redundant assertion with literal args`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 10</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert \"Hello\"</warning>"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
     fun `test highlighted combination of numbers and letters`() {
         myFixture.configureByText(
             "test_file.py", "import unittest\n" +
@@ -93,6 +105,12 @@ class RedundantAssertionTestSmellUnittestInspectionTests : AbstractTestSmellInsp
     @Test
     fun `test redundant assertion multiple`() {
         myFixture.configureByFile("test_redundant_assertion_multiple.py")
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test redundant assertion multiple 1`() {
+        myFixture.configureByFile("test_redundant_assertion_eq.py")
         myFixture.checkHighlighting()
     }
 }
