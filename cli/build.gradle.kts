@@ -2,7 +2,6 @@ group = rootProject.group
 version = rootProject.version
 
 dependencies {
-    implementation(project(":core"))
     implementation(project(":plugin"))
     implementation("org.apache.commons:commons-csv:1.9.0")
 }
