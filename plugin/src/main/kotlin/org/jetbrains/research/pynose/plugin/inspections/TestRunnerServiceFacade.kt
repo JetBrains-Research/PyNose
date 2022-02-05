@@ -3,21 +3,11 @@ package org.jetbrains.research.pynose.plugin.inspections
 import com.intellij.openapi.components.Service
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.PyBundle
 import com.jetbrains.python.psi.PyFromImportStatement
 import com.jetbrains.python.psi.PyImportStatement
 
 enum class TestRunner {
-    PYTEST, UNITTESTS, UNKNOWN, AUTODETECT;
-
-    companion object {
-        fun parse(src: String): TestRunner = when (src) {
-            PyBundle.message("runcfg.pytest.display_name") -> PYTEST
-            PyBundle.message("runcfg.unittest.display_name") -> UNITTESTS
-            PyBundle.message("runcfg.autodetect.display_name") -> AUTODETECT
-            else -> UNKNOWN
-        }
-    }
+    PYTEST, UNITTESTS, UNKNOWN;
 }
 
 @Service
