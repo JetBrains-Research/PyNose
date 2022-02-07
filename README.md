@@ -1,18 +1,27 @@
 # PyNose: a Test Smell Detector for Python
 
-PyNose is a test smell detector tool for Python. 
-It runs as a plugin inside PyCharm IDE (**since version 2021.3**) 
+PyNose is a test smell detector tool for Python.
+It runs as a plugin inside the PyCharm IDE (version 2021.3)
+
+**Note: PyNose is currently under active development, the older version of the tool that was initially described in the paper "PyNose: A Test Smell Detector For Python" can be found in the `ASE2021` branch.**
+
+## How to use in PyCharm
+
+1. Download the latest release of the plugin from [here](https://github.com/JetBrains-Research/PyNose/releases);
+2. Open PyCharm and go to `File`/`Settings`/`Plugins`;
+3. Select the gear icon, and choose `Install Plugin from Disk...`;
+4. Choose the downloaded ZIP archive;
+5. Click `Apply`;
+6. Restart the IDE.
 
 ## Description
 
 PyNose can be used inside the IDE to study the test smells within a specific
 opened project. This can help python developers avoid test smells in their code.
 
-[comment]: <> (installation??)
-
 When you open a project in PyCharm, a number of inspections will be available for usage.
 
-PyNose will retrieve information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
+PyNose will retrieve the information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
 
 Some inspections are initially disabled, however you can enable them from the settings.
 
@@ -36,9 +45,9 @@ Some inspections are initially disabled, however you can enable them from the se
 |Suboptimal Assert              |+       |-      |+ (replace with optimal)                |Warning      | Presence of one of the suboptimal asserts**|
 |Test Maverick                  |+       |+      |-                                       |Disabled     | A test suite contains at least one test case that does not use a single field from the setup method|
 
-*Disabled by default. If enabled - weak warning
+*Disabled by default. If enabled — weak warning.
 
-**List of suboptimal assertions is available [here](https://zenodo.org/record/5156098)
+**List of suboptimal assertions is available [here](https://zenodo.org/record/5156098).
 
 ## Usage examples
 
@@ -53,6 +62,52 @@ Some inspections are initially disabled, however you can enable them from the se
   <br></br>
 
 
-If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.
+## Headless mode
+The headless mode can be useful for processing a large number of projects. 
+In this mode, PyCharm will be launched in the background, the project will be analyzed, 
+and all the results will be saved to JSON and CSV files. 
 
-**Note: the outdated version of the tool (which was initially described in "PyNose: A Test Smell Detector For Python" paper) can be found in `ASE2021` branch.**
+### How to use in headless mode
+
+Create a folder containing all the projects you want to analyse. 
+Analysis will be performed for all the projects in a row.
+
+Create an output directory, where all the `.csv` and `.json` files will be located
+after the analysis.
+
+Download this project: `git clone https://github.com/JetBrains-Research/PyNose`
+
+Switch to headless mode branch: `git checkout headless-main`
+
+#### Steps to run headless mode from IDE:
+
+Open this project in PyCharm.
+
+The IDE will prompt detecting a Gradle project.
+
+<br></br>
+![Load gradle project](assets/load-gradle-project.png)
+<br></br>
+
+Load this Gradle project by clicking Load Gradle Project option.
+
+<br></br>
+![Trust gradle project](assets/trust-project-prompt.png)
+<br></br>
+
+Open gradle side panel as shown below. 
+Direct to `Tasks -> other` and choose the task called runCliHeadless. 
+
+<br></br>
+![Gradle panel](assets/gradle-panel.png)
+<br></br>
+
+In the edit configuration window set arguments as shown below
+
+<br></br>
+![Args](assets/run-conf.png)
+<br></br>
+
+## Contacts
+
+If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.

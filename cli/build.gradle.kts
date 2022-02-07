@@ -8,7 +8,7 @@ dependencies {
 
 open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     @get:Input
-    val projectLocation: String? by project
+    val projectsStorage: String? by project
     val outputDir: String? by project
 
     init {
@@ -23,7 +23,7 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "cli",
-            projectLocation,
+            projectsStorage,
             outputDir
         )
     }
