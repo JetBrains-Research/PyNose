@@ -84,12 +84,14 @@ Switch to headless mode branch: `git checkout headless-main`
 Open this project in PyCharm.
 
 The IDE will prompt detecting a Gradle project.
+Load this Gradle project by clicking `Load Gradle Project` option.
 
 <br></br>
 ![Load gradle project](assets/load-gradle-project.png)
 <br></br>
 
-Load this Gradle project by clicking Load Gradle Project option.
+The IDE may also prompt that this is a project from the web. 
+Click `Trust Project` to continue.
 
 <br></br>
 ![Trust gradle project](assets/trust-project-prompt.png)
