@@ -110,6 +110,12 @@ In the edit configuration window set arguments as shown below
 ![Args](assets/run-conf.png)
 <br></br>
 
+Run `runCliHeadless` task by clicking `Run`
+
+<br></br>
+![Run](assets/run.png)
+<br></br>
+
 ## Contacts
 
 If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.
