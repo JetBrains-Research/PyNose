@@ -17,7 +17,9 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     override fun setUp() {
         super.setUp()
         mockkObject(myFixture.project.service<TestRunnerServiceFacade>())
-        every { myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any()) } returns TestRunner.PYTEST
+        every {
+            myFixture.project.service<TestRunnerServiceFacade>().getConfiguredTestRunner(any())
+        } returns TestRunner.PYTEST
         myFixture.enableInspections(RedundantAssertionTestSmellPytestInspection())
     }
 
@@ -28,9 +30,9 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test highlighted redundant assertion with bool args`() {
         myFixture.configureByText(
-                "test_file.py", "def test_something(self):\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert True</warning>\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert False</warning>"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert True</warning>\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert False</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -38,11 +40,11 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test highlighted redundant assertion with operators`() {
         myFixture.configureByText(
-                "test_file.py", "def test_something(self):\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 1 == 1</warning>\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 2 <= 2</warning>\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert \"hello\" != \"hello\"</warning>\n" +
-                "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 3 is 3</warning>"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 1 == 1</warning>\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 2 <= 2</warning>\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert \"hello\" != \"hello\"</warning>\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 3 is 3</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -50,21 +52,20 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test non-redundant assertions`() {
         myFixture.configureByText(
-                "test_file.py", "def test_something(self):\n" +
-                "    assert 1 == 2\n" +
-                "    assert 1 <= 2\n" +
-                "    assert True is False"
+            "test_file.py", "def test_something(self):\n" +
+                    "    <warning descr=\"This statement is unnecessary as it's result will never change\">assert 1 == 2</warning>\n" +
+                    "    <warning descr=\"This statement is unnecessary as it's result will never change\">assert 1 <= 2</warning>\n" +
+                    "    <warning descr=\"This statement is unnecessary as it's result will never change\">assert True is False</warning>"
         )
-        val highlightInfos = myFixture.doHighlighting()
-        assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
+        myFixture.checkHighlighting()
     }
 
     @Test
     fun `test redundant assertion wrong class name`() {
         myFixture.configureByText(
-                "test_file.py", "class SomeClass():\n" +
-                "    def test_something(self):\n" +
-                "        assert 1 == 1"
+            "test_file.py", "class SomeClass():\n" +
+                    "    def test_something(self):\n" +
+                    "        assert 1 == 1"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
@@ -73,8 +74,8 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     @Test
     fun `test redundant assertion wrong method name`() {
         myFixture.configureByText(
-                "test_file.py", "def do_something(self):\n" +
-                "    assert 1 == 1"
+            "test_file.py", "def do_something(self):\n" +
+                    "    assert 1 == 1"
         )
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
