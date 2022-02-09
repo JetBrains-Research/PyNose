@@ -1,4 +1,4 @@
-class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">TestClass</weak_warning>():
+class TestClass():
     x : int
     s : str
     z : str
@@ -14,5 +14,5 @@ class <weak_warning descr="This test suite fixture's setup method is not used in
         print(self.s + ", world!")
         print(self.z)
 
-    def test_something_else(self):
+    def <weak_warning descr="Test suite fixture's setup method is not used in this test case">test_something_else</weak_warning>(self):
         assert self.w != 1
