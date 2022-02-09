@@ -44,7 +44,7 @@ class TestMaverickTestSmellUnittestInspectionTests : AbstractTestSmellInspection
 
     @Test
     fun `test maverick without unittest dependency`() {
-        myFixture.configureByFile("test_maverick_wrong_class_name.py")
+        myFixture.configureByFile("test_maverick_no_dependency.py")
         val highlightInfos = myFixture.doHighlighting()
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WEAK_WARNING })
     }
