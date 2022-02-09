@@ -59,7 +59,7 @@
         <localInspection language="Python"
                          groupPath="Python,PyNose"
                          groupName="Unittest"
-                         enabledByDefault="false"
+                         enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.DuplicateAssertionTestSmellUnittestInspection"
                          displayName="Duplicate assertion test"
@@ -67,7 +67,7 @@
         <localInspection language="Python"
                          groupPath="Python,PyNose"
                          groupName="Pytest"
-                         enabledByDefault="false"
+                         enabledByDefault="true"
                          level="WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.DuplicateAssertionTestSmellPytestInspection"
                          displayName="Duplicate assertion test"
@@ -93,7 +93,7 @@
                          groupName="Unittest"
                          enabledByDefault="false"
                          level="WEAK WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.MagicNumberTestTestSmellUnittestInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.unittest.MagicNumberTestTestSmellUnittestInspection"
                          displayName="Magic number test"
                          shortName="MagicNumberTestTestSmellUnittestInspection"/>
         <localInspection language="Python"
@@ -101,7 +101,7 @@
                          groupName="Pytest"
                          enabledByDefault="false"
                          level="WEAK WARNING"
-                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.MagicNumberTestTestSmellPytestInspection"
+                         implementationClass="org.jetbrains.research.pynose.plugin.inspections.pytest.MagicNumberTestTestSmellPytestInspection"
                          displayName="Magic number test"
                          shortName="MagicNumberTestTestSmellPytestInspection"/>
         <localInspection language="Python"
@@ -155,7 +155,7 @@
         <localInspection language="Python"
                          groupPath="Python"
                          groupName="PyNose"
-                         enabledByDefault="true"
+                         enabledByDefault="false"
                          level="WEAK WARNING"
                          implementationClass="org.jetbrains.research.pynose.plugin.inspections.universal.RedundantPrintTestSmellInspection"
                          displayName="Redundant print test"
@@ -185,7 +185,9 @@
                          displayName="Test maverick"
                          shortName="TestMaverickTestSmellPytestInspection"/>
     </extensions>
-
+    <extensions defaultExtensionNs="com.intellij">
+        <appStarter implementation="org.jetbrains.research.pynose.headless.HeadlessRunner"/>
+    </extensions>
     <actions>
         <!-- Add your actions here -->
     </actions>
