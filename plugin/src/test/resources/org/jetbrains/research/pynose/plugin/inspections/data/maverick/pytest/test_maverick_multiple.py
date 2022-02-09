@@ -14,7 +14,7 @@ class TestClass:
         assert self.x == 10
         assert self.x != self.w
 
-    def <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">test_something_else</weak_warning>(self):
+    def <weak_warning descr="Test suite fixture's setup method is not used in this test case">test_something_else</weak_warning>(self):
         print("hello!")
 
 
@@ -29,7 +29,7 @@ class TestOtherClass:
         self.s = "hello"
         self.z = "bye"
 
-    def <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">test_something</weak_warning>(self):
+    def <weak_warning descr="Test suite fixture's setup method is not used in this test case">test_something</weak_warning>(self):
         print(self.w)
 
     def test_something_else(self):
