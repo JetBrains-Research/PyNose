@@ -1,7 +1,7 @@
 import unittest
 
 
-class <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">SomeClass</weak_warning>(unittest.TestCase):
+class SomeClass(unittest.TestCase):
     x : int
     s : str
     w = 2
@@ -10,8 +10,8 @@ class <weak_warning descr="This test suite fixture's setup method is not used in
         self.x = 10
         self.s = "hello"
 
-    def test_something(self):
+    def <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">test_something</weak_warning>(self):
         print("Hello, world!")
 
-    def test_something_else(self):
+    def <weak_warning descr="This test suite fixture's setup method is not used in some of the test cases">test_something_else</weak_warning>(self):
         assert self.w != 1

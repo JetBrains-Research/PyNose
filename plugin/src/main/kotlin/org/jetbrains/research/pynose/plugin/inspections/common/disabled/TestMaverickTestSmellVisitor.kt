@@ -73,9 +73,12 @@ open class TestMaverickTestSmellVisitor(
                     )
                 }
         }
-        if (testMethodSetUpFieldsUsage.values.any { arg -> arg.isEmpty() }
-            && setUpFields.isNotEmpty()) {
-            registerMaverick(pyClass.nameIdentifier!!)
+        if (setUpFields.isNotEmpty()) {
+            for (fieldUsage in testMethodSetUpFieldsUsage) {
+                if (fieldUsage.value.isEmpty()) {
+                    registerMaverick(fieldUsage.key.nameIdentifier!!)
+                }
+            }
         }
     }
 
