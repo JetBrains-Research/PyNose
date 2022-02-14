@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
@@ -28,7 +29,8 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
             return false
         }
         val args = assertCall.arguments
-        return args.isNotEmpty() && args[0] is PyBinaryExpression
+        return args.isNotEmpty() && args[0] is PyBinaryExpression || (args[0] is PyParenthesizedExpression
+                && PsiTreeUtil.getChildOfType(args[0], PyBinaryExpression::class.java) != null)
     }
 
     private fun checkAssertEqualNotEqualIsIsNotRelatedSmell(assertCall: PyCallExpression): Boolean {
@@ -43,7 +45,12 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
         }
         val args = assertCall.arguments
         return args.size >= 2 && args
-            .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
+            .any { arg: PyExpression? ->
+                arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression
+                        || arg?.children?.isNotEmpty() ?: false && (
+                        arg?.children?.get(0) is PyBoolLiteralExpression
+                                || arg?.children?.get(0) is PyNoneLiteralExpression)
+            }
     }
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {

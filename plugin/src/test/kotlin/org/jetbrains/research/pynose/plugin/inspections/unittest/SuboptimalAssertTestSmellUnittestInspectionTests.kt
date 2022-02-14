@@ -33,11 +33,11 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
                 "    def test_something(self):\n" +
                 "        X = 5\n" +
                 "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, False)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, True)</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual((X), (True))</warning>\n" +
                 "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, False)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, True)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual(X, None)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, None)</warning>"
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(True, X)</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertEqual((X), None)</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertNotEqual(X, (None))</warning>"
         )
         myFixture.checkHighlighting()
     }
@@ -94,10 +94,10 @@ class SuboptimalAssertTestSmellUnittestInspectionTests : AbstractTestSmellInspec
                 "        X = 5\n" +
                 "        Y = 6\n" +
                 "        Z = {4, 6}\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X != Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X == Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X < Y)</warning>\n" +
-                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X >= Y)</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue((X != Y))</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse((X) == (Y))</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue((X) < Y)</warning>\n" +
+                "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X >= (Y))</warning>\n" +
                 "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertTrue(X not in Z)</warning>\n" +
                 "        <warning descr=\"${TestSmellBundle.message("inspections.suboptimal.description")}\">self.assertFalse(X in Z)</warning>"
         )
