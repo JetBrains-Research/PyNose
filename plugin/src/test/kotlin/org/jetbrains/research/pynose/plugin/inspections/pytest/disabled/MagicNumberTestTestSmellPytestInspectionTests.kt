@@ -32,7 +32,7 @@ class MagicNumberTestTestSmellPytestInspectionTests: AbstractTestSmellInspection
         myFixture.configureByText(
             "test_file.py", "class TestClass:\n" +
                     "    def test_something(self):\n" +
-                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 1 == 41</weak_warning>\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert (1 == 41)</weak_warning>\n" +
                     "        assert \"H\" != \"F\"\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 24 == 1 + 2</weak_warning>\n"
         )

@@ -27,9 +27,13 @@ class MagicNumberTestTestSmellUnittestInspection : AbstractTestSmellInspection()
                 if (callExpression.arguments.any { obj: PyExpression? ->
                         (obj is PyNumericLiteralExpression && !ignoredNumbers.contains(obj.text)) ||
                                 (obj is PyBinaryExpression
-                                        && obj.children.any { child ->
-                                    child is PyNumericLiteralExpression &&
-                                            !ignoredNumbers.contains(child.text)
+                                        && obj.children.any { it is PyNumericLiteralExpression &&
+                                            !ignoredNumbers.contains(it.text)
+                                }) ||
+                                (obj is PyParenthesizedExpression
+                                        && obj.children.any {
+                                    it is PyNumericLiteralExpression
+                                            && !ignoredNumbers.contains(it.text)
                                 })
                     }) {
                     registerMagicNumber(callExpression)
