@@ -4,11 +4,9 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.siblings
-import com.jetbrains.python.psi.LanguageLevel
-import com.jetbrains.python.psi.PyBinaryExpression
-import com.jetbrains.python.psi.PyCallExpression
-import com.jetbrains.python.psi.PyElementGenerator
+import com.jetbrains.python.psi.*
 import com.jetbrains.python.psi.impl.PyExpressionStatementImpl
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -22,9 +20,20 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
         return TestSmellBundle.message("quickfixes.suboptimal.message")
     }
 
+    private fun processAssertionArgsType(assertCall: PyCallExpression) : PyBinaryExpression? {
+        var binaryExpression = assertCall.arguments[0]
+        if (binaryExpression is PyParenthesizedExpression) {
+            binaryExpression = PsiTreeUtil.getChildOfType(binaryExpression, PyBinaryExpression::class.java)
+        }
+        if (binaryExpression !is PyBinaryExpression) {
+            return null
+        }
+        return binaryExpression
+    }
+
     private fun processAssertTrue(assertCall: PyCallExpression) {
         if (assertCall.arguments.isEmpty()) return
-        val binaryExpression = assertCall.arguments[0] as PyBinaryExpression
+        val binaryExpression = processAssertionArgsType(assertCall)?: return
         val children = binaryExpression.children
         val op = binaryExpression.psiOperator
         val assertionType = when (op?.text) {
@@ -56,7 +65,7 @@ class SuboptimalAssertionTestSmellQuickFix : LocalQuickFix {
 
     private fun processAssertFalse(assertCall: PyCallExpression) {
         if (assertCall.arguments.isEmpty()) return
-        val binaryExpression = assertCall.arguments[0] as PyBinaryExpression
+        val binaryExpression = processAssertionArgsType(assertCall)?:return
         val children = binaryExpression.children
         val op = binaryExpression.psiOperator
         val assertionType = when (op?.text) {
