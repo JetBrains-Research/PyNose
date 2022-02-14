@@ -30,7 +30,7 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
 //                        registerRedundant(callExpression)
 //                        return
 //                    }
-                    if (processParenthesis(callExpression, argList)) {
+                    if (processAssertionArgs(callExpression, argList)) {
                         return
                     }
                 } else if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS.contains(callee.name)) {

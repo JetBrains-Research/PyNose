@@ -26,7 +26,7 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
         )
     }
 
-    protected fun <T> processParenthesis(expr: T, args: MutableList<PyExpression>): Boolean where T : PsiElement {
+    protected fun <T> processAssertionArgs(expr: T, args: MutableList<PyExpression>): Boolean where T : PsiElement {
         var literalExpression: PyLiteralExpression? = null
         var binaryExpression: PyBinaryExpression? = null
         if (args[0] is PyLiteralExpression) {
@@ -68,6 +68,6 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
         if (args.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
             return
         }
-        processParenthesis(assertStatement, args.toMutableList())
+        processAssertionArgs(assertStatement, args.toMutableList())
     }
 }
