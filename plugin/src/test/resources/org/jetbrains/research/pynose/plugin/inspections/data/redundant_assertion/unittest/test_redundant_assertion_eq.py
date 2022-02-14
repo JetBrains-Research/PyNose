@@ -25,12 +25,12 @@ class SomeClass(unittest.TestCase):
         p1 = Point(3, 5)
         p2 = Point(-1, 7)
         p3 = Point(3, 1.17)
-        # True
+        <warning descr="This statement is unnecessary as it's result will never change">self.assertTrue(4 <= 4)</warning>
+        <warning descr="This statement is unnecessary as it's result will never change">assert 4 <= 4</warning>
+        assert p0
         assert(p0 == p1)
         self.assertEqual(p0, p1)
-        # False
+        self.assertTrue(p0 == p1)
         assert((not p1 == p1))
-        # True
         assert p0 != p1
-        # True
-        assert(p1 != p2)
+        assert(((p1 != p2)))
