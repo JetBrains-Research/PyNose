@@ -56,7 +56,8 @@ class RedundantAssertionTestSmellUnittestInspectionTests : AbstractTestSmellInsp
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert 10</warning>\n" +
-                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert \"Hello\"</warning>"
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert \"Hello\"</warning>\n" +
+                    "        <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">self.assertIsNone(None)</warning>"
         )
         myFixture.checkHighlighting()
     }

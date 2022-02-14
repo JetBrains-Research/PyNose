@@ -26,10 +26,10 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
                 }
                 val argList = callExpression.getArguments(null)
                 if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(callee.name)) {
-                    if (argList.isNotEmpty() && argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[callee.name]) {
-                        registerRedundant(callExpression)
-                        return
-                    }
+//                    if (argList.isNotEmpty() && argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[callee.name]) {
+//                        registerRedundant(callExpression)
+//                        return
+//                    }
                     if (processParenthesis(callExpression, argList)) {
                         return
                     }
