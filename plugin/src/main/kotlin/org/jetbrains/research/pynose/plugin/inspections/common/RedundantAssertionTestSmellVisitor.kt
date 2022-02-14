@@ -6,10 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.inspections.PyInspectionVisitor
-import com.jetbrains.python.psi.PyAssertStatement
-import com.jetbrains.python.psi.PyBinaryExpression
-import com.jetbrains.python.psi.PyLiteralExpression
-import com.jetbrains.python.psi.PyParenthesizedExpression
+import com.jetbrains.python.psi.*
 import com.jetbrains.python.psi.impl.PyEvaluator
 import org.jetbrains.research.pynose.plugin.quickfixes.common.RedundantAssertionTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
@@ -18,7 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: LocalInspectionToolSession) :
     PyInspectionVisitor(holder, getContext(session)) {
 
-    private val OPERATOR_TEXT = mutableSetOf("==", "!=", ">", ">=", "<=", "<", "is")
+    protected val OPERATOR_TEXT = mutableSetOf("==", "!=", ">", ">=", "<=", "<", "is")
 
     protected fun registerRedundant(valueParam: PsiElement) {
         holder!!.registerProblem(
@@ -29,12 +26,7 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
         )
     }
 
-    override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
-        super.visitPyAssertStatement(assertStatement)
-        val args = assertStatement.arguments
-        if (args.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
-            return
-        }
+    protected fun <T> processParenthesis(expr: T, args: MutableList<PyExpression>): Boolean where T : PsiElement {
         var literalExpression: PyLiteralExpression? = null
         var binaryExpression: PyBinaryExpression? = null
         if (args[0] is PyLiteralExpression) {
@@ -44,16 +36,13 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
             binaryExpression = args[0] as PyBinaryExpression
         }
         if (args[0] is PyParenthesizedExpression) {
-            literalExpression = PsiTreeUtil.findChildOfType(args[0], PyLiteralExpression::class.java)
             binaryExpression = PsiTreeUtil.findChildOfType(args[0], PyBinaryExpression::class.java)
-        }
-        if (literalExpression != null) {
-            registerRedundant(assertStatement)
+            literalExpression = PsiTreeUtil.findChildOfType(args[0], PyLiteralExpression::class.java)
         }
         if (binaryExpression != null) {
-            val psiOperator = binaryExpression.psiOperator ?: return
+            val psiOperator = binaryExpression.psiOperator ?: return false
             if (binaryExpression.children.size < 2) {
-                return
+                return false
             }
             val firstChild = binaryExpression.children[0]
             val secondChild = binaryExpression.children[1]
@@ -62,8 +51,23 @@ open class RedundantAssertionTestSmellVisitor(holder: ProblemsHolder?, session: 
                 && (booleanEval != null || (PyLiteralExpression::class.java.isAssignableFrom(firstChild::class.java)
                         && PyLiteralExpression::class.java.isAssignableFrom(secondChild::class.java)))
             ) {
-                registerRedundant(assertStatement)
+                registerRedundant(expr)
+                return true
             }
         }
+        if (literalExpression != null) {
+            registerRedundant(expr)
+            return true
+        }
+        return false
+    }
+
+    override fun visitPyAssertStatement(assertStatement: PyAssertStatement) {
+        super.visitPyAssertStatement(assertStatement)
+        val args = assertStatement.arguments
+        if (args.isEmpty() || !GeneralInspectionsUtils.checkValidParent(assertStatement)) {
+            return
+        }
+        processParenthesis(assertStatement, args.toMutableList())
     }
 }

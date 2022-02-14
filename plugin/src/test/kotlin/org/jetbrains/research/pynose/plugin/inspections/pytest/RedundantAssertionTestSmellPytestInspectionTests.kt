@@ -39,6 +39,17 @@ class RedundantAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
     }
 
     @Test
+    fun `test highlighted redundant assertion with parenthesis`() {
+        myFixture.configureByText(
+            "test_file.py",
+            "def test_something(self):\n" + "    <warning descr=\"${TestSmellBundle.message("inspections.redundant.assertion.description")}\">assert ((3 == 4))</warning>\n" + "    <warning descr=\"${
+                TestSmellBundle.message("inspections.redundant.assertion.description")
+            }\">assert (False)</warning>"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
     fun `test highlighted redundant assertion with operators`() {
         myFixture.configureByText(
             "test_file.py",

@@ -27,9 +27,10 @@ class SomeClass(unittest.TestCase):
         p3 = Point(3, 1.17)
         # True
         assert(p0 == p1)
+        self.assertEqual(p0, p1)
         # False
-        assert(not p1 == p1)
+        assert((not p1 == p1))
         # True
-        assert(p0 != p1)
+        assert p0 != p1
         # True
         assert(p1 != p2)

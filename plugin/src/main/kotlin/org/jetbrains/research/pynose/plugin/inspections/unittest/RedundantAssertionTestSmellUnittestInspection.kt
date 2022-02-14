@@ -28,6 +28,10 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
                 if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(callee.name)) {
                     if (argList.isNotEmpty() && argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[callee.name]) {
                         registerRedundant(callExpression)
+                        return
+                    }
+                    if (processParenthesis(callExpression, argList)) {
+                        return
                     }
                 } else if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS.contains(callee.name)) {
                     if (argList.size >= 2 && argList[0].text == argList[1].text) {
