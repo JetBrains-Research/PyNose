@@ -12,7 +12,6 @@ plugins {
 
 allprojects {
     repositories {
-        jcenter()
         mavenCentral()
     }
 }
@@ -23,6 +22,19 @@ subprojects {
         plugin("kotlin")
         plugin("org.jetbrains.kotlin.plugin.serialization")
         plugin("org.jetbrains.intellij")
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            jvmTarget = "11"
+            languageVersion = "1.5"
+            apiVersion = "1.5"
+        }
     }
 
     dependencies {

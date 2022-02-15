@@ -6,9 +6,11 @@ dependencies {
     implementation("org.apache.commons:commons-csv:1.9.0")
 }
 
-open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+open class RunHeadlessIdeTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     @get:Input
     val projectsStorage: String? by project
+
+    @get:Input
     val outputDir: String? by project
 
     init {
@@ -19,10 +21,10 @@ open class CliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
 }
 
 tasks {
-    register<CliTask>("runCliHeadless") {
+    register<RunHeadlessIdeTask>("runHeadlessIde") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
-            "cli",
+            "pynose-headless",
             projectsStorage,
             outputDir
         )

@@ -45,7 +45,7 @@ import kotlin.system.exitProcess
 
 class HeadlessRunner : ApplicationStarter {
 
-    override fun getCommandName() = "cli"
+    override fun getCommandName() = "pynose-headless"
 
     private lateinit var sdk: Sdk
     private var mode = TestRunner.UNKNOWN
