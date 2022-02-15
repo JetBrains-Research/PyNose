@@ -6,13 +6,14 @@ class SomeClass(unittest.TestCase):
         y = 10
         <weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">if</weak_warning> (y > 1):
             <weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">for</weak_warning> x in range(1, 20):
-                y += 2
+                assert y > 0
 
     def test_something_else(self):
         y = 20
         <weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">while</weak_warning>(y > 10):
             y -= 3
-        s =<weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">{num: num**2 for num in range(1, 11)}</weak_warning>
+            assert y < 10
+        s ={num: num**2 for num in range(1, 11)}
 
     def not_a_test(self):
         if (2 > 1):
@@ -27,6 +28,7 @@ class OtherClass(unittest.TestCase):
         <weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">if</weak_warning> (x > 1):
             <weak_warning descr="Consider removing conditions from tests to ensure that all statements are executed">for</weak_warning> u in range(1, 20):
                 x += 2
+                assert x > 10
 
     def not_a_test(self):
         if (4 > 1):

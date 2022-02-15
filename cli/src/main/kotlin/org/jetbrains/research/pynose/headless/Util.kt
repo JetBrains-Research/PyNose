@@ -2,17 +2,10 @@ package org.jetbrains.research.pynose.headless
 
 import com.jetbrains.python.inspections.PyInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.DuplicateAssertionTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.pytest.MagicNumberTestTestSmellPytestInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.RedundantAssertionTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.AssertionRouletteTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.LackCohesionTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.ObscureInLineSetupTestSmellPytestInspection
-import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.TestMaverickTestSmellPytestInspection
+import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.*
 import org.jetbrains.research.pynose.plugin.inspections.unittest.*
-import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.AssertionRouletteTestSmellUnittestInspection
-import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.LackCohesionTestSmellUnittestInspection
-import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.ObscureInLineSetupTestSmellUnittestInspection
-import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.TestMaverickTestSmellUnittestInspection
+import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.*
 import org.jetbrains.research.pynose.plugin.inspections.universal.*
 
 object Util {

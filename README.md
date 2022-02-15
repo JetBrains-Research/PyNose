@@ -1,7 +1,7 @@
 # PyNose: a Test Smell Detector for Python
 
-PyNose is a test smell detector tool for Python.
-It runs as a plugin inside the PyCharm IDE (version 2021.3)
+PyNose is a test smell detector tool for Python. 
+It runs as a plugin inside the PyCharm IDE (version 2021.3) 
 
 **Note: PyNose is currently under active development, the older version of the tool that was initially described in the paper "PyNose: A Test Smell Detector For Python" can be found in the `ASE2021` branch.**
 

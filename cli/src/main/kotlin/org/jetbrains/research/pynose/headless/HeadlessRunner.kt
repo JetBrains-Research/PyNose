@@ -333,22 +333,9 @@ class HeadlessRunner : ApplicationStarter {
                     projectName = project.name
                     println("Processing repo #$counter: $projectName")
                     setSdkToProject(project, projectRoot.toString())
-                    var i = 0
-                    // прости прости прости
-                    // я просто не могу понять, почему исключение вылетает и как от него избавиться
-                    while (i < 10) {
-                        i++
-                        var success = true
-                        try {
-                            WriteCommandAction.runWriteCommandAction(project) {
-                                val inspectionManager = InspectionManager.getInstance(project)
-                                analyse(project, inspectionManager, jsonUnittestProjectResult, jsonPytestProjectResult)
-                            }
-                        } catch (e: Exception) {
-                            success = false
-                            e.printStackTrace()
-                        }
-                        if (success) break
+                    val inspectionManager = InspectionManager.getInstance(project)
+                    WriteCommandAction.runWriteCommandAction(project) {
+                        analyse(project, inspectionManager, jsonUnittestProjectResult, jsonPytestProjectResult)
                     }
                 }
                 val jsonUnittestFile = initOutputJsonFile("$outputDir${separator}unittest", projectName)
