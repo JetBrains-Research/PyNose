@@ -10,13 +10,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationStarter
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.FilenameIndex
@@ -31,8 +28,7 @@ import com.jetbrains.python.psi.PyFunction
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.lang3.tuple.MutablePair
-import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
-import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
+import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import java.io.File
@@ -58,20 +54,6 @@ class HeadlessRunner : ApplicationStarter {
     private var agCsvPytestData: MutableList<MutableList<String>> = mutableListOf()
     private var agCsvUnittestData: MutableList<MutableList<String>> = mutableListOf()
     private val separator = File.separatorChar
-
-    private fun setupSdk(project: Project) {
-        try {
-            val projectManager = ProjectRootManager.getInstance(project)
-            sdk = PythonMockSdk(project.basePath!!).create("3.10")
-            val sdkConfigurer = SdkConfigurer(project, projectManager)
-            sdkConfigurer.setProjectSdk(sdk)
-            WriteAction.run<Throwable> {
-                projectManager.projectSdk = sdk
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
     private fun gatherJsonFunctionInformation(
         inspectionName: String,
@@ -350,7 +332,7 @@ class HeadlessRunner : ApplicationStarter {
                     val project = ProjectUtil.openOrImport(projectRoot, null, true) ?: return@invokeAndWait
                     projectName = project.name
                     println("Processing repo #$counter: $projectName")
-                    setupSdk(project)
+                    setSdkToProject(project, projectRoot.toString())
                     var i = 0
                     // прости прости прости
                     // я просто не могу понять, почему исключение вылетает и как от него избавиться
@@ -377,13 +359,6 @@ class HeadlessRunner : ApplicationStarter {
                 writeToJsonFile(jsonPytestProjectResult, jsonPytestFile)
                 writeToAggregatedCsv(outputDir, "pytest")
                 writeToAggregatedCsv(outputDir, "unittest")
-                try {
-                    ApplicationManager.getApplication().runWriteAction {
-                        ProjectJdkTable.getInstance().removeJdk(sdk)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
                 println("Finished processing repo #$counter: $projectName\n")
                 counter++
             } catch (e: Exception) {
