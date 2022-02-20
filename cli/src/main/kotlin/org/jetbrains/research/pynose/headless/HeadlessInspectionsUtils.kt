@@ -8,7 +8,7 @@ import org.jetbrains.research.pynose.plugin.inspections.unittest.*
 import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.*
 import org.jetbrains.research.pynose.plugin.inspections.universal.*
 
-object Util {
+object HeadlessInspectionsUtils {
     fun getPytestInspectionsFunctionLevel(): Map<PyInspection, String> {
         return mapOf(
             Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),

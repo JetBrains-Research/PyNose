@@ -77,11 +77,9 @@ after the analysis.
 
 Download this project: `git clone https://github.com/JetBrains-Research/PyNose`
 
-Switch to headless mode branch: `git checkout headless-main`
-
 #### Steps to run headless mode from IDE:
 
-Open this project in PyCharm.
+Open this project in IntelliJ IDEA.
 
 The IDE will prompt detecting a Gradle project.
 Load this Gradle project by clicking `Load Gradle Project` option.
@@ -110,12 +108,17 @@ In the edit configuration window set arguments as shown below
 ![Args](assets/run-conf.png)
 <br></br>
 
-Run `runCliHeadless` task by clicking `Run`
+Run `runHeadlessIde` task by clicking `Run`
 
 <br></br>
 ![Run](assets/run.png)
 <br></br>
 
-## Contacts
+### Steps to run headless mode from console:
+Execute the following command with your arguments:
 
+`./gradlew runHeadlessIde -P projectsStorage="Your folder with projects" -P outputDir="Yout output directory"`
+
+## Contacts
+ 
 If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.

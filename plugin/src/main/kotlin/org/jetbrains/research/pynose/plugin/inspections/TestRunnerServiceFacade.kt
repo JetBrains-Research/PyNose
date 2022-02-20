@@ -1,48 +1,50 @@
 package org.jetbrains.research.pynose.plugin.inspections
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.PyFromImportStatement
-import com.jetbrains.python.psi.PyImportStatement
+import com.jetbrains.python.PyBundle
+import com.jetbrains.python.sdk.pythonSdk
+import com.jetbrains.python.testing.PythonTestConfigurationType
+import com.jetbrains.python.testing.TestRunnerService
+import com.jetbrains.python.testing.autoDetectTests.PyAutoDetectionConfigurationFactory
 
 enum class TestRunner {
-    PYTEST, UNITTESTS, UNKNOWN;
+    PYTEST, UNITTESTS, UNKNOWN, AUTODETECT;
+
+    companion object {
+        fun parse(src: String): TestRunner = when (src) {
+            PyBundle.message("runcfg.pytest.display_name") -> PYTEST
+            PyBundle.message("runcfg.unittest.display_name") -> UNITTESTS
+            PyBundle.message("runcfg.autodetect.display_name") -> AUTODETECT
+            else -> UNKNOWN
+        }
+    }
 }
 
 @Service
 object TestRunnerServiceFacade {
 
-    private val testRunnerForFile: MutableMap<PsiFile, TestRunner> = mutableMapOf()
+    private val moduleTestRunnerMap: MutableMap<PsiFile, Module> = mutableMapOf()
 
     fun getConfiguredTestRunner(file: PsiFile): TestRunner {
-        if (testRunnerForFile.containsKey(file) && testRunnerForFile[file] != null) {
-            return testRunnerForFile[file]!!
+        if (!moduleTestRunnerMap.containsKey(file)) {
+            moduleTestRunnerMap[file] = ModuleUtilCore.findModuleForPsiElement(file) ?: return TestRunner.UNKNOWN
         }
-        var hasUnittest = false
-        PsiTreeUtil.findChildrenOfType(file, PyFromImportStatement::class.java).forEach { pyFromImportStatement ->
-            if (pyFromImportStatement.importSource?.name?.contains("pytest") == true) {
-                testRunnerForFile[file] = TestRunner.PYTEST
-                return TestRunner.PYTEST
-            } else if (pyFromImportStatement.importSource?.name?.contains("unittest") == true) {
-                hasUnittest = true
-            }
-        }
-        PsiTreeUtil.findChildrenOfType(file, PyImportStatement::class.java).forEach { pyImportStatement ->
-            pyImportStatement.importElements.forEach { importElem ->
-                if (importElem.importedQName.toString().contains("pytest")) {
-                    return TestRunner.PYTEST
-                } else if (importElem.importedQName.toString().contains("unittest")) {
-                    hasUnittest = true
+        val selectedFactoryName = TestRunnerService.getInstance(moduleTestRunnerMap[file]).selectedFactory.name
+        val runner = TestRunner.parse(selectedFactoryName)
+        if (runner == TestRunner.AUTODETECT) {
+            val sdk = file.project.pythonSdk ?: return TestRunner.UNKNOWN
+            // Retrieving the first installed test factory
+            for (factory in PythonTestConfigurationType.getInstance().typedFactories) {
+                if (factory.isFrameworkInstalled(sdk) && factory !is PyAutoDetectionConfigurationFactory) {
+                    return TestRunner.parse(factory.name)
                 }
             }
-        }
-        return if (hasUnittest) {
-            testRunnerForFile[file] = TestRunner.UNITTESTS
-            TestRunner.UNITTESTS
+            return TestRunner.UNKNOWN
         } else {
-            testRunnerForFile[file] = TestRunner.UNKNOWN
-            TestRunner.UNKNOWN
+            return runner
         }
     }
 }
