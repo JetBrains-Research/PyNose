@@ -27,8 +27,8 @@ class HeadlessRunner : ApplicationStarter {
         repoRoot.listFiles()?.forEach {
             inspectionsAnalyzer.resetParameters()
             val projectRoot = it.path
-            val jsonUnittestProjectResult = JsonArray()
-            val jsonPytestProjectResult = JsonArray()
+            val jsonUnittestResult = JsonArray()
+            val jsonPytestResult = JsonArray()
             var projectName = ""
             val outputDir = args[2]
             ApplicationManager.getApplication().invokeAndWait {
@@ -38,10 +38,10 @@ class HeadlessRunner : ApplicationStarter {
                 setSdkToProject(project, projectRoot.toString())
                 val inspectionManager = InspectionManager.getInstance(project)
                 WriteCommandAction.runWriteCommandAction(project) {
-                    inspectionsAnalyzer.analyse(project, inspectionManager, jsonUnittestProjectResult, jsonPytestProjectResult)
+                    inspectionsAnalyzer.analyse(project, inspectionManager, jsonUnittestResult, jsonPytestResult)
                 }
             }
-            inspectionsAnalyzer.processFileOutput(projectName, outputDir, jsonUnittestProjectResult, jsonPytestProjectResult)
+            inspectionsAnalyzer.processFileOutput(projectName, outputDir, jsonUnittestResult, jsonPytestResult)
             println("Finished processing repo #$counter: $projectName\n")
             counter++
         }

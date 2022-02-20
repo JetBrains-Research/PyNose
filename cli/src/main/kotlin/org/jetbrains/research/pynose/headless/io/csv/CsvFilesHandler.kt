@@ -42,15 +42,13 @@ class CsvFilesHandler {
         fileCount: Int, hasHeader: Boolean, aggregatedData: MutableList<MutableList<String>>, frameworkName: String
     ) {
         val sortedCsvMap = TreeMap(csvMap)
-        val csvOutputFileName =
-            "$outputDir${separator}$frameworkName${projectName}_stats.csv"
+        val csvOutputFileName = "$outputDir${separator}${frameworkName}${separator}${projectName}_stats.csv"
         File("$outputDir${separator}$frameworkName").mkdirs()
         File(csvOutputFileName).createNewFile()
         val writer = Paths.get(csvOutputFileName).bufferedWriter()
         val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
         val header = mutableListOf("project_name", "test_file_count")
         val data = mutableListOf(projectName, fileCount.toString())
-
         sortedCsvMap.keys.forEach { header.add(it) }
         sortedCsvMap.keys.forEach { data.add(sortedCsvMap[it]?.size.toString()) }
         if (!hasHeader) {
