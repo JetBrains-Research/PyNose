@@ -1,4 +1,4 @@
-package org.jetbrains.research.pynose.headless
+package org.jetbrains.research.pynose.headless.inspections
 
 import com.jetbrains.python.inspections.PyInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.DuplicateAssertionTestSmellPytestInspection
@@ -8,7 +8,7 @@ import org.jetbrains.research.pynose.plugin.inspections.unittest.*
 import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.*
 import org.jetbrains.research.pynose.plugin.inspections.universal.*
 
-object HeadlessInspectionsUtils {
+object HeadlessInspectionGroups {
     fun getPytestInspectionsFunctionLevel(): Map<PyInspection, String> {
         return mapOf(
             Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
