@@ -12,7 +12,6 @@ plugins {
 
 allprojects {
     repositories {
-        jcenter()
         mavenCentral()
     }
 }
@@ -25,9 +24,23 @@ subprojects {
         plugin("org.jetbrains.intellij")
     }
 
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            jvmTarget = "11"
+            languageVersion = "1.5"
+            apiVersion = "1.5"
+        }
+    }
+
     dependencies {
         compileOnly(kotlin("stdlib-jdk8"))
         implementation("org.apache.opennlp:opennlp-tools:1.9.3")
+        implementation("org.apache.commons:commons-csv:1.9.0")
         implementation("com.google.code.gson:gson:2.8.8")
         implementation("$utilitiesProjectName:plugin-utilities-core") {
             version {

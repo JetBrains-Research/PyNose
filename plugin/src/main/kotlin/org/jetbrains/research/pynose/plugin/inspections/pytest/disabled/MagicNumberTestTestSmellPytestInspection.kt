@@ -3,14 +3,15 @@ package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElementVisitor
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.MagicNumberTestSmellVisitor
 
 class MagicNumberTestTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(MagicNumberTestTestSmellPytestInspection::class.java)
+    override val inspectionName: String = "Magic number test"
 
-    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return MagicNumberTestSmellVisitor(holder, session)
     }
 }

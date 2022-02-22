@@ -13,7 +13,6 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyExpressionStatement
 import com.jetbrains.python.psi.PyFunction
 import com.jetbrains.python.psi.PyReferenceExpression
-import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.pyi.PyiFile
 import org.jetbrains.research.pynose.plugin.quickfixes.common.SleepyTestTestSmellQuickFix
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
@@ -21,6 +20,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class SleepyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(SleepyTestTestSmellInspection::class.java)
+    override val inspectionName: String = "Sleepy test"
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : PyInspectionVisitor(holder, getContext(session)) {
@@ -44,7 +44,7 @@ class SleepyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
                     return
                 }
                 val callExprRef = callExpression.callee as? PyReferenceExpression ?: return
-                val element = callExprRef.followAssignmentsChain(PyResolveContext.defaultContext()).element ?: return
+                val element = callExprRef.followAssignmentsChain(resolveContext).element ?: return
                 if (element !is PyFunction || element.name != "sleep") {
                     super.visitPyElement(callExpression)
                     return

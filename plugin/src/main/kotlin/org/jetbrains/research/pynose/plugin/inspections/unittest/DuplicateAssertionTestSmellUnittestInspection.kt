@@ -3,8 +3,8 @@ package org.jetbrains.research.pynose.plugin.inspections.unittest
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyClass
@@ -16,8 +16,9 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class DuplicateAssertionTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Duplicate assertion"
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : DuplicateAssertionTestSmellVisitor(holder, session) {
             override fun visitPyClass(node: PyClass) {
                 super.visitPyClass(node)

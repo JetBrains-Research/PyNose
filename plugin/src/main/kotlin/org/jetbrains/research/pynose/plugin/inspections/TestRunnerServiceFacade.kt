@@ -23,7 +23,6 @@ enum class TestRunner {
     }
 }
 
-
 @Service
 object TestRunnerServiceFacade {
 

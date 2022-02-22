@@ -9,6 +9,8 @@ import com.jetbrains.python.inspections.PyInspection
 
 abstract class AbstractTestSmellInspection : PyInspection() {
 
+    abstract val inspectionName: String
+
     protected open fun buildUnittestVisitor(
         holder: ProblemsHolder,
         session: LocalInspectionToolSession

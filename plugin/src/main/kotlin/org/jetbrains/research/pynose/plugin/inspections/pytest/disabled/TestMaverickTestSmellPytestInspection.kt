@@ -3,7 +3,6 @@ package org.jetbrains.research.pynose.plugin.inspections.pytest.disabled
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFunction
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
@@ -12,8 +11,9 @@ import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 
 class TestMaverickTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(TestMaverickTestSmellPytestInspection::class.java)
+    override val inspectionName: String = "Test maverick"
 
-    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): TestMaverickTestSmellVisitor {
 
         return object : TestMaverickTestSmellVisitor(holder, session) {
 

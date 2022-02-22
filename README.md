@@ -19,8 +19,6 @@ It runs as a plugin inside the PyCharm IDE (version 2021.3)
 PyNose can be used inside the IDE to study the test smells within a specific
 opened project. This can help python developers avoid test smells in their code.
 
-[comment]: <> (installation??)
-
 When you open a project in PyCharm, a number of inspections will be available for usage.
 
 PyNose will retrieve the information about your currently configured Test Runner (`Preferences > Tools > Python Integrated Tools > Testing > Default test runner`) to use the appropriate set of inspections (*pytest* or *Unittest*).
@@ -63,6 +61,64 @@ Some inspections are initially disabled, however you can enable them from the se
   ![Exception handling example](assets/gifs/exception_handling_example.gif)
   <br></br>
 
-## Contacts
 
+## Headless mode
+The headless mode can be useful for processing a large number of projects. 
+In this mode, PyCharm will be launched in the background, the project will be analyzed, 
+and all the results will be saved to JSON and CSV files. 
+
+### How to use in headless mode
+
+Create a folder containing all the projects you want to analyse. 
+Analysis will be performed for all the projects in a row.
+
+Create an output directory, where all the `.csv` and `.json` files will be located
+after the analysis.
+
+Download this project: `git clone https://github.com/JetBrains-Research/PyNose`
+
+#### Steps to run headless mode from IDE:
+
+Open this project in IntelliJ IDEA.
+
+The IDE will prompt detecting a Gradle project.
+Load this Gradle project by clicking `Load Gradle Project` option.
+
+<br></br>
+![Load gradle project](assets/load-gradle-project.png)
+<br></br>
+
+The IDE may also prompt that this is a project from the web. 
+Click `Trust Project` to continue.
+
+<br></br>
+![Trust gradle project](assets/trust-project-prompt.png)
+<br></br>
+
+Open gradle side panel as shown below. 
+Direct to `Tasks -> other` and choose the task called runCliHeadless. 
+
+<br></br>
+![Gradle panel](assets/gradle-panel.png)
+<br></br>
+
+In the edit configuration window set arguments as shown below
+
+<br></br>
+![Args](assets/run-conf.png)
+<br></br>
+
+Run `runHeadlessIde` task by clicking `Run`
+
+<br></br>
+![Run](assets/run.png)
+<br></br>
+
+### Steps to run headless mode from console:
+Execute the following command with your arguments:
+
+`./gradlew runHeadlessIde -P projectsStorage="Your folder with projects" -P outputDir="Yout output directory"`
+
+## Contacts
+ 
 If you have any questions or suggestions, don't hesitate to open an issue or contact Yaroslav Golubev at `yaroslav.golubev@jetbrains.com`.

@@ -6,8 +6,8 @@ The original author:
 
 Current maintainers: 
 
-* [Oleg Smirnov](https://github.com/SmirnovOleg)
 * [Olesia Subbotina](https://github.com/OlesiaSub)
+* [Oleg Smirnov](https://github.com/SmirnovOleg)
 * [Yaroslav Golubev](https://github.com/areyde)
 
 Contributors:

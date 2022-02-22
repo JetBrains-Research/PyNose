@@ -1,5 +1,5 @@
 rootProject.name = "pynose"
-include(":plugin", ":cli", ":core")
+include(":plugin", ":cli")
 
 val utilitiesRepo = "https://github.com/JetBrains-Research/plugin-utilities.git"
 val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"

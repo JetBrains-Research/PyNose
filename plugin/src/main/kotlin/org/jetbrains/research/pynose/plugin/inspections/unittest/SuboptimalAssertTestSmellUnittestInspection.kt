@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.*
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
@@ -15,6 +14,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Suboptimal assert"
 
     private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
         this::checkAssertTrueFalseRelatedSmell,
@@ -46,7 +46,7 @@ class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection(
             .any { arg: PyExpression? -> arg is PyBoolLiteralExpression || arg is PyNoneLiteralExpression }
     }
 
-    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         fun registerSuboptimal(valueParam: PsiElement) {
             holder.registerProblem(
                 valueParam,

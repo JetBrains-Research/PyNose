@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyExpressionStatement
 import com.jetbrains.python.psi.PyFunction
@@ -17,8 +16,12 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellInspection::class.java)
+    override val inspectionName: String = "Empty test"
 
-    override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
+    override fun buildUniversalVisitor(
+        holder: ProblemsHolder,
+        session: LocalInspectionToolSession
+    ): PyInspectionVisitor {
         return object : PyInspectionVisitor(holder, getContext(session)) {
             private fun registerEmpty(valueParam: PsiElement) {
                 holder.registerProblem(
