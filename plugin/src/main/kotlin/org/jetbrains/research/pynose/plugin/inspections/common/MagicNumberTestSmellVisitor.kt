@@ -4,10 +4,12 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.descendants
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.PyAssertStatement
 import com.jetbrains.python.psi.PyBinaryExpression
 import com.jetbrains.python.psi.PyNumericLiteralExpression
+import com.jetbrains.python.psi.PyParenthesizedExpression
 import org.jetbrains.research.pynose.plugin.util.GeneralInspectionsUtils
 import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
@@ -37,6 +39,10 @@ open class MagicNumberTestSmellVisitor(
                         || (arg is PyBinaryExpression
                         && arg.children.any { child ->
                     child is PyNumericLiteralExpression && !ignoredNumbers.contains(child.text)
+                }) || (arg is PyParenthesizedExpression
+                        && arg.descendants().any {
+                    it is PyNumericLiteralExpression
+                            && !ignoredNumbers.contains(it.text)
                 })
             }) {
             registerMagicNumber(assertStatement)

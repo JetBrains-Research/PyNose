@@ -37,6 +37,7 @@ class DuplicateAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
         assertTrue(!highlightInfos.any { it.severity == HighlightSeverity.WARNING })
     }
 
+
     @Test
     fun `test duplicate assertion wrong file name`() {
         myFixture.configureByText(
@@ -54,6 +55,16 @@ class DuplicateAssertionTestSmellPytestInspectionTests : AbstractTestSmellInspec
                 "test_file.py", "def test_something(self):\n" +
                 "    assert True\n" +
                 "    <warning descr=\"${TestSmellBundle.message("inspections.duplicate.description")}\">assert True</warning>"
+        )
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test highlighted duplicate assertion with parentheses`() {
+        myFixture.configureByText(
+            "test_file.py", "def test_something(self):\n" +
+                    "    assert (True)\n" +
+                    "    <warning descr=\"${TestSmellBundle.message("inspections.duplicate.description")}\">assert (True)</warning>"
         )
         myFixture.checkHighlighting()
     }

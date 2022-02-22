@@ -33,7 +33,7 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
             "test_file.py", "import unittest\n" +
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
-                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert 17 == 1</weak_warning>\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">assert (1 == 17)</weak_warning>\n" +
                     "        assert \"H\" != \"F\"\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertTrue(22 == 1 + 2)</weak_warning>\n"
         )
@@ -48,6 +48,18 @@ class MagicNumberTestTestSmellUnittestInspectionTests : AbstractTestSmellInspect
                     "class SomeClass(unittest.TestCase):\n" +
                     "    def test_something(self):\n" +
                     "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertEqual(\"G\", 882)</weak_warning>"
+        )
+
+        myFixture.checkHighlighting()
+    }
+
+    @Test
+    fun `test highlighted magic number with parentheses`() {
+        myFixture.configureByText(
+            "test_file.py", "import unittest\n" +
+                    "class SomeClass(unittest.TestCase):\n" +
+                    "    def test_something(self):\n" +
+                    "        <weak_warning descr=\"${TestSmellBundle.message("inspections.magic.number.description")}\">self.assertEqual(\"G\", (885))</weak_warning>"
         )
 
         myFixture.checkHighlighting()
