@@ -22,7 +22,6 @@ import org.jetbrains.research.pynose.headless.io.json.JsonFilesHandler
 import org.jetbrains.research.pynose.plugin.inspections.TestRunner
 import org.jetbrains.research.pynose.plugin.inspections.TestRunnerServiceFacade
 import java.io.File
-import java.nio.file.Paths
 
 class HeadlessInspectionAnalyzer {
 
@@ -128,9 +127,9 @@ class HeadlessInspectionAnalyzer {
     private fun analysePytest(inspectionManager: InspectionManager, psiFile: PsiFile, resultArray: JsonArray) {
         HeadlessInspectionContainer.getPytestInspectionsFunctionLevel().forEach { 
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, it)
-            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach {
-                it.accept(inspectionVisitor)
-                it.descendants { true }.forEach { d -> d.accept(inspectionVisitor) }
+            PsiTreeUtil.findChildrenOfType(psiFile, PyFunction::class.java).forEach { ch ->
+                ch.accept(inspectionVisitor)
+                ch.descendants { true }.forEach { d -> d.accept(inspectionVisitor) }
             }
             jsonHandler.gatherJsonFunctionInformation(it.inspectionName, holder, resultArray)
             csvHandler.gatherCsvInformation(it.inspectionName, holder, psiFile, pytestCsvMap)
@@ -155,9 +154,9 @@ class HeadlessInspectionAnalyzer {
         HeadlessInspectionContainer.getUnittestInspectionsFunctionResultLevel()
             .forEach { 
                 val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, it)
-                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach {
-                    it.accept(inspectionVisitor)
-                    it.descendants { true }.forEach { d -> d.accept(inspectionVisitor) }
+                PsiTreeUtil.findChildrenOfType(psiFile, PyClass::class.java).forEach { ch ->
+                    ch.accept(inspectionVisitor)
+                    ch.descendants { true }.forEach { d -> d.accept(inspectionVisitor) }
                 }
                 jsonHandler.gatherJsonFunctionInformation(it.inspectionName, holder, jsonFileResultArray)
                 csvHandler.gatherCsvInformation(it.inspectionName, holder, psiFile, unittestCsvMap)
@@ -175,8 +174,8 @@ class HeadlessInspectionAnalyzer {
     ) {
         HeadlessInspectionContainer.getUniversalInspections().forEach { 
             val (holder, inspectionVisitor) = initParams(inspectionManager, psiFile, it)
-            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach {
-                it.accept(inspectionVisitor)
+            PsiTreeUtil.findChildrenOfType(psiFile, PyCallExpression::class.java).forEach { ch ->
+                ch.accept(inspectionVisitor)
             }
             jsonHandler.gatherJsonFunctionInformation(it.inspectionName, holder, jsonFileResultArray)
             if (mode == TestRunner.UNITTESTS) {
