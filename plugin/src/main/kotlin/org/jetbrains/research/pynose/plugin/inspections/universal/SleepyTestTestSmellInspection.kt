@@ -20,6 +20,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class SleepyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(SleepyTestTestSmellInspection::class.java)
+    override val inspectionName: String = "Sleepy test"
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : PyInspectionVisitor(holder, getContext(session)) {

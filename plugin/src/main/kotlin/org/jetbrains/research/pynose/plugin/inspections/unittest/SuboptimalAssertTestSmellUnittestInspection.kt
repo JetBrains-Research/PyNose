@@ -14,6 +14,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class SuboptimalAssertTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(SuboptimalAssertTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Suboptimal assert"
 
     private val CHECKERS: MutableList<(PyCallExpression) -> Boolean> = mutableListOf(
         this::checkAssertTrueFalseRelatedSmell,

@@ -16,6 +16,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class DuplicateAssertionTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Duplicate assertion"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : DuplicateAssertionTestSmellVisitor(holder, session) {

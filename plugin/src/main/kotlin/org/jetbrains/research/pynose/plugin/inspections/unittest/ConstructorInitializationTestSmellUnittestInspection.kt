@@ -15,6 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ConstructorInitializationTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(ConstructorInitializationTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Constructor initialization"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         fun registerConstructorInitialization(valueParam: PsiElement) {

@@ -14,6 +14,7 @@ import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 @Suppress("UNCHECKED_CAST")
 class DuplicateAssertionTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DuplicateAssertionTestSmellPytestInspection::class.java)
+    override val inspectionName: String = "Duplicate assertion"
 
     override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : DuplicateAssertionTestSmellVisitor(holder, session) {

@@ -15,6 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ConditionalTestLogicTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(ConditionalTestLogicTestSmellInspection::class.java)
+    override val inspectionName: String = "Conditional test logic"
 
     override fun buildUniversalVisitor(
         holder: ProblemsHolder,

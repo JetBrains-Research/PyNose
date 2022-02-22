@@ -11,6 +11,7 @@ import org.jetbrains.research.pynose.plugin.util.PytestInspectionsUtils
 
 class TestMaverickTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(TestMaverickTestSmellPytestInspection::class.java)
+    override val inspectionName: String = "Test maverick"
 
     override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): TestMaverickTestSmellVisitor {
 

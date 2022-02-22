@@ -1,6 +1,7 @@
 package org.jetbrains.research.pynose.headless.inspections
 
 import com.jetbrains.python.inspections.PyInspection
+import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.DuplicateAssertionTestSmellPytestInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.RedundantAssertionTestSmellPytestInspection
 import org.jetbrains.research.pynose.plugin.inspections.pytest.disabled.*
@@ -9,58 +10,58 @@ import org.jetbrains.research.pynose.plugin.inspections.unittest.disabled.*
 import org.jetbrains.research.pynose.plugin.inspections.universal.*
 
 object HeadlessInspectionContainer {
-    fun getPytestInspectionsFunctionLevel(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
-            Pair(EmptyTestTestSmellInspection(), "Empty test"),
-            Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
-            Pair(MagicNumberTestTestSmellPytestInspection(), "Magic number"),
-            Pair(RedundantAssertionTestSmellPytestInspection(), "Redundant assertion")
+    fun getPytestInspectionsFunctionLevel(): List<AbstractTestSmellInspection> {
+        return listOf(
+            ConditionalTestLogicTestSmellInspection(),
+            EmptyTestTestSmellInspection(),
+            ExceptionHandlingTestSmellInspection(),
+            MagicNumberTestTestSmellPytestInspection(),
+            RedundantAssertionTestSmellPytestInspection()
         )
     }
 
-    fun getPytestInspectionsFileLaunchLevel(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(AssertionRouletteTestSmellPytestInspection(), "Assertion roulette"),
-            Pair(DuplicateAssertionTestSmellPytestInspection(), "Duplicate assertion"),
-            Pair(ObscureInLineSetupTestSmellPytestInspection(), "Obscure in-line setup")
+    fun getPytestInspectionsFileLaunchLevel(): List<AbstractTestSmellInspection> {
+        return listOf(
+            AssertionRouletteTestSmellPytestInspection(),
+            DuplicateAssertionTestSmellPytestInspection(),
+            ObscureInLineSetupTestSmellPytestInspection()
         )
     }
 
-    fun getPytestInspectionsFileResultLevel(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(LackCohesionTestSmellPytestInspection(), "Lack cohesion"),
-            Pair(TestMaverickTestSmellPytestInspection(), "Test maverick")
+    fun getPytestInspectionsFileResultLevel(): List<AbstractTestSmellInspection> {
+        return listOf(
+            LackCohesionTestSmellPytestInspection(),
+            TestMaverickTestSmellPytestInspection()
         )
     }
 
-    fun getUnittestInspectionsFunctionResultLevel(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(AssertionRouletteTestSmellUnittestInspection(), "Assertion roulette"),
-            Pair(ConditionalTestLogicTestSmellInspection(), "Conditional test logic"),
-            Pair(ConstructorInitializationTestSmellUnittestInspection(), "Constructor initialization"),
-            Pair(DuplicateAssertionTestSmellUnittestInspection(), "Duplicate assertion"),
-            Pair(EmptyTestTestSmellInspection(), "Empty test"),
-            Pair(ExceptionHandlingTestSmellInspection(), "Exception handling"),
-            Pair(ObscureInLineSetupTestSmellUnittestInspection(), "Obscure in-line setup"),
-            Pair(MagicNumberTestTestSmellUnittestInspection(), "Magic number"),
-            Pair(RedundantAssertionTestSmellUnittestInspection(), "Redundant assertion"),
-            Pair(SuboptimalAssertTestSmellUnittestInspection(), "Suboptimal assertion")
+    fun getUnittestInspectionsFunctionResultLevel(): List<AbstractTestSmellInspection> {
+        return listOf(
+            AssertionRouletteTestSmellUnittestInspection(),
+            ConditionalTestLogicTestSmellInspection(),
+            ConstructorInitializationTestSmellUnittestInspection(),
+            DuplicateAssertionTestSmellUnittestInspection(),
+            EmptyTestTestSmellInspection(),
+            ExceptionHandlingTestSmellInspection(),
+            ObscureInLineSetupTestSmellUnittestInspection(),
+            MagicNumberTestTestSmellUnittestInspection(),
+            RedundantAssertionTestSmellUnittestInspection(),
+            SuboptimalAssertTestSmellUnittestInspection()
         )
     }
 
-    fun getUnittestInspectionsClassResultLevel(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(DefaultTestTestSmellUnittestInspection(), "Default test"),
-            Pair(LackCohesionTestSmellUnittestInspection(), "Lack cohesion"),
-            Pair(TestMaverickTestSmellUnittestInspection(), "Test maverick")
+    fun getUnittestInspectionsClassResultLevel(): List<AbstractTestSmellInspection> {
+        return listOf(
+            DefaultTestTestSmellUnittestInspection(),
+            LackCohesionTestSmellUnittestInspection(),
+            TestMaverickTestSmellUnittestInspection()
         )
     }
 
-    fun getUniversalInspections(): Map<PyInspection, String> {
-        return mapOf(
-            Pair(RedundantPrintTestSmellInspection(), "Redundant print"),
-            Pair(SleepyTestTestSmellInspection(), "Sleepy test")
+    fun getUniversalInspections(): List<AbstractTestSmellInspection> {
+        return listOf(
+            RedundantPrintTestSmellInspection(),
+            SleepyTestTestSmellInspection()
         )
     }
 }

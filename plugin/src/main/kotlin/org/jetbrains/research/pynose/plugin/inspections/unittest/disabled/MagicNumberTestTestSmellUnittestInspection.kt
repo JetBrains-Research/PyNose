@@ -11,6 +11,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class MagicNumberTestTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(MagicNumberTestTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Magic number test"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
 

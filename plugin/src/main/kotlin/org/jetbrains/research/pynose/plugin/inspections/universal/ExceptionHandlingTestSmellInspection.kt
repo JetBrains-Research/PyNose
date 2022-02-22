@@ -18,6 +18,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class ExceptionHandlingTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(ExceptionHandlingTestSmellInspection::class.java)
+    override val inspectionName: String = "Exception handling"
 
     override fun buildUniversalVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : PyInspectionVisitor(holder, getContext(session)) {

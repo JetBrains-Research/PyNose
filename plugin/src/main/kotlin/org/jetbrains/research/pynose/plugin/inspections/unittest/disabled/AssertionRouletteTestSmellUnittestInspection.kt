@@ -12,6 +12,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class AssertionRouletteTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(AssertionRouletteTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Assertion roulette"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : AssertionRouletteTestSmellVisitor(holder, session) {

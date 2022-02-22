@@ -16,6 +16,7 @@ import org.jetbrains.research.pynose.plugin.util.TestSmellBundle
 
 class EmptyTestTestSmellInspection : AbstractUniversalTestSmellInspection() {
     private val LOG = Logger.getInstance(EmptyTestTestSmellInspection::class.java)
+    override val inspectionName: String = "Empty test"
 
     override fun buildUniversalVisitor(
         holder: ProblemsHolder,

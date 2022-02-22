@@ -12,6 +12,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class LackCohesionTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(LackCohesionTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Lack cohesion"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : LackCohesionTestSmellVisitor(holder, session) {

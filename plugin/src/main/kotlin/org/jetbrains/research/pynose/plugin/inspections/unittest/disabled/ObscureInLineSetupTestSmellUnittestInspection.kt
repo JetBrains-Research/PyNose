@@ -12,6 +12,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 class ObscureInLineSetupTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(ObscureInLineSetupTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Obscure in-line setup"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : ObscureInLineSetupTestSmellVisitor(holder, session) {

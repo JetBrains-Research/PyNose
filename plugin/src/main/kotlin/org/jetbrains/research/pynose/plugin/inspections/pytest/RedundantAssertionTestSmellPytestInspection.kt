@@ -9,6 +9,7 @@ import org.jetbrains.research.pynose.plugin.inspections.common.RedundantAssertio
 
 class RedundantAssertionTestSmellPytestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(RedundantAssertionTestSmellPytestInspection::class.java)
+    override val inspectionName: String = "Redundant assertion"
 
     override fun buildPytestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         return object : RedundantAssertionTestSmellVisitor(holder, session) {}

@@ -15,6 +15,7 @@ import org.jetbrains.research.pynose.plugin.util.UnittestInspectionsUtils
 
 open class DefaultTestTestSmellUnittestInspection : AbstractTestSmellInspection() {
     private val LOG = Logger.getInstance(DefaultTestTestSmellUnittestInspection::class.java)
+    override val inspectionName: String = "Default test"
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PyInspectionVisitor {
         fun registerDefault(valueParam: PsiElement, defaultTestSmellQuickFix: LocalQuickFix?) {
