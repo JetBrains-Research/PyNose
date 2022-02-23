@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.python.psi.PyCallExpression
+import com.jetbrains.python.psi.PyLiteralExpression
 import com.jetbrains.python.psi.PyReferenceExpression
 import org.jetbrains.research.pynose.plugin.inspections.AbstractTestSmellInspection
 import org.jetbrains.research.pynose.plugin.inspections.common.RedundantAssertionTestSmellVisitor
@@ -15,7 +16,6 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
 
     override fun buildUnittestVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : RedundantAssertionTestSmellVisitor(holder, session) {
-            // todo: assertTrue(x < x) is not detected yet
             override fun visitPyCallExpression(callExpression: PyCallExpression) {
                 super.visitPyCallExpression(callExpression)
                 val callee = callExpression.callee ?: return
@@ -25,12 +25,12 @@ class RedundantAssertionTestSmellUnittestInspection : AbstractTestSmellInspectio
                     return
                 }
                 val argList = callExpression.getArguments(null)
-                if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(callee.name)) {
-                    if (argList.isNotEmpty() && argList[0].text == UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM[callee.name]) {
-                        registerRedundant(callExpression)
-                    }
+                if (UnittestInspectionsUtils.ASSERT_METHOD_ONE_PARAM.containsKey(callee.name)
+                    && processAssertionArgs(callExpression, argList)) {
+                    return
                 } else if (UnittestInspectionsUtils.ASSERT_METHOD_TWO_PARAMS.contains(callee.name)) {
-                    if (argList.size >= 2 && argList[0].text == argList[1].text) {
+                    if (argList.size >= 2 && (PyLiteralExpression::class.java.isAssignableFrom(argList[0]::class.java)
+                                && PyLiteralExpression::class.java.isAssignableFrom(argList[1]::class.java))) {
                         registerRedundant(callExpression)
                     }
                 }

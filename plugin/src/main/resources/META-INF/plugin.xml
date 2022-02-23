@@ -185,7 +185,6 @@
                          displayName="Test maverick"
                          shortName="TestMaverickTestSmellPytestInspection"/>
     </extensions>
-
     <actions>
         <!-- Add your actions here -->
     </actions>
